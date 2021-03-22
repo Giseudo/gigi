@@ -6,24 +6,21 @@
 import { defineComponent, markRaw } from 'vue'
 import { IcosahedronGeometry, MeshBasicMaterial, Mesh, Vector3 } from 'three'
 import { StandardNodeMaterial } from 'three/examples/jsm/nodes/Nodes'
+import { UPDATE, DRAW, PRIMARY_AXIS, AXIS_CHANGED } from '@/viewport/types'
 import * as Nodes from 'three/examples/jsm/nodes/Nodes'
+
+const clamp = (number, min, max) => Math.max(min, Math.min(number, max))
 
 export default defineComponent({
   name: 'GSphere',
 
-  inject: ['viewport'],
+  inject: ['viewport', 'input'],
 
   data: () => markRaw({
     mesh: null,
     geometry: null,
     material: null,
-    keys: {
-      up: false,
-      right: false,
-      down: false,
-      left: false
-    },
-    speed: 20.0,
+    acceleration: 60,
     velocity: new Vector3(0, 0, 0)
   }),
 
@@ -39,6 +36,16 @@ export default defineComponent({
     position: {
       type: Array,
       default: () => ([0, 0, 0])
+    },
+    maxVelocity: {
+      type: Number,
+      default: 20
+    }
+  },
+
+  computed: {
+    isMoving () {
+      return this.input.getAxis(PRIMARY_AXIS).lengthSq() > 0
     }
   },
 
@@ -48,98 +55,71 @@ export default defineComponent({
   },
 
   mounted () {
-    const { scene } = this.viewport
-
     this.geometry = new IcosahedronGeometry(1, this.detail)
     this.material = new StandardNodeMaterial({ color: 0xffffff })
-
-    this.material.color = new Nodes.ColorNode(0xffffff)
     this.material.roughness= new Nodes.FloatNode(0.)
 
-    /*const { MUL, ADD } = Nodes.OperatorNode
-    const localPosition = new Nodes.PositionNode()
-    const localY = new Nodes.SwitchNode(localPosition, 'y')
-
-    let offset = new Nodes.MathNode(
-      new Nodes.OperatorNode(localY, this.viewport.state.time, MUL),
-      Nodes.MathNode.SIN
-    )
-    offset = new Nodes.OperatorNode(offset, new Nodes.FloatNode(0.2), MUL)
-    offset = new Nodes.OperatorNode(offset, new Nodes.FloatNode(1.0), MUL)
-    this.material.position = new Nodes.OperatorNode(localPosition, offset, MUL)*/
-
     this.mesh = new Mesh(this.geometry, this.material)
+    this.mesh.castShadow = true
     this.setPosition(this.position)
     this.setSize(this.size)
 
-    document.addEventListener('keydown', this.onKeyDown)
-    document.addEventListener('keyup', this.onKeyUp)
-
-    scene.add(this.mesh)
-
-    this.viewport.subscribe('update', this.onUpdate)
+    this.viewport.scene.add(this.mesh)
+    this.viewport.subscribe(UPDATE, this.onUpdate)
   },
 
   beforeUnmount () {
-    const { scene } = this.viewport
-
-    scene.remove(this.mesh)
-
+    this.viewport.unsubscribe(UPDATE, this.onUpdate)
+    this.viewport.scene.remove(this.mesh)
     this.geometry.dispose()
     this.material.dispose()
     this.mesh.remove()
-    this.viewport.unsubscribe('update', this.onUpdate)
   },
 
   methods: {
     setSize (value) {
-      this.mesh.scale.x = value
-      this.mesh.scale.y = value
-      this.mesh.scale.z = value
+      this.mesh.scale.set(value, value, value)
     },
 
     setPosition ([ x, y, z ]) {
-      this.mesh.position.x = x
-      this.mesh.position.y = y
-      this.mesh.position.z = z
+      this.mesh.position.set(x, y, z)
     },
 
-    onUpdate ({ detail }) {
-      const { deltaTime } = detail
-
-      if (this.keys.left) this.velocity.x -= 1
-      if (this.keys.right) this.velocity.x += 1
-      if (this.keys.down) this.velocity.y -= 1
-      if (this.keys.up) this.velocity.y += 1
-
-      this.mesh.position.x += this.velocity.x * this.speed * deltaTime
-      this.mesh.position.y += this.velocity.y * this.speed * deltaTime
-      this.mesh.position.z += this.velocity.z * this.speed * deltaTime
-
-      this.velocity.set(0,0,0)
+    onUpdate (_, deltaTime) {
+      this.adjustVelocity(deltaTime)
+      this.mesh.position.add(
+        new Vector3()
+          .copy(this.velocity)
+          .multiplyScalar(deltaTime)
+      )
     },
 
-    onKeyDown (event) {
-      const { key } = event
+    adjustVelocity (deltaTime) {
+      const direction = this.getOrientedDirection(this.input.getAxis(PRIMARY_AXIS))
 
-      if (key === 'w') this.keys.up = true
-      if (key === 'd') this.keys.right = true
-      if (key === 's') this.keys.down = true 
-      if (key === 'a') this.keys.left = true
+      if (!this.isMoving)
+        this.velocity.multiplyScalar(.9)
+      else
+        this.velocity.add(direction.multiplyScalar(this.acceleration * deltaTime))
+
+      this.velocity.clampLength(0, this.maxVelocity)
     },
 
-    onKeyUp (event) {
-      const { key } = event
+    getOrientedDirection (direction) {
+      const { camera } = this.viewport
 
-      if (key === 'w') this.keys.up = false
-      if (key === 'd') this.keys.right = false
-      if (key === 's') this.keys.down = false 
-      if (key === 'a') this.keys.left = false
-    },
+      const right = new Vector3(1, 0, 0)
+        .applyQuaternion(camera.quaternion)
+      right.y = 0
+      right.normalize()
 
-    move (x, y) {
-      this.mesh.position.x += x
-      this.mesh.position.y += y
+      const forward = new Vector3(0, 0, -1)
+        .applyQuaternion(camera.quaternion)
+      forward.y = 0
+      forward.normalize()
+
+      return right.multiplyScalar(direction.x)
+        .add(forward.multiplyScalar(direction.y))
     }
   }
 })

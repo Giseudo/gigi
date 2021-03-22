@@ -8,11 +8,13 @@
 <script>
 import { defineComponent } from 'vue'
 import { Vector3 } from 'three'
-import viewport from './viewport'
+import viewport from '@/viewport'
+import input from '@/viewport/input'
+import * as types from '@/viewport/types'
 
 export default defineComponent({
   provide () {
-    return { viewport }
+    return { viewport, input }
   },
 
   data: () => ({
@@ -23,22 +25,23 @@ export default defineComponent({
     this.init()
   },
 
+  beforeUnmount () {
+    input.destroy()
+  },
+
   methods: {
     init () {
       viewport.init({ el: this.$refs.viewport })
-      viewport.animate(this.update, this.draw)
-      viewport.moveCamera(Vector3.Forward, 20)
+      input.init()
+
+      viewport.subscribe(types.UPDATE, this.onUpdate)
+      viewport.subscribe(types.DRAW, this.onDraw)
 
       this.isLoading = false
     },
 
-    update (deltaTime) {
-      this.$emit('update', deltaTime)
-    },
-
-    draw () {
-      this.$emit('draw')
-    }
+    onUpdate (_, deltaTime) { },
+    onDraw () { }
   }
 })
 </script>

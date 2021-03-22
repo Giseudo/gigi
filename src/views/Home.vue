@@ -27,15 +27,18 @@
       :point-size="pointSize"
       :color="0x0000ff"
     /-->
-    <g-sphere :position="[0, 0, 0]"></g-sphere>
+
+    <g-sphere :position="[0, 2, 0]"></g-sphere>
   </div>
 </template>
 
 <script>
-import { defineComponent } from 'vue'
-import { PointLight } from 'three'
+import { defineComponent, markRaw } from 'vue'
+import { PointLight, Vector3, Mesh, PlaneGeometry } from 'three'
+import { StandardNodeMaterial } from 'three/examples/jsm/nodes/Nodes'
 import GSphere from '@/components/GSphere'
 import GRipples from '@/components/GRipples'
+
 
 export default defineComponent({
   name: 'Home',
@@ -47,24 +50,46 @@ export default defineComponent({
     GRipples
   },
 
-  data: () => ({
+  data: () => markRaw({
     light: null,
     amplitude: 1.0,
     frequency: 1.0,
     speed: 2.0,
     size: 30,
-    pointSize: 8
+    pointSize: 8,
+
+    geometry: null,
+    material: null,
+    mesh: null
   }),
 
   mounted () {
-    this.light = new PointLight(0xffffff, 1, 50)
-    this.light.position.set(10, 10, 10)
+    this.light = new PointLight(0xffaa77, 1, 50)
+    this.light.castShadow = true
+    this.light.position.set(0, 10, 0)
+
+    this.viewport.camera.position.set(0, 10, 10)
+    this.viewport.camera.rotation.x = -Math.PI / 4
+
+    this.geometry = new PlaneGeometry(300, 300)
+    this.material = new StandardNodeMaterial({ color: 0xffffff })
+    this.mesh = new Mesh(this.geometry, this.material)
+    this.mesh.rotation.x = -Math.PI/ 2
+    this.mesh.receiveShadow = true
 
     this.viewport.scene.add(this.light)
+    this.viewport.scene.add(this.mesh)
   },
 
   beforeUnmount () {
+    this.geometry.dispose()
+    this.material.dispose()
+
+    this.viewport.scene.remove(this.mesh)
     this.viewport.scene.remove(this.light)
+    this.viewport.destroy()
+
+    this.mesh.remove()
     this.light.remove()
   }
 })

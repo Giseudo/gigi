@@ -1,30 +1,61 @@
 <template>
-  <div id="nav">
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
+  <div class="g-app">
+    <router-view  v-if="!isLoading" />
+    <div ref="viewport" class="viewport" />
   </div>
-  <router-view/>
 </template>
 
+<script>
+import { defineComponent } from 'vue'
+import { Vector3 } from 'three'
+import viewport from './viewport'
+
+export default defineComponent({
+  provide () {
+    return { viewport }
+  },
+
+  data: () => ({
+    isLoading: true,
+  }),
+
+  mounted () {
+    this.init()
+  },
+
+  methods: {
+    init () {
+      viewport.init({ el: this.$refs.viewport })
+      viewport.animate(this.update, this.draw)
+      viewport.moveCamera(Vector3.Forward, 20)
+
+      this.isLoading = false
+    },
+
+    update (deltaTime) {
+      this.$emit('update', deltaTime)
+    },
+
+    draw () {
+      this.$emit('draw')
+    }
+  }
+})
+</script>
+
 <style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
+body,
+html {
+  margin: 0;
 }
 
-#nav {
-  padding: 30px;
-
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-
-    &.router-link-exact-active {
-      color: #42b983;
-    }
+.g-app {
+  & > .viewport {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
   }
 }
 </style>

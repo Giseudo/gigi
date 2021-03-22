@@ -13,7 +13,7 @@
       :amplitude="amplitude"
       :frequency="frequency"
       :speed="speed"
-      :time-offset=".1"
+     :time-offset=".1"
       :size="size"
       :point-size="pointSize - 2"
       :color="0x00ff00"
@@ -43,7 +43,7 @@ import GRipples from '@/components/GRipples'
 export default defineComponent({
   name: 'Home',
 
-  inject: ['viewport'],
+  inject: ['renderer', 'camera', 'scene'],
 
   components: {
     GSphere,
@@ -64,12 +64,14 @@ export default defineComponent({
   }),
 
   mounted () {
-    this.light = new PointLight(0xffaa77, 1, 50)
+    const { mainCamera } = this.camera
+
+    this.light = new PointLight(0xbbddee, 1, 50)
     this.light.castShadow = true
     this.light.position.set(0, 10, 0)
 
-    this.viewport.camera.position.set(0, 10, 10)
-    this.viewport.camera.rotation.x = -Math.PI / 4
+    mainCamera.position.set(0, 10, 10)
+    mainCamera.rotation.x = -Math.PI / 4
 
     this.geometry = new PlaneGeometry(300, 300)
     this.material = new StandardNodeMaterial({ color: 0xffffff })
@@ -77,17 +79,17 @@ export default defineComponent({
     this.mesh.rotation.x = -Math.PI/ 2
     this.mesh.receiveShadow = true
 
-    this.viewport.scene.add(this.light)
-    this.viewport.scene.add(this.mesh)
+    this.scene.add(this.light)
+    this.scene.add(this.mesh)
   },
 
   beforeUnmount () {
     this.geometry.dispose()
     this.material.dispose()
 
-    this.viewport.scene.remove(this.mesh)
-    this.viewport.scene.remove(this.light)
-    this.viewport.destroy()
+    this.scene.remove(this.mesh)
+    this.scene.remove(this.light)
+    this.renderer.destroy()
 
     this.mesh.remove()
     this.light.remove()

@@ -6,7 +6,7 @@
 import { defineComponent, markRaw } from 'vue'
 import { IcosahedronGeometry, MeshBasicMaterial, Mesh, Vector3 } from 'three'
 import { StandardNodeMaterial } from 'three/examples/jsm/nodes/Nodes'
-import { UPDATE, DRAW, PRIMARY_AXIS, AXIS_CHANGED } from '@/viewport/types'
+import { UPDATE, DRAW, PRIMARY_AXIS, AXIS_CHANGED } from '@/engine/types'
 import * as Nodes from 'three/examples/jsm/nodes/Nodes'
 
 const clamp = (number, min, max) => Math.max(min, Math.min(number, max))
@@ -14,7 +14,7 @@ const clamp = (number, min, max) => Math.max(min, Math.min(number, max))
 export default defineComponent({
   name: 'GSphere',
 
-  inject: ['viewport', 'input'],
+  inject: ['renderer', 'input', 'camera', 'scene'],
 
   data: () => markRaw({
     mesh: null,
@@ -64,13 +64,13 @@ export default defineComponent({
     this.setPosition(this.position)
     this.setSize(this.size)
 
-    this.viewport.scene.add(this.mesh)
-    this.viewport.subscribe(UPDATE, this.onUpdate)
+    this.scene.add(this.mesh)
+    this.renderer.subscribe(UPDATE, this.onUpdate)
   },
 
   beforeUnmount () {
-    this.viewport.unsubscribe(UPDATE, this.onUpdate)
-    this.viewport.scene.remove(this.mesh)
+    this.renderer.unsubscribe(UPDATE, this.onUpdate)
+    this.scene.remove(this.mesh)
     this.geometry.dispose()
     this.material.dispose()
     this.mesh.remove()
@@ -106,15 +106,15 @@ export default defineComponent({
     },
 
     getOrientedDirection (direction) {
-      const { camera } = this.viewport
+      const { mainCamera } = this.camera
 
       const right = new Vector3(1, 0, 0)
-        .applyQuaternion(camera.quaternion)
+        .applyQuaternion(mainCamera.quaternion)
       right.y = 0
       right.normalize()
 
       const forward = new Vector3(0, 0, -1)
-        .applyQuaternion(camera.quaternion)
+        .applyQuaternion(mainCamera.quaternion)
       forward.y = 0
       forward.normalize()
 

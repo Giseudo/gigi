@@ -7,14 +7,16 @@
 
 <script>
 import { defineComponent } from 'vue'
-import { Vector3 } from 'three'
-import viewport from '@/viewport'
-import input from '@/viewport/input'
-import * as types from '@/viewport/types'
+import renderer from '@/engine/renderer'
+import input from '@/engine/input'
+import camera from '@/engine/camera'
+import scene from '@/engine/scene'
+import * as types from '@/engine/types'
+
 
 export default defineComponent({
   provide () {
-    return { viewport, input }
+    return { renderer, input, camera, scene }
   },
 
   data: () => ({
@@ -31,17 +33,11 @@ export default defineComponent({
 
   methods: {
     init () {
-      viewport.init({ el: this.$refs.viewport })
+      renderer.init(this.$refs.viewport)
       input.init()
 
-      viewport.subscribe(types.UPDATE, this.onUpdate)
-      viewport.subscribe(types.DRAW, this.onDraw)
-
       this.isLoading = false
-    },
-
-    onUpdate (_, deltaTime) { },
-    onDraw () { }
+    }
   }
 })
 </script>

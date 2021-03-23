@@ -4,10 +4,9 @@ import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass'
 import { GlitchPass } from 'three/examples/jsm/postprocessing/GlitchPass'
 import { BloomPass } from 'three/examples/jsm/postprocessing/BloomPass'
-import { publish, subscribe, unsubscribe, clearAllSubscriptions, countSubscriptions } from 'pubsub-js'
 import { camera } from '@/engine/camera'
 import { scene } from '@/engine/scene'
-import { WebGLRenderer, PCFSoftShadowMap, Clock } from 'three'
+import { WebGLRenderer, Clock, EventDispatcher } from 'three'
 import * as types from './types'
 
 const state = reactive({
@@ -17,26 +16,24 @@ const state = reactive({
   deltaTime: new FloatNode(0.0)
 })
 
-export const renderer = new WebGLRenderer({ antialias: false })
+const Events = new EventDispatcher()
+
+export const renderer = new WebGLRenderer({ antialias: true })
 export const composer = new EffectComposer(renderer)
 export const clock = new Clock()
-
-const update = () => {
-  state.deltaTime.value = clock.getDelta()
-  state.time.value += state.deltaTime.value
-
-  publish(types.UPDATE, state.deltaTime.value)
-}
-
-const draw = () => {
-  publish(types.DRAW)
-
-  composer.render()
-}
+const interval = 1 / 60
 
 const gameLoop = () => {
-  update()
-  draw()
+  state.deltaTime.value += clock.getDelta()
+
+  if (state.deltaTime.value > interval) {
+    Events.dispatchEvent({ type: types.UPDATE, deltaTime: state.deltaTime.value })
+    Events.dispatchEvent({ type: types.DRAW })
+    composer.render()
+
+    state.time.value += state.deltaTime.value
+    state.deltaTime.value %= interval
+  }
 }
 
 export default {
@@ -51,17 +48,31 @@ export default {
     const renderPass = new RenderPass(scene, camera)
     composer.addPass(renderPass)
 
+    // const bloomPass = new BloomPass()
+    // composer.addPass(bloomPass)
+
     el.appendChild(renderer.domElement)
 
-    publish(types.START)
+    Events.dispatchEvent({ type: types.START })
     renderer.setAnimationLoop(gameLoop)
   },
 
   destroy: () => {
     renderer.setAnimationLoop(null)
-    clearAllSubscriptions()
   },
 
-  subscribe: (topic, callback) => subscribe(topic, callback),
-  unsubscribe: (topic, callback) => unsubscribe(topic, callback)
+  setSize: (width, height) => {
+    state.width = width
+    state.height = width
+
+    renderer.setSize(width, height)
+  },
+
+  subscribe: (topic, callback) => {
+    Events.addEventListener(topic, callback)
+  },
+
+  unsubscribe: (topic, callback) => {
+    Events.removeEventListener(topic, callback)
+  }
 }

@@ -28,13 +28,18 @@
       :color="0x0000ff"
     /-->
 
-    <g-sphere :position="[0, 2, 0]"></g-sphere>
+    <g-sphere :position="[0, 2, 0]" />
+    <!--g-sphere :position="[4, 2, 8]" />
+    <g-sphere :position="[0, 2, 4]" />
+    <g-sphere :position="[4, 2, 0]" />
+    <g-sphere :position="[4, 2, 4]" />
+    <g-sphere :position="[0, 2, 8]" /-->
   </div>
 </template>
 
 <script>
 import { defineComponent, markRaw } from 'vue'
-import { PointLight, Vector3, Mesh, PlaneGeometry } from 'three'
+import { Vector2, MeshPhongMaterial, PointLight, Vector3, Mesh, PlaneGeometry } from 'three'
 import { StandardNodeMaterial } from 'three/examples/jsm/nodes/Nodes'
 import GSphere from '@/components/GSphere'
 import GRipples from '@/components/GRipples'
@@ -69,12 +74,13 @@ export default defineComponent({
     this.light = new PointLight(0xbbddee, 1, 50)
     this.light.castShadow = true
     this.light.position.set(0, 10, 0)
+    // this.light.shadow.mapSize = new Vector2(256, 256)
 
     mainCamera.position.set(0, 10, 10)
     mainCamera.rotation.x = -Math.PI / 4
 
     this.geometry = new PlaneGeometry(300, 300)
-    this.material = new StandardNodeMaterial({ color: 0xffffff })
+    this.material = new MeshPhongMaterial({ color: 0xffffff })
     this.mesh = new Mesh(this.geometry, this.material)
     this.mesh.rotation.x = -Math.PI/ 2
     this.mesh.receiveShadow = true

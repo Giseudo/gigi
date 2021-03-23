@@ -29,6 +29,7 @@ export default defineComponent({
 
   beforeUnmount () {
     input.destroy()
+      window.removeEventListener('resize', this.onResize)
   },
 
   methods: {
@@ -37,14 +38,23 @@ export default defineComponent({
       input.init()
 
       this.isLoading = false
+      window.addEventListener('resize', this.onResize)
+    },
+
+    onResize () {
+      camera.mainCamera.aspect = window.innerWidth / window.innerHeight
+      camera.mainCamera.updateProjectionMatrix()
+      renderer.setSize(window.innerWidth, window.innerHeight)
     }
   }
 })
 </script>
 
 <style lang="scss">
-body,
-html {
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
   margin: 0;
 }
 

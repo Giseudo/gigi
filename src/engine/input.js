@@ -1,6 +1,5 @@
 import { reactive, readonly } from 'vue'
-import { publish, subscribe, unsubscribe } from 'pubsub-js'
-import { Vector2 } from 'three'
+import { Vector2, EventDispatcher } from 'three'
 
 export const BUTTON_DOWN = 'input/BUTTON_DOWN'
 export const BUTTON_PRESS = 'input/BUTTON_PRESS'
@@ -15,6 +14,8 @@ export const LEFT_BUTTON = 'input/LEFT_BUTTON'
 export const CONFIRM_BUTTON = 'input/CONFIRM_BUTTON'
 
 import { PRIMARY_AXIS, AXIS_CHANGED } from './types'
+
+const Events = new EventDispatcher()
 
 const state = reactive({
   axes: {
@@ -59,7 +60,7 @@ export const changeAxis = (button) => {
     if (axis.horizontal.negative.includes(button))
       axis.value.x = isPressing(button) ? -1 : 0
 
-    publish(AXIS_CHANGED, topic)
+    Events.dispatchEvent({ type: AXIS_CHANGED, value: axis.value })
   }
 }
 
@@ -78,7 +79,7 @@ const onKeyDown = (event) => {
     if (['up', 'right', 'down', 'left'].includes(button))
       changeAxis(button)
 
-    publish(BUTTON_DOWN, button)
+    Events.dispatchEvent({ type: BUTTON_DOWN, button })
   }
 }
 
@@ -97,7 +98,7 @@ const onKeyUp = (event) => {
     if (['up', 'right', 'down', 'left'].includes(button))
       changeAxis(button)
 
-    publish(BUTTON_UP, button)
+    Events.dispatchEvent({ type: BUTTON_UP, button })
   }
 }
 
@@ -115,11 +116,11 @@ export default {
   },
 
   subscribe: (topic, callback) => {
-    subscribe(topic, callback)
+    Events.addEventListener(topic, callback)
   },
 
   unsubscribe: (topic, callback) => {
-    unsubscribe(topic, callback)
+    Events.removeEventListener(topic, callback)
   },
 
   getAxis: (axis) => state.axes[axis].value

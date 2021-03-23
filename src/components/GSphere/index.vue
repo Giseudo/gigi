@@ -4,10 +4,13 @@
 
 <script>
 import { defineComponent, markRaw } from 'vue'
-import { IcosahedronGeometry, MeshBasicMaterial, Mesh, Vector3 } from 'three'
+import { IcosahedronGeometry, Color, ShaderMaterial, Mesh, Vector3 } from 'three'
 import { StandardNodeMaterial } from 'three/examples/jsm/nodes/Nodes'
 import { UPDATE, DRAW, PRIMARY_AXIS, AXIS_CHANGED } from '@/engine/types'
 import * as Nodes from 'three/examples/jsm/nodes/Nodes'
+
+import vertexShader from './sphere-vert.glsl'
+import fragmentShader from './sphere-frag.glsl'
 
 const clamp = (number, min, max) => Math.max(min, Math.min(number, max))
 
@@ -56,8 +59,18 @@ export default defineComponent({
 
   mounted () {
     this.geometry = new IcosahedronGeometry(1, this.detail)
-    this.material = new StandardNodeMaterial({ color: 0xffffff })
-    this.material.roughness= new Nodes.FloatNode(0.)
+    this.material = new ShaderMaterial({
+      vertexShader,
+      fragmentShader,
+      transparent: true,
+      uniforms: {
+        color: {
+          type: 'v3',
+          value: new Color(0xff0000)
+        }
+      },
+    })
+    this.material.roughness = new Nodes.FloatNode(0.2)
 
     this.mesh = new Mesh(this.geometry, this.material)
     this.mesh.castShadow = true
@@ -85,7 +98,7 @@ export default defineComponent({
       this.mesh.position.set(x, y, z)
     },
 
-    onUpdate (_, deltaTime) {
+    onUpdate ({ deltaTime }) {
       this.adjustVelocity(deltaTime)
       this.mesh.position.add(
         new Vector3()
@@ -108,13 +121,11 @@ export default defineComponent({
     getOrientedDirection (direction) {
       const { mainCamera } = this.camera
 
-      const right = new Vector3(1, 0, 0)
-        .applyQuaternion(mainCamera.quaternion)
+      const right = new Vector3(1, 0, 0).applyQuaternion(mainCamera.quaternion)
       right.y = 0
       right.normalize()
 
-      const forward = new Vector3(0, 0, -1)
-        .applyQuaternion(mainCamera.quaternion)
+      const forward = new Vector3(0, 0, -1).applyQuaternion(mainCamera.quaternion)
       forward.y = 0
       forward.normalize()
 

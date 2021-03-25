@@ -28,22 +28,19 @@
       :color="0x0000ff"
     /-->
 
-    <g-sphere :position="[0, 2, 0]" />
-    <!--g-sphere :position="[4, 2, 8]" />
-    <g-sphere :position="[0, 2, 4]" />
-    <g-sphere :position="[4, 2, 0]" />
-    <g-sphere :position="[4, 2, 4]" />
-    <g-sphere :position="[0, 2, 8]" /-->
+    <g-sphere ref="protagonist" :position="[0, 2, 0]" />
   </div>
 </template>
 
 <script>
 import { defineComponent, markRaw } from 'vue'
-import { Vector2, MeshPhongMaterial, PointLight, Vector3, Mesh, PlaneGeometry } from 'three'
-import { StandardNodeMaterial } from 'three/examples/jsm/nodes/Nodes'
+import { TextureLoader, ShaderMaterial, AmbientLight, PointLight, Color, Vector3, Mesh, PlaneGeometry, BoxGeometry } from 'three'
+import { FloatNode } from 'three/examples/jsm/nodes/Nodes'
+import vertexShader from '@/components/GBox/box-vert.glsl'
+import fragmentShader from '@/components/GBox/box-frag.glsl'
 import GSphere from '@/components/GSphere'
 import GRipples from '@/components/GRipples'
-
+import * as types from '@/engine/types'
 
 export default defineComponent({
   name: 'Home',
@@ -56,49 +53,104 @@ export default defineComponent({
   },
 
   data: () => markRaw({
+    ambientLight: null,
     light: null,
+
+    material: null,
+    groundGeo: null,
+    ground: null,
+    boxGeo: null,
+    box: null,
+
+    depthPlaneMaterial: null,
+    depthGeo: null,
+    depthPlane: null,
+
     amplitude: 1.0,
     frequency: 1.0,
     speed: 2.0,
     size: 30,
     pointSize: 8,
-
-    geometry: null,
-    material: null,
-    mesh: null
   }),
 
   mounted () {
     const { mainCamera } = this.camera
 
-    this.light = new PointLight(0xbbddee, 1, 50)
-    this.light.castShadow = true
-    this.light.position.set(0, 10, 0)
-    // this.light.shadow.mapSize = new Vector2(256, 256)
+    mainCamera.position.set(0, 40, 100)
+    // mainCamera.rotateY(.5)
+    mainCamera.rotateX(-Math.PI / 7)
 
-    mainCamera.position.set(0, 10, 10)
-    mainCamera.rotation.x = -Math.PI / 4
+    // generic material
+    this.material = new ShaderMaterial({
+      vertexShader,
+      fragmentShader,
+      uniforms: {
+        color: { type: 'v3', value: new Color(0xffeebb) },
+        viewMatrixInverse: this.renderer.state.viewMatrixInverse,
+      }
+    })
 
-    this.geometry = new PlaneGeometry(300, 300)
-    this.material = new MeshPhongMaterial({ color: 0xffffff })
-    this.mesh = new Mesh(this.geometry, this.material)
-    this.mesh.rotation.x = -Math.PI/ 2
-    this.mesh.receiveShadow = true
+    this.depthPlaneMaterial = new ShaderMaterial({
+      vertexShader: require('@/components/GDepthPlane/depth-plane.vert.glsl').default,
+      fragmentShader: require('@/components/GDepthPlane/depth-plane.frag.glsl').default,
+      transparent: true,
+      alphaTest: false,
+      depthWrite: false,
+      uniforms: {
+        color: { value: new Color(0x221111) },
+        uProjectionInverse: this.renderer.state.uProjectionInverse,
+        uMatrixWorld: this.renderer.state.uMatrixWorld,
+        uResolution: this.renderer.state.uResolution,
+        tDepth: { value: this.renderer.target.depthTexture }
+      }
+    })
 
-    this.scene.add(this.light)
-    this.scene.add(this.mesh)
+    // ground
+    this.groundGeo = new BoxGeometry(30, 200, 30)
+    this.ground = new Mesh(this.groundGeo, this.material)
+    this.ground.position.set(0, -100, 0)
+    this.ground.receiveShadow = true
+
+    // cube
+    this.boxGeo = new BoxGeometry(4, 4, 4)
+    this.box = new Mesh(this.boxGeo, this.material)
+    this.box.position.set(8, 2, 0)
+    this.box.castShadow = true
+
+    // depth plane
+    this.depthGeo = new PlaneGeometry(1000, 1000)
+    this.depthPlane = new Mesh(this.depthGeo, this.depthPlaneMaterial)
+    this.depthPlane.rotateX(-Math.PI / 2)
+    this.depthPlane.position.set(0, -10, 0)
+
+    // mount scene
+    this.scene.add(this.ground)
+    this.scene.add(this.box)
+    this.scene.add(this.depthPlane)
+
+    this.renderer.subscribe(types.DRAW, this.onDraw)
   },
 
   beforeUnmount () {
-    this.geometry.dispose()
     this.material.dispose()
+    this.groundGeo.dispose()
+    this.boxGeo.dispose()
 
-    this.scene.remove(this.mesh)
+    this.scene.remove(this.ground)
+    this.scene.remove(this.box)
     this.scene.remove(this.light)
+    this.scene.remove(this.ambientLight)
     this.renderer.destroy()
 
-    this.mesh.remove()
-    this.light.remove()
+    this.ground.remove()
+    this.box.remove()
+    this.depthPlane.remove()
+  },
+
+  methods: {
+    onDraw () {
+      this.camera.mainCamera.lookAt(this.$refs.protagonist.mesh.position)
+    }
   }
 })
 </script>

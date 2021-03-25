@@ -62,12 +62,14 @@ export default defineComponent({
     this.material = new ShaderMaterial({
       vertexShader,
       fragmentShader,
-      transparent: true,
+      transparent: false,
+      depthWrite: true,
       uniforms: {
         color: {
           type: 'v3',
           value: new Color(0xff0000)
-        }
+        },
+        time: this.renderer.state.time
       },
     })
     this.material.roughness = new Nodes.FloatNode(0.2)

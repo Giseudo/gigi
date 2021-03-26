@@ -1,4 +1,4 @@
-import { PerspectiveCamera, OrthographicCamera } from 'three'
+import { PerspectiveCamera } from 'three'
 
 export default class GCamera {
   mainCamera
@@ -11,6 +11,4 @@ export default class GCamera {
       1000
     )
   }
-
-  // getCamera = () => mainCamera
 }

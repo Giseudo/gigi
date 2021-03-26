@@ -69,7 +69,7 @@ export default defineComponent({
           type: 'v3',
           value: new Color(0xff0000)
         },
-        time: this.renderer.state.time
+        time: this.renderer.time
       },
     })
     this.material.roughness = new Nodes.FloatNode(0.2)

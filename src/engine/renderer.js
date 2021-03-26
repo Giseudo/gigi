@@ -19,7 +19,7 @@ import { TextureLoader,
   OrthographicCamera,
   Scene,
 } from 'three'
-import * as types from './types'
+import { START, UPDATE, DRAW } from './types'
 
 const TIME_INTERVAL = 1 / 60
 
@@ -31,27 +31,16 @@ export default class GRenderer {
   composer
   events = new EventDispatcher()
   clock = new Clock()
+  width = window.innerWidth
+  height = window.innerHeight
+  time = 0.0
+  deltaTime = 0.0
 
-  state = {
-    width: window.innerWidth,
-    height: window.innerHeight,
-    time: new FloatNode(0.0),
-    deltaTime: new FloatNode(0.0),
-    depthTexture: {
-      value: null
-    },
-    uProjectionInverse: {
-      type: 'm4',
-      value: new Matrix4()
-    },
-    uMatrixWorld: {
-      type: 'm4',
-      value: new Matrix4()
-    },
-    uResolution: {
-      type: 'v2',
-      value: new Vector2()
-    }
+  uniforms = {
+    depthTexture: { value: null },
+    uProjectionInverse: { value: new Matrix4() },
+    uMatrixWorld: { value: new Matrix4() },
+    uResolution: { value: new Vector2() }
   }
 
   constructor (scene, camera) {
@@ -59,12 +48,12 @@ export default class GRenderer {
     this.camera = camera
     this.renderer = new WebGLRenderer()
     this.composer = new EffectComposer(this.renderer)
-    this.target = new WebGLRenderTarget(this.state.width, this.state.height)
+    this.target = new WebGLRenderTarget(this.width, this.height)
   }
 
   init (el) {
     this.renderer.setClearColor(0x252428)
-    this.renderer.setSize(this.state.width, this.state.height)
+    this.renderer.setSize(this.width, this.height)
     this.renderer.shadowMap.enabled = true
     this.renderer.setPixelRatio(window.devicePixelRatio)
     this.renderer.toneMapping = CineonToneMapping
@@ -84,36 +73,36 @@ export default class GRenderer {
 
     this.renderer.setAnimationLoop(() => this.gameLoop())
 
-    this.publish(types.START)
+    this.publish(START)
 
     el.appendChild(this.renderer.domElement)
   }
 
   setSize (width, height) {
-    this.state.width = width
-    this.state.height = height
+    this.width = width
+    this.height = height
     this.renderer.setSize(width, height)
     this.target.setSize(width, height)
     this.renderer.setPixelRatio(window.devicePixelRatio)
   }
 
   gameLoop () {
-    this.state.deltaTime.value += this.clock.getDelta()
+    this.deltaTime += this.clock.getDelta()
 
-    const deltaTime = this.state.deltaTime.value
+    const deltaTime = this.deltaTime
 
     if (deltaTime > TIME_INTERVAL) {
-      this.publish(types.UPDATE, { deltaTime })
+      this.publish(UPDATE, { deltaTime })
 
       this.renderer.setRenderTarget(this.target)
       this.renderer.render(this.scene, this.camera)
 
       this.composer.render(deltaTime)
 
-      this.publish(types.DRAW)
+      this.publish(DRAW)
 
-      this.state.time.value += this.state.deltaTime.value
-      this.state.deltaTime.value %= TIME_INTERVAL
+      this.time += this.deltaTime.value
+      this.deltaTime %= TIME_INTERVAL
     }
   }
 

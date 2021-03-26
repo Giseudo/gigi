@@ -1,5 +1,5 @@
 varying vec3 pos;
-varying vec4 mvPosition;
+// varying vec4 mvPosition;
 uniform vec3 color;
 uniform float amplitude;
 uniform float frequency;

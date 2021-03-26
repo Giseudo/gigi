@@ -32,7 +32,7 @@ export default class GRenderer {
   events = new EventDispatcher()
   clock = new Clock()
 
-  state = reactive({
+  state = {
     width: window.innerWidth,
     height: window.innerHeight,
     time: new FloatNode(0.0),
@@ -52,18 +52,17 @@ export default class GRenderer {
       type: 'v2',
       value: new Vector2()
     }
-  })
+  }
 
-  constructor (el, scene, camera) {
+  constructor (scene, camera) {
     this.scene = scene
     this.camera = camera
-
-    this.init(el)
-    this.publish(types.START)
+    this.renderer = new WebGLRenderer()
+    this.composer = new EffectComposer(this.renderer)
+    this.target = new WebGLRenderTarget(this.state.width, this.state.height)
   }
 
   init (el) {
-    this.renderer = new WebGLRenderer({ antialias: false })
     this.renderer.setClearColor(0x252428)
     this.renderer.setSize(this.state.width, this.state.height)
     this.renderer.shadowMap.enabled = true
@@ -71,9 +70,6 @@ export default class GRenderer {
     this.renderer.toneMapping = CineonToneMapping
     this.renderer.toneMappingExposure = 1
 
-    this.composer = new EffectComposer(this.renderer)
-
-    this.target = new WebGLRenderTarget(this.state.width, this.state.height)
     this.target.texture.format = RGBFormat
     this.target.texture.minFilter = LinearFilter
     this.target.texture.magFilter = LinearFilter
@@ -87,6 +83,8 @@ export default class GRenderer {
     this.composer.addPass(new RenderPass(this.scene, this.camera))
 
     this.renderer.setAnimationLoop(() => this.gameLoop())
+
+    this.publish(types.START)
 
     el.appendChild(this.renderer.domElement)
   }

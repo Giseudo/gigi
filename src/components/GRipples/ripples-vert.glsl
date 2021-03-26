@@ -1,7 +1,7 @@
 varying vec2 vUv;
 varying vec3 pos;
 varying float sdf;
-varying vec4 mvPosition;
+// varying vec4 mvPosition;
 
 uniform float time;
 uniform float amplitude;
@@ -27,7 +27,7 @@ void main() {
   vec4 projectedPosition = projectionMatrix * viewPosition;
 
   pos = localPosition.xyz;
-  mvPosition = modelViewMatrix * vec4(position, 1.0);
+  // mvPosition = modelViewMatrix * vec4(position, 1.0);
 
   gl_PointSize = pointSize;
   gl_Position = projectedPosition;

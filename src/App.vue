@@ -1,35 +1,37 @@
 <template>
   <div class="g-app">
-    <router-view  v-if="!isLoading" />
+    <router-view  v-if="!state.isLoading" />
+    <div ref="viewport" />
   </div>
 </template>
 
 <script>
-import { defineComponent } from 'vue'
+import { defineComponent, markRaw, reactive } from 'vue'
 import GRenderer from '@/engine/renderer'
 import GCamera from '@/engine/camera'
-import input from '@/engine/input'
-import scene from '@/engine/scene'
+import GInput from '@/engine/input'
+import GScene from '@/engine/scene'
 import * as types from '@/engine/types'
-
 
 export default defineComponent({
   provide () {
-    this.viewport = document.createElement('div')
     this.camera = new GCamera()
-    this.renderer = new GRenderer(this.viewport, scene, this.camera.mainCamera)
+    this.scene = new GScene()
+    this.renderer = new GRenderer(this.scene, this.camera.mainCamera)
+    this.input = new GInput()
 
     return {
       renderer: this.renderer,
       camera: this.camera,
-      input,
-      scene
+      input: this.input,
+      scene: this.scene
     }
   },
 
-  data: () => ({
-    isLoading: true,
-    viewport: null,
+  data: () => markRaw({
+    state: reactive({
+      isLoading: true,
+    }),
     renderer: null,
     camera: null,
   }),
@@ -39,22 +41,24 @@ export default defineComponent({
   },
 
   beforeUnmount () {
-    input.destroy()
-      window.removeEventListener('resize', this.onResize)
+    this.input.destroy()
+    window.removeEventListener('resize', this.onResize)
   },
 
   methods: {
     init () {
-      this.$el.appendChild(this.viewport)
-      input.init()
+      this.renderer.init(this.$refs.viewport)
+      this.input.init()
 
-      this.isLoading = false
+      this.state.isLoading = false
       window.addEventListener('resize', this.onResize)
     },
 
     onResize () {
-      camera.mainCamera.aspect = window.innerWidth / window.innerHeight
-      camera.mainCamera.updateProjectionMatrix()
+      const { mainCamera } = this.camera
+      mainCamera.aspect = window.innerWidth / window.innerHeight
+      mainCamera.updateProjectionMatrix()
+
       this.renderer.setSize(window.innerWidth, window.innerHeight)
     }
   }

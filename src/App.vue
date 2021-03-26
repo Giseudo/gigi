@@ -1,17 +1,18 @@
 <template>
   <div class="g-app">
     <router-view  v-if="!state.isLoading" />
-    <div ref="viewport" />
+    <div class="viewport" ref="viewport" />
   </div>
 </template>
 
 <script>
 import { defineComponent, markRaw, reactive } from 'vue'
-import GRenderer from '@/engine/renderer'
-import GCamera from '@/engine/camera'
-import GInput from '@/engine/input'
-import GScene from '@/engine/scene'
-import * as types from '@/engine/types'
+import { publish } from '@Messenger'
+import { START, RESIZE } from '@Events'
+import GRenderer from '@Engine/renderer'
+import GCamera from '@Engine/camera'
+import GInput from '@Engine/input'
+import GScene from '@Engine/scene'
 
 export default defineComponent({
   provide () {
@@ -24,20 +25,19 @@ export default defineComponent({
       renderer: this.renderer,
       camera: this.camera,
       input: this.input,
-      scene: this.scene
+      scene: this.scene,
     }
   },
 
   data: () => markRaw({
     state: reactive({
       isLoading: true,
-    }),
-    renderer: null,
-    camera: null,
+    })
   }),
 
   mounted () {
     this.init()
+    window.addEventListener('resize', this.onResize)
   },
 
   beforeUnmount () {
@@ -50,20 +50,19 @@ export default defineComponent({
   methods: {
     init () {
       this.renderer.init(this.$refs.viewport)
+      this.camera.init()
       this.input.init()
 
       this.state.isLoading = false
 
-      window.addEventListener('resize', this.onResize)
+      publish(START)
     },
 
     onResize () {
-      const { mainCamera } = this.camera
+      const width = window.innerWidth
+      const height = window.innerHeight
 
-      mainCamera.aspect = window.innerWidth / window.innerHeight
-      mainCamera.updateProjectionMatrix()
-
-      this.renderer.setSize(window.innerWidth, window.innerHeight)
+      publish(RESIZE, { width, height })
     }
   }
 })

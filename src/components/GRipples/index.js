@@ -1,4 +1,3 @@
-<script>
 import { defineComponent, markRaw } from 'vue'
 import {
   IcosahedronGeometry,
@@ -9,47 +8,27 @@ import {
   OneFactor,
   AddEquation
 } from 'three'
-import vertexShader from './ripples-vert.glsl'
-import fragmentShader from './ripples-frag.glsl'
-
-function delay (time) {
-  return new Promise(resolve => setTimeout(resolve, time))
-}
+import vertexShader from './ripples.vert.glsl'
+import fragmentShader from './ripples.frag.glsl'
 
 export default defineComponent({
   name: 'GRipples',
 
-  inject: ['viewport'],
+  inject: ['renderer', 'scene'],
 
   data: vm => markRaw({
     geometry: null,
     material: null,
     mesh: null,
     uniforms: {
-      color: {
-        type: 'v3',
-        value: new Color(0xffffff)
-      },
-      amplitude: {
-        type: 'float',
-        value: vm.amplitude 
-      },
-      frequency: {
-        type: 'float',
-        value: vm.frequency
-      },
-      speed: {
-        type: 'float',
-        value: vm.speed
-      },
-      timeOffset: {
-        type: 'float',
-        value: vm.timeOffset
-      },
-      pointSize: {
-        type: 'float',
-        value: vm.pointSize
-      }
+      color: { value: new Color(vm.color) },
+      amplitude: { value: vm.amplitude },
+      frequency: { value: vm.frequency },
+      speed: { value: vm.speed },
+      timeOffset: { value: vm.timeOffset },
+      pointSize: { value: vm.pointSize },
+      time: vm.renderer.time,
+      deltaTime: vm.renderer.deltaTime,
     }
   }),
 
@@ -86,7 +65,6 @@ export default defineComponent({
 
   mounted () {
     this.geometry = new IcosahedronGeometry(this.size, 10)
-    this.uniforms.color.value = new Color(this.color)
     this.material = new ShaderMaterial({
       uniforms: this.uniforms,
       vertexShader,
@@ -98,22 +76,15 @@ export default defineComponent({
       blendDst: OneFactor
     })
     this.mesh = new Points(this.geometry, this.material)
-
-    this.uniforms.time = this.viewport.state.time
-    this.uniforms.deltaTime = this.viewport.state.deltaTime
-
-    this.viewport.scene.add(this.mesh)
+    this.scene.add(this.mesh)
   },
 
   beforeUnmount () {
     this.geometry.dispose()
     this.material.dispose()
-    this.viewport.scene.remove(this.mesh)
+    this.scene.remove(this.mesh)
     this.mesh.remove()
   },
 
-  render () {
-    return []
-  }
+  render: () => ([])
 })
-</script>

@@ -1,45 +1,40 @@
 import { reactive, readonly } from 'vue'
-import { Vector2, EventDispatcher } from 'three'
+import { Vector2 } from 'three'
+import { publish } from '@Messenger'
+import { AXIS_CHANGED, BUTTON_DOWN, BUTTON_PRESS, BUTTON_UP } from '@Events'
 
-export const BUTTON_DOWN = 'input/BUTTON_DOWN'
-export const BUTTON_PRESS = 'input/BUTTON_PRESS'
-export const BUTTON_UP = 'input/BUTTON_UP'
-
+export const PRIMARY_AXIS = 'input/PRIMARY_AXIS'
 export const SECONDARY_AXIS = 'input/SECONDARY_AXIS'
-
 export const UP_BUTTON = 'input/UP_BUTTON'
 export const RIGHT_BUTTON = 'input/RIGHT_BUTTON'
 export const DOWN_BUTTON = 'input/DOWN_BUTTON'
 export const LEFT_BUTTON = 'input/LEFT_BUTTON'
 export const CONFIRM_BUTTON = 'input/CONFIRM_BUTTON'
-
-import { PRIMARY_AXIS, AXIS_CHANGED } from './types'
+export const CANCEL_BUTTON = 'input/CANCEL_BUTTON'
 
 export default class GInput {
-  events = new EventDispatcher()
-
   state = reactive({
     axes: {
       [PRIMARY_AXIS]: {
         value: new Vector2(0, 0),
         vertical: {
-          positive: ['up'],
-          negative: ['down'],
+          positive: [UP_BUTTON],
+          negative: [DOWN_BUTTON],
         },
         horizontal: {
-          positive: ['right'],
-          negative: ['left'],
+          positive: [RIGHT_BUTTON],
+          negative: [LEFT_BUTTON],
         }
       }
     },
 
     buttons: {
-      up: ['w', 'W', 'ArrowUp'],
-      down: ['s', 'S', 'ArrowDown'],
-      left: ['a', 'A', 'ArrowLeft'],
-      right: ['d', 'D', 'ArrowRight'],
-      confirm: ['space'],
-      cancel: ['esc']
+      [UP_BUTTON]: ['w', 'W', 'ArrowUp'],
+      [DOWN_BUTTON]: ['s', 'S', 'ArrowDown'],
+      [LEFT_BUTTON]: ['a', 'A', 'ArrowLeft'],
+      [RIGHT_BUTTON]: ['d', 'D', 'ArrowRight'],
+      [CONFIRM_BUTTON]: ['space'],
+      [CANCEL_BUTTON]: ['esc']
     },
 
     pressing: []
@@ -58,18 +53,6 @@ export default class GInput {
     document.removeEventListener('keyup', this.onKeyUp)
   }
 
-  publish (type, data) {
-    this.events.dispatchEvent({ type, ...(data ? data : {}) })
-  }
-
-  subscribe (topic, callback) {
-    this.events.addEventListener(topic, callback)
-  }
-
-  unsubscribe (topic, callback) {
-    this.events.removeEventListener(topic, callback)
-  }
-
   changeAxis = (button) => {
     for (const topic in this.state.axes) {
       const axis = this.state.axes[topic]
@@ -83,7 +66,7 @@ export default class GInput {
       if (axis.horizontal.negative.includes(button))
         axis.value.x = this.isPressing(button) ? -1 : 0
 
-      this.publish(AXIS_CHANGED, { value: axis.value })
+      publish(AXIS_CHANGED, { value: axis.value })
     }
   }
 
@@ -99,10 +82,10 @@ export default class GInput {
 
       if (!this.isPressing(button)) this.state.pressing.push(button)
 
-      if (['up', 'right', 'down', 'left'].includes(button))
+      if ([UP_BUTTON, RIGHT_BUTTON, DOWN_BUTTON, LEFT_BUTTON].includes(button))
         this.changeAxis(button)
 
-      this.publish(BUTTON_DOWN)
+      publish(BUTTON_DOWN)
     }
   }
 
@@ -118,10 +101,10 @@ export default class GInput {
 
       this.state.pressing.splice(index, 1)
 
-      if (['up', 'right', 'down', 'left'].includes(button))
+      if ([UP_BUTTON, RIGHT_BUTTON, DOWN_BUTTON, LEFT_BUTTON].includes(button))
         this.changeAxis(button)
 
-      this.publish(BUTTON_UP, { button })
+      publish(BUTTON_UP, { button })
     }
   }
 }

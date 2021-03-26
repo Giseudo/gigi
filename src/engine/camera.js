@@ -1,4 +1,6 @@
 import { PerspectiveCamera } from 'three'
+import { RESIZE } from '@Events'
+import { subscribe, unsubscribe } from '@Messenger'
 
 export default class GCamera {
   mainCamera
@@ -10,5 +12,18 @@ export default class GCamera {
       10.,
       1000
     )
+  }
+
+  init () {
+    subscribe(RESIZE, this.onResize)
+  }
+
+  destroy () {
+    unsubscribe(RESIZE, this.onResize)
+  }
+
+  onResize = ({ width, height }) => {
+    this.mainCamera.aspect = width / height
+    this.mainCamera.updateProjectionMatrix()
   }
 }

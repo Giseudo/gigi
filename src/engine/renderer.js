@@ -2,34 +2,31 @@ import { reactive, readonly } from 'vue'
 import { FloatNode } from 'three/examples/jsm/nodes/Nodes'
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer'
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass'
-import { TextureLoader,
-  Matrix4,
+import {
+  WebGLRenderer,
   WebGLRenderTarget,
+  Clock,
   LinearFilter,
   NearestFilter,
   RGBFormat,
   DepthFormat,
   DepthTexture,
   UnsignedShortType,
-  Vector2,
-  WebGLRenderer,
-  Clock,
-  EventDispatcher,
   CineonToneMapping,
-  OrthographicCamera,
-  Scene,
+  Vector2,
+  Matrix4
 } from 'three'
-import { START, UPDATE, DRAW } from './types'
+import { UPDATE, DRAW, RESIZE } from '@Events'
+import { publish, subscribe, unsubscribe } from '@Messenger'
 
 const TIME_INTERVAL = 1 / 60
 
 export default class GRenderer {
-  scene
-  camera
-  target
-  renderer
-  composer
-  events = new EventDispatcher()
+  scene = null
+  camera = null
+  target = null
+  renderer = null
+  composer = null
   clock = new Clock()
   width = window.innerWidth
   height = window.innerHeight
@@ -37,10 +34,9 @@ export default class GRenderer {
   deltaTime = new FloatNode(0.0)
 
   uniforms = {
-    depthTexture: { value: null },
+    tDepth: { value: null },
     uProjectionInverse: { value: new Matrix4() },
     uMatrixWorld: { value: new Matrix4() },
-    uResolution: { value: new Vector2() }
   }
 
   constructor (scene, camera) {
@@ -66,6 +62,8 @@ export default class GRenderer {
     this.target.depthTexture.format = DepthFormat
     this.target.depthTexture.type = UnsignedShortType
 
+    this.uniforms.tDepth.value = this.target.depthTexture
+
     this.composer = new EffectComposer(this.renderer)
   }
 
@@ -74,17 +72,8 @@ export default class GRenderer {
 
     this.renderer.setAnimationLoop(() => this.gameLoop())
 
-    this.publish(START)
-
+    subscribe(RESIZE, this.onResize)
     el.appendChild(this.renderer.domElement)
-  }
-
-  setSize (width, height) {
-    this.width = width
-    this.height = height
-    this.renderer.setSize(width, height)
-    this.target.setSize(width, height)
-    this.renderer.setPixelRatio(window.devicePixelRatio)
   }
 
   gameLoop () {
@@ -93,14 +82,14 @@ export default class GRenderer {
     const deltaTime = this.deltaTime.value
 
     if (deltaTime > TIME_INTERVAL) {
-      this.publish(UPDATE, { deltaTime })
+      publish(UPDATE, { deltaTime })
 
       this.renderer.setRenderTarget(this.target)
       this.renderer.render(this.scene, this.camera)
 
       this.composer.render(deltaTime)
 
-      this.publish(DRAW)
+      publish(DRAW)
 
       this.time.value += deltaTime
       this.deltaTime.value %= TIME_INTERVAL
@@ -109,17 +98,15 @@ export default class GRenderer {
 
   destroy () {
     this.renderer.setAnimationLoop(null)
+
+    unsubscribe(RESIZE, this.onResize)
   }
 
-  publish (type, data) {
-    this.events.dispatchEvent({ type, ...(data ? data : {}) })
-  }
-
-  subscribe (topic, callback) {
-    this.events.addEventListener(topic, callback)
-  }
-
-  unsubscribe (topic, callback) {
-    this.events.removeEventListener(topic, callback)
+  onResize = ({ width, height }) => {
+    this.width = width
+    this.height = height
+    this.target.setSize(width, height)
+    this.renderer.setPixelRatio(window.devicePixelRatio)
+    this.renderer.setSize(width, height)
   }
 }

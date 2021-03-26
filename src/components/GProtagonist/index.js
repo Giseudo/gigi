@@ -1,23 +1,17 @@
-<template>
-  <div class="sphere" />
-</template>
-
-<script>
 import { defineComponent, markRaw } from 'vue'
 import { IcosahedronGeometry, Color, ShaderMaterial, Mesh, Vector3 } from 'three'
-import { StandardNodeMaterial } from 'three/examples/jsm/nodes/Nodes'
-import { UPDATE, DRAW, PRIMARY_AXIS, AXIS_CHANGED } from '@/engine/types'
-import * as Nodes from 'three/examples/jsm/nodes/Nodes'
+import { UPDATE, DRAW, AXIS_CHANGED } from '@Events'
+import { PRIMARY_AXIS } from '@Input'
+import { subscribe, unsubscribe } from '@Messenger'
 
-import vertexShader from './sphere-vert.glsl'
-import fragmentShader from './sphere-frag.glsl'
-
-const clamp = (number, min, max) => Math.max(min, Math.min(number, max))
+import vertexShader from './protagonist.vert.glsl'
+import fragmentShader from './protagonist.frag.glsl'
 
 export default defineComponent({
-  name: 'GSphere',
+  name: 'GProtagonist',
 
   inject: ['renderer', 'input', 'camera', 'scene'],
+  emits: ['move'],
 
   data: () => markRaw({
     mesh: null,
@@ -47,8 +41,12 @@ export default defineComponent({
   },
 
   computed: {
+    primaryAxis () {
+      return this.input.getAxis(PRIMARY_AXIS)
+    },
+
     isMoving () {
-      return this.input.getAxis(PRIMARY_AXIS).lengthSq() > 0
+      return this.primaryAxis.lengthSq() > 0
     }
   },
 
@@ -72,7 +70,6 @@ export default defineComponent({
         time: this.renderer.time
       },
     })
-    this.material.roughness = new Nodes.FloatNode(0.2)
 
     this.mesh = new Mesh(this.geometry, this.material)
     this.mesh.castShadow = true
@@ -80,16 +77,18 @@ export default defineComponent({
     this.setSize(this.size)
 
     this.scene.add(this.mesh)
-    this.renderer.subscribe(UPDATE, this.onUpdate)
+    subscribe(UPDATE, this.onUpdate)
   },
 
   beforeUnmount () {
-    this.renderer.unsubscribe(UPDATE, this.onUpdate)
     this.scene.remove(this.mesh)
     this.geometry.dispose()
     this.material.dispose()
     this.mesh.remove()
+    unsubscribe(UPDATE, this.onUpdate)
   },
+
+  render: () => ([]),
 
   methods: {
     setSize (value) {
@@ -110,12 +109,14 @@ export default defineComponent({
     },
 
     adjustVelocity (deltaTime) {
-      const direction = this.getOrientedDirection(this.input.getAxis(PRIMARY_AXIS))
+      const direction = this.getOrientedDirection(this.primaryAxis)
 
-      if (!this.isMoving)
-        this.velocity.multiplyScalar(.9)
-      else
+      if (!this.isMoving) this.velocity.multiplyScalar(.9)
+
+      if (this.isMoving) {
         this.velocity.add(direction.multiplyScalar(this.acceleration * deltaTime))
+        this.$emit('move', this.mesh.position)
+      }
 
       this.velocity.clampLength(0, this.maxVelocity)
     },
@@ -136,4 +137,3 @@ export default defineComponent({
     }
   }
 })
-</script>

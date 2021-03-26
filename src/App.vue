@@ -7,8 +7,8 @@
 <script>
 import { defineComponent } from 'vue'
 import GRenderer from '@/engine/renderer'
+import GCamera from '@/engine/camera'
 import input from '@/engine/input'
-import camera from '@/engine/camera'
 import scene from '@/engine/scene'
 import * as types from '@/engine/types'
 
@@ -16,20 +16,22 @@ import * as types from '@/engine/types'
 export default defineComponent({
   provide () {
     this.viewport = document.createElement('div')
-    this.renderer = new GRenderer(this.viewport, scene, camera.mainCamera)
+    this.camera = new GCamera()
+    this.renderer = new GRenderer(this.viewport, scene, this.camera.mainCamera)
 
     return {
       renderer: this.renderer,
+      camera: this.camera,
       input,
-      camera,
       scene
     }
   },
 
   data: () => ({
     isLoading: true,
+    viewport: null,
     renderer: null,
-    viewport: null
+    camera: null,
   }),
 
   mounted () {

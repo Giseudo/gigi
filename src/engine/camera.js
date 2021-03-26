@@ -5,15 +5,15 @@ import renderer from '@/engine/renderer'
 const state = reactive({ })
 
 export const camera = new PerspectiveCamera(
-  45,
+  70,
   window.innerWidth / window.innerHeight,
-  .1,
+  10.,
   1000
 )
 
-/*export const camera = new OrthographicCamera(
+export const orthoCam = new OrthographicCamera(
   window.innerWidth / - 2, window.innerWidth / 2, window.innerHeight / 2, window.innerHeight / - 2, 1, 1000
-)*/
+)
 
 export default {
   mainCamera: camera,

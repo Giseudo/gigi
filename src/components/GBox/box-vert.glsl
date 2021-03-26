@@ -1,8 +1,4 @@
-varying vec3 viewDir;
-varying vec3 worldNormal;
-varying vec4 viewPos;
-
-uniform mat4 viewMatrixInverse;
+varying vec3 vNormal;
 
 void main() {
   vec4 localPosition = vec4(position, 1.);
@@ -10,10 +6,11 @@ void main() {
   vec4 viewPosition = viewMatrix * worldPosition;
   vec4 projectedPosition = projectionMatrix * viewPosition;
 
-  viewDir = worldPosition.xyz - cameraPosition;
-  viewPos = viewPosition;
+  vNormal = normal;
 
-  worldNormal = normalize(mat3(viewMatrixInverse) * normal);
+  // viewDir = worldPosition.xyz - cameraPosition;
+  // viewPos = viewPosition;
+  // worldNormal = normalize(mat3(viewMatrixInverse) * normal);
 
   gl_Position = projectedPosition;
 }

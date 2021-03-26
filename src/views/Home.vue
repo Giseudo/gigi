@@ -76,7 +76,7 @@ export default defineComponent({
   mounted () {
     const { mainCamera } = this.camera
 
-    mainCamera.position.set(0, 40, 100)
+    mainCamera.position.set(0, 40, 30)
     // mainCamera.rotateY(.5)
     mainCamera.rotateX(-Math.PI / 7)
 
@@ -86,11 +86,10 @@ export default defineComponent({
       fragmentShader,
       uniforms: {
         color: { type: 'v3', value: new Color(0xffeebb) },
-        viewMatrixInverse: this.renderer.state.viewMatrixInverse,
       }
     })
 
-    this.depthPlaneMaterial = new ShaderMaterial({
+    /*this.depthPlaneMaterial = new ShaderMaterial({
       vertexShader: require('@/components/GDepthPlane/depth-plane.vert.glsl').default,
       fragmentShader: require('@/components/GDepthPlane/depth-plane.frag.glsl').default,
       transparent: true,
@@ -104,6 +103,12 @@ export default defineComponent({
         tDepth: { value: this.renderer.target.depthTexture }
       }
     })
+    // depth plane
+    this.depthGeo = new PlaneGeometry(1000, 1000)
+    this.depthPlane = new Mesh(this.depthGeo, this.depthPlaneMaterial)
+    this.depthPlane.rotateX(-Math.PI / 2)
+    this.depthPlane.position.set(0, -10, 0)
+    */
 
     // ground
     this.groundGeo = new BoxGeometry(30, 200, 30)
@@ -117,16 +122,10 @@ export default defineComponent({
     this.box.position.set(8, 2, 0)
     this.box.castShadow = true
 
-    // depth plane
-    this.depthGeo = new PlaneGeometry(1000, 1000)
-    this.depthPlane = new Mesh(this.depthGeo, this.depthPlaneMaterial)
-    this.depthPlane.rotateX(-Math.PI / 2)
-    this.depthPlane.position.set(0, -10, 0)
-
     // mount scene
     this.scene.add(this.ground)
     this.scene.add(this.box)
-    this.scene.add(this.depthPlane)
+    // this.scene.add(this.depthPlane)
 
     this.renderer.subscribe(types.DRAW, this.onDraw)
   },
@@ -144,7 +143,7 @@ export default defineComponent({
 
     this.ground.remove()
     this.box.remove()
-    this.depthPlane.remove()
+    // this.depthPlane.remove()
   },
 
   methods: {

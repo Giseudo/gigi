@@ -41,7 +41,9 @@ export default defineComponent({
   },
 
   beforeUnmount () {
+    this.renderer.destroy()
     this.input.destroy()
+
     window.removeEventListener('resize', this.onResize)
   },
 
@@ -51,11 +53,13 @@ export default defineComponent({
       this.input.init()
 
       this.state.isLoading = false
+
       window.addEventListener('resize', this.onResize)
     },
 
     onResize () {
       const { mainCamera } = this.camera
+
       mainCamera.aspect = window.innerWidth / window.innerHeight
       mainCamera.updateProjectionMatrix()
 

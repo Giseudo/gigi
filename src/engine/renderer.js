@@ -33,8 +33,8 @@ export default class GRenderer {
   clock = new Clock()
   width = window.innerWidth
   height = window.innerHeight
-  time = 0.0
-  deltaTime = 0.0
+  time = new FloatNode(0.0)
+  deltaTime = new FloatNode(0.0)
 
   uniforms = {
     depthTexture: { value: null },
@@ -46,12 +46,8 @@ export default class GRenderer {
   constructor (scene, camera) {
     this.scene = scene
     this.camera = camera
-    this.renderer = new WebGLRenderer()
-    this.composer = new EffectComposer(this.renderer)
-    this.target = new WebGLRenderTarget(this.width, this.height)
-  }
 
-  init (el) {
+    this.renderer = new WebGLRenderer()
     this.renderer.setClearColor(0x252428)
     this.renderer.setSize(this.width, this.height)
     this.renderer.shadowMap.enabled = true
@@ -59,6 +55,7 @@ export default class GRenderer {
     this.renderer.toneMapping = CineonToneMapping
     this.renderer.toneMappingExposure = 1
 
+    this.target = new WebGLRenderTarget(this.width, this.height)
     this.target.texture.format = RGBFormat
     this.target.texture.minFilter = LinearFilter
     this.target.texture.magFilter = LinearFilter
@@ -69,6 +66,10 @@ export default class GRenderer {
     this.target.depthTexture.format = DepthFormat
     this.target.depthTexture.type = UnsignedShortType
 
+    this.composer = new EffectComposer(this.renderer)
+  }
+
+  init (el) {
     this.composer.addPass(new RenderPass(this.scene, this.camera))
 
     this.renderer.setAnimationLoop(() => this.gameLoop())
@@ -87,9 +88,9 @@ export default class GRenderer {
   }
 
   gameLoop () {
-    this.deltaTime += this.clock.getDelta()
+    this.deltaTime.value += this.clock.getDelta()
 
-    const deltaTime = this.deltaTime
+    const deltaTime = this.deltaTime.value
 
     if (deltaTime > TIME_INTERVAL) {
       this.publish(UPDATE, { deltaTime })
@@ -101,8 +102,8 @@ export default class GRenderer {
 
       this.publish(DRAW)
 
-      this.time += this.deltaTime.value
-      this.deltaTime %= TIME_INTERVAL
+      this.time.value += deltaTime
+      this.deltaTime.value %= TIME_INTERVAL
     }
   }
 

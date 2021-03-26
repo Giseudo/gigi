@@ -1,13 +1,12 @@
 <template>
   <div class="g-app">
     <router-view  v-if="!isLoading" />
-    <div ref="viewport" class="viewport" />
   </div>
 </template>
 
 <script>
 import { defineComponent } from 'vue'
-import renderer from '@/engine/renderer'
+import GRenderer from '@/engine/renderer'
 import input from '@/engine/input'
 import camera from '@/engine/camera'
 import scene from '@/engine/scene'
@@ -16,11 +15,21 @@ import * as types from '@/engine/types'
 
 export default defineComponent({
   provide () {
-    return { renderer, input, camera, scene }
+    this.viewport = document.createElement('div')
+    this.renderer = new GRenderer(this.viewport, scene, camera.mainCamera)
+
+    return {
+      renderer: this.renderer,
+      input,
+      camera,
+      scene
+    }
   },
 
   data: () => ({
     isLoading: true,
+    renderer: null,
+    viewport: null
   }),
 
   mounted () {
@@ -34,7 +43,7 @@ export default defineComponent({
 
   methods: {
     init () {
-      renderer.init(this.$refs.viewport)
+      this.$el.appendChild(this.viewport)
       input.init()
 
       this.isLoading = false
@@ -44,7 +53,7 @@ export default defineComponent({
     onResize () {
       camera.mainCamera.aspect = window.innerWidth / window.innerHeight
       camera.mainCamera.updateProjectionMatrix()
-      renderer.setSize(window.innerWidth, window.innerHeight)
+      this.renderer.setSize(window.innerWidth, window.innerHeight)
     }
   }
 })

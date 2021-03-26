@@ -127,7 +127,7 @@ export default defineComponent({
     this.scene.add(this.box)
     // this.scene.add(this.depthPlane)
 
-    this.renderer.subscribe(types.DRAW, this.onDraw)
+    this.renderer.subscribe(types.UPDATE, this.onUpdate)
   },
 
   beforeUnmount () {
@@ -147,7 +147,7 @@ export default defineComponent({
   },
 
   methods: {
-    onDraw () {
+    onUpdate ({ deltaTime }) {
       this.camera.mainCamera.lookAt(this.$refs.protagonist.mesh.position)
     }
   }

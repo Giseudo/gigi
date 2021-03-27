@@ -8,7 +8,7 @@ void main() {
   vec4 projectedPosition = projectionMatrix * viewPosition;
 
   viewDir = worldPosition.xyz - cameraPosition;
-  worldNormal = normal;
+  worldNormal = normalize(mat3(modelMatrix[0].xyz, modelMatrix[1].xyz, modelMatrix[2].xyz) * normal);
 
   gl_Position = projectedPosition;
 }

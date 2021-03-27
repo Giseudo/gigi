@@ -1,5 +1,5 @@
 import { defineComponent, markRaw } from 'vue'
-import { IcosahedronGeometry, Color, ShaderMaterial, Mesh, Vector3 } from 'three'
+import { IcosahedronGeometry, Color, ShaderMaterial, Mesh, Euler, Quaternion, Vector3 } from 'three'
 import { UPDATE, DRAW, AXIS_CHANGED } from '@Events'
 import { PRIMARY_AXIS } from '@Input'
 import { subscribe, unsubscribe } from '@Messenger'
@@ -10,10 +10,13 @@ import fragmentShader from './protagonist.frag.glsl'
 export default defineComponent({
   name: 'GProtagonist',
 
-  inject: ['renderer', 'input', 'camera', 'scene'],
-  emits: ['move'],
+  inject: ['renderer', 'input', 'camera', 'scene', 'resources'],
+  emits: ['move', 'load'],
 
   data: () => markRaw({
+    assets: {
+      navigator: require('@/assets/Navigator.fbx').default
+    },
     mesh: null,
     geometry: null,
     material: null,
@@ -24,7 +27,7 @@ export default defineComponent({
   props: {
     size: {
       type: Number,
-      default: 2
+      default: 1
     },
     detail: {
       type: Number,
@@ -55,7 +58,7 @@ export default defineComponent({
     position: { handler: 'setPosition' }
   },
 
-  mounted () {
+  async mounted () {
     this.geometry = new IcosahedronGeometry(1, this.detail)
     this.material = new ShaderMaterial({
       vertexShader,
@@ -71,14 +74,18 @@ export default defineComponent({
       },
     })
 
-    this.mesh = new Mesh(this.geometry, this.material)
-    this.mesh.castShadow = true
-    this.setPosition(this.position)
-    this.setSize(this.size)
+    this.resources.loadObject(this.assets.navigator, this.material)
+      .then(obj => {
+        this.mesh = obj
+        this.scene.add(obj)
 
-    this.scene.add(this.mesh)
+        this.setPosition(this.position)
+        this.setSize(this.size)
 
-    subscribe(UPDATE, this.onUpdate)
+        this.$emit('load', obj)
+
+        subscribe(UPDATE, this.onUpdate)
+      })
   },
 
   beforeUnmount () {
@@ -102,24 +109,37 @@ export default defineComponent({
 
     onUpdate ({ deltaTime }) {
       this.adjustVelocity(deltaTime)
+      this.adjustRotation(deltaTime)
+
       this.mesh.position.add(
-        new Vector3()
-          .copy(this.velocity)
-          .multiplyScalar(deltaTime)
+        this.velocity.clone().multiplyScalar(deltaTime)
       )
     },
 
     adjustVelocity (deltaTime) {
       const direction = this.getOrientedDirection(this.primaryAxis)
 
-      if (!this.isMoving) this.velocity.multiplyScalar(1.0 - deltaTime * 3.)
-
       if (this.isMoving) {
-        this.velocity.add(direction.multiplyScalar(this.acceleration * deltaTime))
+        direction.multiplyScalar(this.acceleration * deltaTime)
+
+        this.velocity.add(direction)
+
+        const smoothDirection = new Vector3(0, 0, 1)
+          .applyQuaternion(this.mesh.quaternion)
+          .lerp(direction, deltaTime * 5.)
+          .add(this.mesh.position)
+
+        this.mesh.lookAt(smoothDirection)
+
         this.$emit('move', this.mesh.position)
+      } else {
+        this.velocity.multiplyScalar(1.0 - deltaTime * 3.)
       }
 
       this.velocity.clampLength(0, this.maxVelocity)
+    },
+
+    adjustRotation () {
     },
 
     getOrientedDirection (direction) {

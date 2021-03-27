@@ -28,13 +28,18 @@
       :color="0x0000ff"
     /-->
 
-    <g-protagonist ref="protagonist" :position="[0, 2, 0]" />
+    <g-protagonist
+      ref="protagonist"
+      :position="[0, 0, 0]"
+      :size="1."
+      @load="onProtagonistLoad"
+    />
   </div>
 </template>
 
 <script>
 import { defineComponent, markRaw } from 'vue'
-import { ShaderMaterial, Color, Mesh, BoxGeometry } from 'three'
+import { PointLight, ShaderMaterial, Color, Mesh, BoxGeometry } from 'three'
 import GProtagonist from '@/components/GProtagonist'
 import GRipples from '@/components/GRipples'
 import vertexShader from '@/components/GBox/box.vert.glsl'
@@ -73,8 +78,10 @@ export default defineComponent({
 
   mounted () {
     this.camera.mainCamera.position.set(30, 40, 30)
-    this.camera.mainCamera.lookAt(this.$refs.protagonist.mesh.position)
-    this.camera.follow(this.$refs.protagonist.mesh)
+
+    this.pointLight = new PointLight()
+    this.pointLight.position.set(0, 10, 20)
+    this.scene.add(this.pointLight)
 
     // Generic material
     this.material = new ShaderMaterial({
@@ -115,6 +122,13 @@ export default defineComponent({
 
     this.ground.remove()
     this.box.remove()
+  },
+
+  methods: {
+    onProtagonistLoad (object) {
+      this.camera.mainCamera.lookAt(object.position)
+      this.camera.follow(object)
+    }
   }
 })
 </script>

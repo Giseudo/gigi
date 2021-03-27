@@ -13,15 +13,18 @@ import GRenderer from '@Engine/renderer'
 import GCamera from '@Engine/camera'
 import GInput from '@Engine/input'
 import GScene from '@Engine/scene'
+import GResources from '@Engine/resources'
 
 export default defineComponent({
   provide () {
+    this.resources = new GResources()
     this.camera = new GCamera()
     this.scene = new GScene()
     this.renderer = new GRenderer(this.scene, this.camera.mainCamera)
     this.input = new GInput()
 
     return {
+      resources: this.resources,
       renderer: this.renderer,
       camera: this.camera,
       input: this.input,

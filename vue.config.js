@@ -1,4 +1,6 @@
 const path = require('path')
+const webpack = require('webpack')
+
 const alias = location => path.resolve(__dirname, location)
 
 module.exports = {
@@ -10,14 +12,27 @@ module.exports = {
         .loader('raw-loader')
         .end()
 
+    config.module
+      .rule('models')
+      .test(/\.fbx$/)
+      .use('file-loader')
+        .loader('file-loader')
+        .end()
+
     config.resolve.alias
       .set('@Engine', alias('src/engine'))
       .set('@Messenger', alias('src/engine/messenger'))
       .set('@Events', alias('src/engine/events'))
       .set('@Input', alias('src/engine/input'))
 
-    config.externals({
-      // 'three': 'three'
-    })
+  },
+
+  configureWebpack: {
+    plugins: [
+      new webpack.ProvidePlugin({
+        THREE: 'three',
+        fflate: 'fflate'
+      })
+    ]
   }
 }

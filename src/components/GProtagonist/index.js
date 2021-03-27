@@ -39,7 +39,7 @@ export default defineComponent({
     },
     maxVelocity: {
       type: Number,
-      default: 20
+      default: 10
     }
   },
 
@@ -109,7 +109,6 @@ export default defineComponent({
 
     onUpdate ({ deltaTime }) {
       this.adjustVelocity(deltaTime)
-      this.adjustRotation(deltaTime)
 
       this.mesh.position.add(
         this.velocity.clone().multiplyScalar(deltaTime)
@@ -137,9 +136,6 @@ export default defineComponent({
       }
 
       this.velocity.clampLength(0, this.maxVelocity)
-    },
-
-    adjustRotation () {
     },
 
     getOrientedDirection (direction) {

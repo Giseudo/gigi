@@ -34,5 +34,9 @@ module.exports = {
         fflate: 'fflate'
       })
     ]
+  },
+
+  devServer: {
+    disableHostCheck: true
   }
 }

@@ -30,7 +30,7 @@
 
     <g-protagonist
       ref="protagonist"
-      :position="[0, 0, 0]"
+      :position="[0, 0, 8]"
       :size="1."
       @load="onProtagonistLoad"
     />

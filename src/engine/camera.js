@@ -10,9 +10,9 @@ export default class GCamera {
 
   constructor () {
     this.mainCamera = new PerspectiveCamera(
-      70,
+      90,
       window.innerWidth / window.innerHeight,
-      10.,
+      .1,
       1000
     )
   }

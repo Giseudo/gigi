@@ -52,14 +52,14 @@ export default class GRenderer {
     this.renderer.setClearColor(0x252428)
     this.renderer.setSize(this.width, this.height)
     this.renderer.shadowMap.enabled = true
-    this.renderer.setPixelRatio(window.devicePixelRatio / 2)
+    this.renderer.setPixelRatio(window.devicePixelRatio / 4)
     this.renderer.toneMapping = CineonToneMapping
     this.renderer.toneMappingExposure = 1
 
     this.target = new WebGLRenderTarget(this.width, this.height)
     this.target.texture.format = RGBFormat
-    this.target.texture.minFilter = LinearFilter
-    this.target.texture.magFilter = LinearFilter
+    this.target.texture.minFilter = NearestFilter
+    this.target.texture.magFilter = NearestFilter
     this.target.texture.generateMipmaps = false
     this.target.stencilBuffer = false
     this.target.depthBuffer = true
@@ -89,7 +89,7 @@ export default class GRenderer {
 
     this.composer.addPass(renderPass)
     // this.composer.addPass(saoPass)
-    this.composer.addPass(fxaaPass)
+    // this.composer.addPass(fxaaPass)
     this.composer.addPass(filmPass)
     this.composer.addPass(lensDistortionPass)
 
@@ -131,7 +131,7 @@ export default class GRenderer {
     this.width = width
     this.height = height
     this.target.setSize(width, height)
-    this.renderer.setPixelRatio(window.devicePixelRatio / 2)
+    this.renderer.setPixelRatio(window.devicePixelRatio / 4)
     this.renderer.setSize(width, height)
   }
 }

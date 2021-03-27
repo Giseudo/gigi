@@ -91,7 +91,6 @@ export default defineComponent({
 
   beforeUnmount () {
     this.material.dispose()
-    this.ground.remove()
     this.light.remove()
     this.scene.remove(this.light)
     this.renderer.destroy()
@@ -99,7 +98,7 @@ export default defineComponent({
 
   methods: {
     onProtagonistLoad (object) {
-      this.camera.mainCamera.position.set(30, 40, 30)
+      this.camera.mainCamera.position.set(20, 20, 20)
       this.camera.mainCamera.lookAt(object.position)
       this.camera.follow(object)
     }

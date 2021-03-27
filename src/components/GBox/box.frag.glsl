@@ -15,8 +15,8 @@ void main() {
   top = clamp(top, 0., 1.);
 
   float fog = vWorldPosition.y;
-  fog += 40.;
-  fog /= 40.;
+  fog += 30.;
+  fog /= 25.;
   fog = clamp(fog, 0., 1.);
   fog = 1.0 - fog;
 

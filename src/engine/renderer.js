@@ -3,6 +3,9 @@ import { FloatNode } from 'three/examples/jsm/nodes/Nodes'
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer'
 import { FilmPass } from 'three/examples/jsm/postprocessing/FilmPass'
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass'
+import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass'
+import { FXAAShader } from 'three/examples/jsm/shaders/FXAAShader'
+import { SAOPass } from 'three/examples/jsm/postprocessing/SAOPass'
 import { LensDistortionPass } from './passes/LensDistortionPass'
 import {
   WebGLRenderer,
@@ -49,7 +52,7 @@ export default class GRenderer {
     this.renderer.setClearColor(0x252428)
     this.renderer.setSize(this.width, this.height)
     this.renderer.shadowMap.enabled = true
-    this.renderer.setPixelRatio(window.devicePixelRatio)
+    this.renderer.setPixelRatio(window.devicePixelRatio / 2)
     this.renderer.toneMapping = CineonToneMapping
     this.renderer.toneMappingExposure = 1
 
@@ -70,9 +73,25 @@ export default class GRenderer {
   }
 
   init (el) {
-    this.composer.addPass(new RenderPass(this.scene, this.camera))
-    this.composer.addPass(new FilmPass(.2, .5, 1000, false))
-    this.composer.addPass(new LensDistortionPass(1.0))
+    const renderPass = new RenderPass(this.scene, this.camera)
+    const saoPass = new SAOPass(this.scene, this.camera, true, true, new Vector2(1 / (this.width * pixelRatio), 1 / (this.height * pixelRatio)))
+    const fxaaPass = new ShaderPass(FXAAShader)
+    const filmPass = new FilmPass(.2, .2, 500, false)
+    const lensDistortionPass = new LensDistortionPass(1.0)
+
+    const pixelRatio = this.renderer.getPixelRatio()
+    fxaaPass.material.uniforms.resolution.value.x = 1 / (this.width * pixelRatio)
+    fxaaPass.material.uniforms.resolution.value.y = 1 / (this.height * pixelRatio)
+
+    saoPass.params.saoIntensity = .001
+    saoPass.params.saoKernelSize = 100
+    saoPass.params.saoScale = 1
+
+    this.composer.addPass(renderPass)
+    // this.composer.addPass(saoPass)
+    this.composer.addPass(fxaaPass)
+    this.composer.addPass(filmPass)
+    this.composer.addPass(lensDistortionPass)
 
     this.renderer.setAnimationLoop(this.gameLoop)
 
@@ -112,7 +131,7 @@ export default class GRenderer {
     this.width = width
     this.height = height
     this.target.setSize(width, height)
-    this.renderer.setPixelRatio(window.devicePixelRatio)
+    this.renderer.setPixelRatio(window.devicePixelRatio / 2)
     this.renderer.setSize(width, height)
   }
 }

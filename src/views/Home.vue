@@ -48,7 +48,7 @@ import fragmentShader from '@/components/GBox/box.frag.glsl'
 export default defineComponent({
   name: 'Home',
 
-  inject: ['renderer', 'camera', 'scene'],
+  inject: ['renderer', 'camera', 'scene', 'resources'],
 
   components: {
     GProtagonist,
@@ -58,16 +58,8 @@ export default defineComponent({
   data: () => markRaw({
     ambientLight: null,
     light: null,
-
     material: null,
-    groundGeo: null,
     ground: null,
-    boxGeo: null,
-    box: null,
-
-    depthPlaneMaterial: null,
-    depthGeo: null,
-    depthPlane: null,
 
     amplitude: 2.0,
     frequency: 1.0,
@@ -77,55 +69,37 @@ export default defineComponent({
   }),
 
   mounted () {
-    this.camera.mainCamera.position.set(30, 40, 30)
-
-    this.pointLight = new PointLight()
-    this.pointLight.position.set(0, 10, 20)
-    this.scene.add(this.pointLight)
-
-    // Generic material
     this.material = new ShaderMaterial({
       vertexShader,
       fragmentShader,
       uniforms: {
         color: { type: 'v3', value: new Color(0xffeebb) },
+        fogColor: { type: 'v3', value: new Color(0x252428) },
       }
     })
 
-    // Ground
-    this.groundGeo = new BoxGeometry(30, 200, 200)
-    this.ground = new Mesh(this.groundGeo, this.material)
-    this.ground.position.set(0, -100, 0)
-    this.ground.receiveShadow = true
+    this.resources.loadObject(require('@/assets/NavMesh.fbx').default, this.material)
+      .then(obj => {
+        this.ground = obj
+        this.scene.add(obj)
+      })
 
-    // Cube
-    this.boxGeo = new BoxGeometry(4, 4, 4)
-    this.box = new Mesh(this.boxGeo, this.material)
-    this.box.position.set(8, 2, 0)
-    this.box.castShadow = true
-
-    // Mount scene
-    this.scene.add(this.ground)
-    this.scene.add(this.box)
+    this.pointLight = new PointLight()
+    this.pointLight.position.set(0, 10, 20)
+    this.scene.add(this.pointLight)
   },
 
   beforeUnmount () {
     this.material.dispose()
-    this.groundGeo.dispose()
-    this.boxGeo.dispose()
-
-    this.scene.remove(this.ground)
-    this.scene.remove(this.box)
-    this.scene.remove(this.light)
-    this.scene.remove(this.ambientLight)
-    this.renderer.destroy()
-
     this.ground.remove()
-    this.box.remove()
+    this.light.remove()
+    this.scene.remove(this.light)
+    this.renderer.destroy()
   },
 
   methods: {
     onProtagonistLoad (object) {
+      this.camera.mainCamera.position.set(30, 40, 30)
       this.camera.mainCamera.lookAt(object.position)
       this.camera.follow(object)
     }

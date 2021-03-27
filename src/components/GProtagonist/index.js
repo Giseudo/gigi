@@ -63,8 +63,6 @@ export default defineComponent({
     this.material = new ShaderMaterial({
       vertexShader,
       fragmentShader,
-      transparent: false,
-      depthWrite: true,
       uniforms: {
         color: {
           type: 'v3',

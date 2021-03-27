@@ -77,6 +77,7 @@ export default defineComponent({
     this.setSize(this.size)
 
     this.scene.add(this.mesh)
+
     subscribe(UPDATE, this.onUpdate)
   },
 
@@ -111,7 +112,7 @@ export default defineComponent({
     adjustVelocity (deltaTime) {
       const direction = this.getOrientedDirection(this.primaryAxis)
 
-      if (!this.isMoving) this.velocity.multiplyScalar(.9)
+      if (!this.isMoving) this.velocity.multiplyScalar(1.0 - deltaTime * 3.)
 
       if (this.isMoving) {
         this.velocity.add(direction.multiplyScalar(this.acceleration * deltaTime))

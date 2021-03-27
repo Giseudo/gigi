@@ -1,7 +1,9 @@
 import { reactive, readonly } from 'vue'
 import { FloatNode } from 'three/examples/jsm/nodes/Nodes'
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer'
+import { FilmPass } from 'three/examples/jsm/postprocessing/FilmPass'
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass'
+import { LensDistortionPass } from './passes/LensDistortionPass'
 import {
   WebGLRenderer,
   WebGLRenderTarget,
@@ -16,7 +18,7 @@ import {
   Vector2,
   Matrix4
 } from 'three'
-import { UPDATE, DRAW, RESIZE } from '@Events'
+import { UPDATE, DRAW, RESIZE, INIT_RENDERER } from '@Events'
 import { publish, subscribe, unsubscribe } from '@Messenger'
 
 const TIME_INTERVAL = 1 / 60
@@ -69,14 +71,18 @@ export default class GRenderer {
 
   init (el) {
     this.composer.addPass(new RenderPass(this.scene, this.camera))
+    this.composer.addPass(new FilmPass(.2, .5, 1000, false))
+    this.composer.addPass(new LensDistortionPass(1.0))
 
-    this.renderer.setAnimationLoop(() => this.gameLoop())
+    this.renderer.setAnimationLoop(this.gameLoop)
 
     subscribe(RESIZE, this.onResize)
+    publish(INIT_RENDERER)
+
     el.appendChild(this.renderer.domElement)
   }
 
-  gameLoop () {
+  gameLoop = () => {
     this.deltaTime.value += this.clock.getDelta()
 
     const deltaTime = this.deltaTime.value

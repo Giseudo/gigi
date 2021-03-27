@@ -42,6 +42,7 @@ export default defineComponent({
 
   beforeUnmount () {
     this.renderer.destroy()
+    this.camera.destroy()
     this.input.destroy()
 
     window.removeEventListener('resize', this.onResize)

@@ -72,10 +72,9 @@ export default defineComponent({
   }),
 
   mounted () {
-    // Setup camera
-    const { mainCamera } = this.camera
-    mainCamera.position.set(30, 40, 30)
-    mainCamera.lookAt(this.$refs.protagonist.mesh.position)
+    this.camera.mainCamera.position.set(30, 40, 30)
+    this.camera.mainCamera.lookAt(this.$refs.protagonist.mesh.position)
+    this.camera.follow(this.$refs.protagonist.mesh)
 
     // Generic material
     this.material = new ShaderMaterial({
@@ -87,7 +86,7 @@ export default defineComponent({
     })
 
     // Ground
-    this.groundGeo = new BoxGeometry(30, 200, 30)
+    this.groundGeo = new BoxGeometry(30, 200, 200)
     this.ground = new Mesh(this.groundGeo, this.material)
     this.ground.position.set(0, -100, 0)
     this.ground.receiveShadow = true

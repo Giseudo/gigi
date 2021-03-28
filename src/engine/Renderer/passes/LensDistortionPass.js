@@ -3,27 +3,29 @@ import { Pass } from 'three/examples/jsm/postprocessing/Pass.js'
 import vertexShader from '../shaders/LensDistortion.vert.glsl'
 import fragmentShader from '../shaders/LensDistortion.frag.glsl'
 
-var LensDistortionPass = function (intensity) {
-	Pass.call(this)
+export class LensDistortionPass extends Pass {
+  uniforms
+  material
+  fsQuad
 
-  this.uniforms = {
-    tDiffuse: { value: null },
-    intensity: { value: intensity }
+  constructor (intensity) {
+    super()
+
+    this.uniforms = {
+      tDiffuse: { value: null },
+      intensity: { value: intensity }
+    }
+
+    this.material = new ShaderMaterial( {
+      uniforms: this.uniforms,
+      vertexShader: vertexShader,
+      fragmentShader: fragmentShader
+    })
+
+    this.fsQuad = new Pass.FullScreenQuad(this.material)
   }
 
-	this.material = new ShaderMaterial( {
-		uniforms: this.uniforms,
-		vertexShader: vertexShader,
-		fragmentShader: fragmentShader
-	})
-
-	this.fsQuad = new Pass.FullScreenQuad(this.material)
-}
-
-LensDistortionPass.prototype = Object.assign(Object.create(Pass.prototype), {
-	constructor: LensDistortionPass,
-
-	render: function (renderer, writeBuffer, readBuffer, deltaTime) {
+	render (renderer, writeBuffer, readBuffer, deltaTime) {
  		this.uniforms.tDiffuse.value = readBuffer.texture
 
 		if (this.renderToScreen) {
@@ -35,6 +37,4 @@ LensDistortionPass.prototype = Object.assign(Object.create(Pass.prototype), {
 			this.fsQuad.render(renderer)
 		}
 	}
-})
-
-export { LensDistortionPass }
+}

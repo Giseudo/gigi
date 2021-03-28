@@ -10,7 +10,7 @@ import fragmentShader from './protagonist.frag.glsl'
 export default defineComponent({
   name: 'GProtagonist',
 
-  inject: ['renderer', 'input', 'camera', 'scene', 'resources'],
+  inject: ['renderer', 'input', 'camera', 'scene', 'resources', 'navMesh'],
   emits: ['move', 'load'],
 
   data: () => markRaw({
@@ -39,7 +39,7 @@ export default defineComponent({
     },
     maxVelocity: {
       type: Number,
-      default: 10
+      default: 15
     }
   },
 
@@ -83,6 +83,11 @@ export default defineComponent({
         this.$emit('load', obj)
 
         subscribe(UPDATE, this.onUpdate)
+
+        const a = this.mesh.position
+        const b = new Vector3(0, 0, -8)
+        const groupID = this.navMesh.pathfinding.getGroup('Level 1', a)
+        const path = this.navMesh.pathfinding.findPath(a, b, 'Level 1', groupID)
       })
   },
 
@@ -108,9 +113,22 @@ export default defineComponent({
     onUpdate ({ deltaTime }) {
       this.adjustVelocity(deltaTime)
 
-      this.mesh.position.add(
+      const position = this.mesh.position.clone().add(
         this.velocity.clone().multiplyScalar(deltaTime)
       )
+
+      try {
+        const groupID = this.navMesh.pathfinding.getGroup('Level 1', position)
+        const node = this.navMesh.pathfinding.getClosestNode(position, 'Level 1', groupID, true)
+
+        if (node) {
+          this.mesh.position.add(
+            this.velocity.clone().multiplyScalar(deltaTime)
+          )
+        }
+      } catch (e) {
+        console.error(e)
+      }
     },
 
     adjustVelocity (deltaTime) {

@@ -9,6 +9,7 @@
   "dependencies": {
     "core-js": "^3.6.5",
     "three": "^0.126.1",
+    "three-pathfinding": "^0.14.0",
     "vue": "^3.0.0",
     "vue-router": "^4.0.0-0"
   },
@@ -17,10 +18,10 @@
     "@vue/cli-plugin-router": "~4.5.0",
     "@vue/cli-service": "~4.5.0",
     "@vue/compiler-sfc": "^3.0.0",
+    "fflate": "^0.6.9",
+    "file-loader": "^6.2.0",
     "node-sass": "^4.12.0",
     "raw-loader": "^4.0.2",
-    "sass-loader": "^8.0.2",
-    "file-loader": "^6.2.0",
-    "fflate": "^0.6.9"
+    "sass-loader": "^8.0.2"
   }
 }

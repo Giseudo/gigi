@@ -1,5 +1,5 @@
 <template>
-  <div class="home">
+  <div class="g-home">
     <!--g-ripples
       :amplitude="amplitude"
       :frequency="frequency"
@@ -57,15 +57,14 @@ export default defineComponent({
 
   data: () => markRaw({
     ambientLight: null,
-    light: null,
     material: null,
     ground: null,
 
-    amplitude: 2.0,
+    amplitude: 500.0,
     frequency: 1.0,
     speed: 2.0,
-    size: 100,
-    pointSize: 15,
+    size: 500,
+    pointSize: 6,
   }),
 
   mounted () {
@@ -78,27 +77,21 @@ export default defineComponent({
       }
     })
 
-    this.resources.loadObject(require('@/assets/NavMesh.fbx').default, this.material)
+    this.resources.loadObject(require('@/assets/Environment.fbx').default, this.material)
       .then(obj => {
         this.ground = obj
         this.scene.add(obj)
       })
-
-    this.pointLight = new PointLight()
-    this.pointLight.position.set(0, 10, 20)
-    this.scene.add(this.pointLight)
   },
 
   beforeUnmount () {
     this.material.dispose()
-    this.light.remove()
-    this.scene.remove(this.light)
     this.renderer.destroy()
   },
 
   methods: {
     onProtagonistLoad (object) {
-      this.camera.mainCamera.position.set(20, 20, 20)
+      this.camera.mainCamera.position.set(30, 20, 30)
       this.camera.mainCamera.lookAt(object.position)
       this.camera.follow(object)
     }

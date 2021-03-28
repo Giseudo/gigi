@@ -1,4 +1,4 @@
-import { ShaderMaterial, UniformsUtils } from 'three'
+import { ShaderMaterial, UniformsUtils, NearestFilter } from 'three'
 import { Pass } from 'three/examples/jsm/postprocessing/Pass.js'
 import vertexShader from '@Engine/shaders/LensDistortion.vert.glsl'
 import fragmentShader from '@Engine/shaders/LensDistortion.frag.glsl'
@@ -24,7 +24,7 @@ LensDistortionPass.prototype = Object.assign(Object.create(Pass.prototype), {
 	constructor: LensDistortionPass,
 
 	render: function (renderer, writeBuffer, readBuffer, deltaTime) {
-		this.uniforms.tDiffuse.value = readBuffer.texture
+ 		this.uniforms.tDiffuse.value = readBuffer.texture
 
 		if (this.renderToScreen) {
 			renderer.setRenderTarget(null)

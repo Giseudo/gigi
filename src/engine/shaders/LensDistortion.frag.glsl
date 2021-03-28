@@ -14,7 +14,7 @@ vec2 distort(vec2 uv, float scale, float distortion, float cubicDistortion)
 void main() {
   float s = .8;
   float d = .0;
-  float k = .7;
+  float k = .5;
 
   float offset = vUv.x - .5;
   offset = abs(offset);

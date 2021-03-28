@@ -16,7 +16,7 @@ export default class GInput {
   state = reactive({
     axes: {
       [PRIMARY_AXIS]: {
-        value: new Vector2(0, 0),
+        value: new Vector2(),
         vertical: {
           positive: [UP_BUTTON],
           negative: [DOWN_BUTTON],
@@ -37,7 +37,7 @@ export default class GInput {
       [CANCEL_BUTTON]: ['esc']
     },
 
-    pressing: []
+    pressing: [],
   })
 
   getAxis = axis => this.state.axes[axis].value
@@ -68,6 +68,10 @@ export default class GInput {
 
       publish(AXIS_CHANGED, { value: axis.value })
     }
+  }
+
+  setAxis (axis, direction) {
+    this.state.axes[axis].value = direction
   }
 
   onKeyDown = (event) => {

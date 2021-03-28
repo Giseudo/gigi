@@ -84,6 +84,7 @@ export default {
   right: 0;
   bottom: 0;
   opacity: 0;
+  mix-blend-mode: overlay;
 
   &__background {
     position: absolute;
@@ -96,13 +97,14 @@ export default {
     &:before {
       content: "";
       position: absolute;
-      background: rgba(white, .2);
+      background: #aa2e1e;
       width: 40%;
       height: 40%;
       border-radius: 75px;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
+      box-shadow: 0 0 40px #ff2649;
     }
   }
 
@@ -118,7 +120,7 @@ export default {
     &:before {
       content: "";
       position: absolute;
-      background: rgba(white, 1);
+      background: #ffd424;
       width: 40%;
       height: 40%;
       border-radius: 75px;

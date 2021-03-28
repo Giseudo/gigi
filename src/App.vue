@@ -1,10 +1,11 @@
 <template>
   <div class="g-app">
-    <g-touch-axis @move="onTouchChange" />
 
     <router-view  v-if="!state.isLoading" />
 
-    <div class="viewport" ref="viewport" />
+    <div class="viewport" ref="viewport">
+      <g-touch-axis @move="onTouchChange" />
+    </div>
   </div>
 </template>
 
@@ -110,7 +111,6 @@ body, html, #app { height: 100%; }
     bottom: 0;
     left: 0;
     touch-action: none;
-    z-index: -1;
   }
 }
 </style>

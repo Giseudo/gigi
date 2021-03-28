@@ -39,7 +39,7 @@ export default defineComponent({
     },
     maxVelocity: {
       type: Number,
-      default: 15
+      default: 10
     }
   },
 

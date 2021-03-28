@@ -31,7 +31,6 @@ void main() {
   float vignet = 1.0 - distance(vUv - .5, vec2(0.));
   vignet = pow(vignet, .8);
   vignet = clamp(0.0, 1.0, vignet);
-  // vignet = 1.0;
 
   gl_FragColor = vec4(
     red * vignet,

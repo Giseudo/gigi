@@ -1,6 +1,5 @@
 <template>
   <div class="g-app">
-
     <router-view  v-if="!state.isLoading" />
 
     <div class="viewport" ref="viewport">
@@ -13,14 +12,15 @@
 import { defineComponent, markRaw, reactive } from 'vue'
 import { publish } from '@Messenger'
 import { START, RESIZE } from '@Events'
-import { PRIMARY_AXIS } from '@Engine/input'
-import GRenderer from '@Engine/renderer'
-import GCamera from '@Engine/camera'
-import GInput from '@Engine/input'
-import GScene from '@Engine/scene'
-import GResources from '@Engine/resources'
-import GNavMesh from '@Engine/nav-mesh'
+import { PRIMARY_AXIS } from '@Input'
+
 import GTouchAxis from '@/components/GTouchAxis'
+import GRenderer from '@Renderer'
+import GCamera from '@Camera'
+import GInput from '@Input'
+import GScene from '@Scene'
+import GResources from '@Resources'
+import GNavMesh from '@NavMesh'
 
 export default defineComponent({
   components: { GTouchAxis },
@@ -58,6 +58,7 @@ export default defineComponent({
     this.renderer.destroy()
     this.camera.destroy()
     this.input.destroy()
+    this.navMesh.destroy()
 
     window.removeEventListener('resize', this.onResize)
   },
@@ -67,9 +68,9 @@ export default defineComponent({
       this.renderer.init(this.$refs.viewport)
       this.camera.init()
       this.input.init()
-
-      const navMeshGeometry = await this.resources.loadObject(require('@/assets/NavMesh.fbx').default)
-      this.navMesh.init(navMeshGeometry)
+      this.navMesh.init(
+        await this.resources.loadObject(require('@/assets/NavMesh.fbx').default)
+      )
 
       this.state.isLoading = false
 

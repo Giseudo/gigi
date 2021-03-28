@@ -74,22 +74,12 @@ export default class GRenderer {
 
   init (el) {
     const renderPass = new RenderPass(this.scene, this.camera)
-    const saoPass = new SAOPass(this.scene, this.camera, true, true, new Vector2(1 / (this.width * pixelRatio), 1 / (this.height * pixelRatio)))
-    const fxaaPass = new ShaderPass(FXAAShader)
+    // const bloomPass = new BloomPass(this.scene)
     const filmPass = new FilmPass(.2, .2, 500, false)
     const lensDistortionPass = new LensDistortionPass(1.0)
 
-    const pixelRatio = this.renderer.getPixelRatio()
-    fxaaPass.material.uniforms.resolution.value.x = 1 / (this.width * pixelRatio)
-    fxaaPass.material.uniforms.resolution.value.y = 1 / (this.height * pixelRatio)
-
-    saoPass.params.saoIntensity = .001
-    saoPass.params.saoKernelSize = 100
-    saoPass.params.saoScale = 1
-
     this.composer.addPass(renderPass)
-    // this.composer.addPass(saoPass)
-    // this.composer.addPass(fxaaPass)
+    // this.composer.addPass(bloomPass)
     this.composer.addPass(filmPass)
     this.composer.addPass(lensDistortionPass)
 

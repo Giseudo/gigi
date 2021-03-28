@@ -21,10 +21,16 @@ module.exports = {
 
     config.resolve.alias
       .set('@Engine', alias('src/engine'))
-      .set('@Messenger', alias('src/engine/messenger'))
-      .set('@Events', alias('src/engine/events'))
-      .set('@Input', alias('src/engine/input'))
-
+      .set('@Audio', alias('src/engine/Audio'))
+      .set('@Camera', alias('src/engine/Camera'))
+      .set('@Input', alias('src/engine/Input'))
+      .set('@Messenger', alias('src/engine/Messenger'))
+      .set('@NavMesh', alias('src/engine/NavMesh'))
+      .set('@Events', alias('src/engine/Messenger/events'))
+      .set('@Physics', alias('src/engine/Physics'))
+      .set('@Renderer', alias('src/engine/Renderer'))
+      .set('@Resources', alias('src/engine/Resources'))
+      .set('@Scene', alias('src/engine/Scene'))
   },
 
   configureWebpack: {

@@ -41,6 +41,7 @@
 import { defineComponent, markRaw } from 'vue'
 import { DoubleSide, CylinderGeometry, MeshBasicMaterial, TextureLoader, PointLight, ShaderMaterial, Color, Mesh, BoxGeometry } from 'three'
 import { UPDATE } from '@Events'
+import { BLOOM_LAYER } from '@Scene/layers'
 import { subscribe } from '@Messenger'
 import GProtagonist from '@/components/GProtagonist'
 import GRipples from '@/components/GRipples'
@@ -75,7 +76,7 @@ export default defineComponent({
       vertexShader,
       fragmentShader,
       uniforms: {
-        color: { type: 'v3', value: new Color(0xffeebb) },
+        color: { type: 'v3', value: new Color(0x5b737f) },
         fogColor: { type: 'v3', value: new Color(0x252428) },
       }
     })
@@ -98,7 +99,7 @@ export default defineComponent({
       })
       this.cylinder = new Mesh(geometry, material)
       this.cylinder.position.set(-2, 3.8, -2)
-
+      this.cylinder.layers.enable(BLOOM_LAYER)
       this.scene.add(this.cylinder)
 
       subscribe(UPDATE, this.onUpdate)

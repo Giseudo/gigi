@@ -12,7 +12,7 @@
   >
       <span
         class="g-touch-axis__handle"
-        :style="{ transform: `translate(${direction.x * 75 / 2}px, ${-direction.y * 75 / 2}px)` }"
+        :style="{ transform: `translate(${direction.x * 100 / 2}px, ${-direction.y * 100 / 2}px)` }"
       />
     </div>
   </div>
@@ -23,6 +23,8 @@ import { markRaw } from 'vue'
 import { Vector2 } from 'three'
 
 export default {
+  inject: ['renderer'],
+
   data: () => ({
     isDragging: false,
     direction: new Vector2(),
@@ -55,22 +57,26 @@ export default {
 
     onTouchMove (event) {
       const { touches } = event
+      const delta = {
+        x: (this.origin.x - touches[0].pageX) * this.renderer.deltaTime.value * .1,
+        y: (this.origin.y - touches[0].pageY) * this.renderer.deltaTime.value * .1
+      }
 
       if (touches.length === 0) return
 
-      this.direction.set(touches[0].pageX, touches[0].pageY)
-        .sub(this.origin)
-        .normalize()
+      this.direction.x -= delta.x
+      this.direction.y += delta.y
 
-      this.direction.y *= -1
+      if (this.direction.lengthSq() > 1)
+       this.direction.normalize()
 
       this.$emit('move', this.direction)
     },
 
     onTouchEnd (event) {
-      this.origin.set(0, 0)
       this.direction.set(0, 0)
       this.isDragging = false
+
     }
   }
 }
@@ -84,43 +90,35 @@ export default {
   right: 0;
   bottom: 0;
   opacity: 0;
+  transition: opacity .2s ease-in-out;
   mix-blend-mode: overlay;
 
   &__background {
     position: absolute;
-    width: 200px;
-    height: 200px;
+    width: 100px;
+    height: 100px;
     border-radius: 200px;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    &:before {
-      content: "";
-      position: absolute;
-      background: #aa2e1e;
-      width: 40%;
-      height: 40%;
-      border-radius: 75px;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      box-shadow: 0 0 40px #ff2649;
-    }
+    background: rgba(white, .2);
+    box-shadow: 0 0 70px rgba(white, .3);
   }
 
   &__handle {
     top: 50%;
     left: 50%;
-    margin-left: calc(-75px / 2);
-    margin-top: calc(-75px / 2);
+    margin-left: calc(-50px / 2);
+    margin-top: calc(-50px / 2);
     position: absolute;
-    width: 75px;
-    height: 75px;
+    width: 50px;
+    height: 50px;
     border-radius: 75px;
+    transition: .2s ease-out;
     &:before {
       content: "";
       position: absolute;
-      background: #ffd424;
+      background: rgba(white, .5);
       width: 40%;
       height: 40%;
       border-radius: 75px;

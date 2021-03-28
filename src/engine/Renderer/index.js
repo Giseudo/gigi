@@ -1,12 +1,11 @@
 import { reactive, readonly } from 'vue'
 import { FloatNode } from 'three/examples/jsm/nodes/Nodes'
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer'
-import { FilmPass } from 'three/examples/jsm/postprocessing/FilmPass'
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass'
-import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass'
-import { FXAAShader } from 'three/examples/jsm/shaders/FXAAShader'
-import { SAOPass } from 'three/examples/jsm/postprocessing/SAOPass'
+import { FilmPass } from 'three/examples/jsm/postprocessing/FilmPass'
 import { LensDistortionPass } from './passes/LensDistortionPass'
+import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass'
+import { BloomPass } from './passes/BloomPass'
 import {
   WebGLRenderer,
   WebGLRenderTarget,
@@ -24,7 +23,7 @@ import {
 import { UPDATE, DRAW, RESIZE, INIT_RENDERER } from '@Events'
 import { publish, subscribe, unsubscribe } from '@Messenger'
 
-const TIME_INTERVAL = 1 / 60
+const TIME_INTERVAL = 1 / 24
 
 export default class GRenderer {
   scene = null
@@ -74,13 +73,13 @@ export default class GRenderer {
 
   init (el) {
     const renderPass = new RenderPass(this.scene, this.camera)
-    // const bloomPass = new BloomPass(this.scene)
-    const filmPass = new FilmPass(.2, .2, 500, false)
+    const bloomPass = new BloomPass(this.scene, this.camera, this.renderer)
+    const filmPass = new FilmPass(.1, .3, 200, false)
     const lensDistortionPass = new LensDistortionPass(1.0)
 
     this.composer.addPass(renderPass)
-    // this.composer.addPass(bloomPass)
-    this.composer.addPass(filmPass)
+    this.composer.addPass(bloomPass)
+    // this.composer.addPass(filmPass)
     this.composer.addPass(lensDistortionPass)
 
     this.renderer.setAnimationLoop(this.gameLoop)

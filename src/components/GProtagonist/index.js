@@ -1,6 +1,7 @@
 import { defineComponent, markRaw } from 'vue'
 import { IcosahedronGeometry, Color, ShaderMaterial, Mesh, Euler, Quaternion, Vector3 } from 'three'
 import { UPDATE, DRAW, AXIS_CHANGED } from '@Events'
+import { BLOOM_LAYER } from '@Scene/layers'
 import { PRIMARY_AXIS } from '@Input'
 import { subscribe, unsubscribe } from '@Messenger'
 
@@ -39,7 +40,7 @@ export default defineComponent({
     },
     maxVelocity: {
       type: Number,
-      default: 10
+      default: 15
     }
   },
 
@@ -76,6 +77,11 @@ export default defineComponent({
       .then(obj => {
         this.mesh = obj
         this.scene.add(obj)
+
+        obj.traverse(node => {
+          if (node.isMesh)
+            node.layers.enable(BLOOM_LAYER)
+        })
 
         this.setPosition(this.position)
         this.setSize(this.size)

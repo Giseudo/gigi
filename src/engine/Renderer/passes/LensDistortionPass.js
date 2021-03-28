@@ -1,6 +1,6 @@
 import { ShaderMaterial, UniformsUtils, NearestFilter } from 'three'
 import { Pass } from 'three/examples/jsm/postprocessing/Pass.js'
-import vertexShader from '../shaders/LensDistortion.vert.glsl'
+import vertexShader from '../shaders/FullScreenQuad.vert.glsl'
 import fragmentShader from '../shaders/LensDistortion.frag.glsl'
 
 export class LensDistortionPass extends Pass {

@@ -51,11 +51,13 @@ export default class GRenderer {
     this.renderer.setClearColor(0x252428)
     this.renderer.setSize(this.width, this.height)
     this.renderer.shadowMap.enabled = true
-    this.renderer.setPixelRatio(window.devicePixelRatio / 4)
+    this.renderer.setPixelRatio(window.devicePixelRatio)
     this.renderer.toneMapping = CineonToneMapping
     this.renderer.toneMappingExposure = 1
 
-    this.target = new WebGLRenderTarget(this.width, this.height)
+    const pixelRatio = .25 * window.devicePixelRatio
+
+    this.target = new WebGLRenderTarget(this.width * pixelRatio, this.height * pixelRatio)
     this.target.texture.format = RGBFormat
     this.target.texture.minFilter = NearestFilter
     this.target.texture.magFilter = NearestFilter
@@ -68,18 +70,18 @@ export default class GRenderer {
 
     this.uniforms.tDepth.value = this.target.depthTexture
 
-    this.composer = new EffectComposer(this.renderer)
+    this.composer = new EffectComposer(this.renderer, this.target)
   }
 
   init (el) {
     const renderPass = new RenderPass(this.scene, this.camera)
     const bloomPass = new BloomPass(this.scene, this.camera, this.renderer)
-    const filmPass = new FilmPass(.1, .3, 200, false)
+    const filmPass = new FilmPass(.1, .2, 400, false)
     const lensDistortionPass = new LensDistortionPass(1.0)
 
     this.composer.addPass(renderPass)
     this.composer.addPass(bloomPass)
-    // this.composer.addPass(filmPass)
+    this.composer.addPass(filmPass)
     this.composer.addPass(lensDistortionPass)
 
     this.renderer.setAnimationLoop(this.gameLoop)
@@ -97,9 +99,6 @@ export default class GRenderer {
 
     if (deltaTime > TIME_INTERVAL) {
       publish(UPDATE, { deltaTime })
-
-      this.renderer.setRenderTarget(this.target)
-      this.renderer.render(this.scene, this.camera)
 
       this.composer.render(deltaTime)
 
@@ -119,8 +118,10 @@ export default class GRenderer {
   onResize = ({ width, height }) => {
     this.width = width
     this.height = height
-    this.target.setSize(width, height)
-    this.renderer.setPixelRatio(window.devicePixelRatio / 4)
     this.renderer.setSize(width, height)
+    this.renderer.setPixelRatio(window.devicePixelRatio)
+
+    const pixelRatio = .2 * window.devicePixelRatio
+    this.composer.setSize(width * pixelRatio, height * pixelRatio)
   }
 }

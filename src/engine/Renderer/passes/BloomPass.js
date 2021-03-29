@@ -1,4 +1,4 @@
-import { ShaderMaterial, UniformsUtils, NearestFilter, Layer, MeshBasicMaterial, Vector2, Layers, Color } from 'three'
+import { WebGLRenderTarget, NearestFilter, ShaderMaterial, UniformsUtils, Layer, MeshBasicMaterial, Vector2, Layers, Color } from 'three'
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer'
 import { Pass } from 'three/examples/jsm/postprocessing/Pass.js'
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass'
@@ -21,6 +21,7 @@ export class BloomPass extends Pass {
   materials = {}
 
   composer = null
+  target = null
   renderPass = null
   bloomPass = null
   finalPass = null
@@ -35,7 +36,12 @@ export class BloomPass extends Pass {
 
     this.darkMaterial = new MeshBasicMaterial({ color: 0x000000 })
 
-    this.composer = new EffectComposer(renderer)
+    const pixelRatio = .25 * window.devicePixelRatio
+    this.target = new WebGLRenderTarget(window.innerWidth * pixelRatio, window.innerHeight * pixelRatio)
+    this.target.texture.minFilter = NearestFilter
+    this.target.texture.magFilter = NearestFilter
+
+    this.composer = new EffectComposer(renderer, this.target)
     this.composer.renderToScreen = false
 
     this.uniforms = {

@@ -92,7 +92,7 @@ export default defineComponent({
     loader.load(require('@/assets/warning_emission.png'), image => {
       const geometry = new CylinderGeometry(7.5, 7.5, 3, 16, 1, true)
       const material = new MeshBasicMaterial({
-        color: 0xff9900,
+        color: 0xff6600,
         alphaMap: image,
         side: DoubleSide,
         transparent: true

@@ -72,22 +72,25 @@ export default defineComponent({
   }),
 
   mounted () {
-    this.material = new ShaderMaterial({
-      vertexShader,
-      fragmentShader,
-      uniforms: {
-        color: { type: 'v3', value: new Color(0x5b737f) },
-        fogColor: { type: 'v3', value: new Color(0x252428) },
-      }
-    })
+    const loader = new TextureLoader()
 
-    this.resources.loadObject(require('@/assets/Environment.fbx').default, this.material)
-      .then(obj => {
-        this.ground = obj
-        this.scene.add(obj)
+    loader.load(require('@/assets/matcap.png'), image => {
+      this.material = new ShaderMaterial({
+        vertexShader,
+        fragmentShader,
+        uniforms: {
+          color: { type: 'v3', value: new Color(0x73858e) },
+          fogColor: { type: 'v3', value: new Color(0x252428) },
+          tMatcap: { value: image }
+        }
       })
 
-    const loader = new TextureLoader()
+      this.resources.loadObject(require('@/assets/Environment.fbx').default, this.material)
+        .then(obj => {
+          this.ground = obj
+          this.scene.add(obj)
+        })
+    })
 
     loader.load(require('@/assets/warning_emission.png'), image => {
       const geometry = new CylinderGeometry(7.5, 7.5, 3, 16, 1, true)

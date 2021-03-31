@@ -73,6 +73,12 @@ export default defineComponent({
       },
     })
 
+    this.redLine = new THREE.Line(new THREE.BufferGeometry(), new THREE.LineBasicMaterial({ color: 0xff0000 }))
+    this.greenLine = new THREE.Line(new THREE.BufferGeometry(), new THREE.LineBasicMaterial({ color: 0x00ff00 }))
+    this.blueLine = new THREE.Line(new THREE.BufferGeometry(), new THREE.LineBasicMaterial({ color: 0x0000ff }))
+
+    this.scene.add(this.line)
+
     this.resources.loadObject(this.assets.navigator, this.material)
       .then(obj => {
         this.mesh = obj
@@ -89,6 +95,7 @@ export default defineComponent({
         this.$emit('load', obj)
 
         subscribe(UPDATE, this.onUpdate)
+        subscribe(DRAW, this.onDraw)
 
         const a = this.mesh.position
         const b = new Vector3(0, 0, -8)
@@ -102,7 +109,9 @@ export default defineComponent({
     this.geometry.dispose()
     this.material.dispose()
     this.mesh.remove()
+
     unsubscribe(UPDATE, this.onUpdate)
+    unsubscribe(DRAW, this.onDraw)
   },
 
   render: () => ([]),
@@ -118,6 +127,10 @@ export default defineComponent({
 
     onUpdate ({ deltaTime }) {
       this.adjustVelocity(deltaTime)
+
+      /*this.mesh.position.add(
+        this.velocity.clone().multiplyScalar(deltaTime)
+      )*/
 
       const position = this.mesh.position.clone().add(
         this.velocity.clone().multiplyScalar(deltaTime)
@@ -135,6 +148,17 @@ export default defineComponent({
       } catch (e) {
         console.error(e)
       }
+    },
+
+    drawLine (line, start, end, offset = new Vector3(0, 1, 0)) {
+      const v1 = start.clone().add(offset)
+      const v2 = end.clone().add(offset)
+
+      line.geometry.setFromPoints([ v1, v2 ])
+    },
+
+    onDraw () {
+      // this.drawLine(this.redLine, this.mesh.position, this.mesh.position.clone().add(this.velocity))
     },
 
     adjustVelocity (deltaTime) {

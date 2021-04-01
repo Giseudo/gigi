@@ -86,7 +86,6 @@ export default defineComponent({
 
   methods: {
     async init () {
-      this.scene.init()
       this.renderer.init(this.$refs.viewport)
       this.camera.init()
       this.input.init()

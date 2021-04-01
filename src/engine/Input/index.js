@@ -66,12 +66,14 @@ export default class GInput {
       if (axis.horizontal.negative.includes(button))
         axis.value.x = this.isPressing(button) ? -1 : 0
 
-      publish(AXIS_CHANGED, { value: axis.value })
+      publish(AXIS_CHANGED, { axis: topic, value: axis.value })
     }
   }
 
   setAxis (axis, direction) {
     this.state.axes[axis].value = direction
+
+    publish(AXIS_CHANGED, { axis, value: direction })
   }
 
   onKeyDown = (event) => {

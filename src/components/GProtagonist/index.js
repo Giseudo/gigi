@@ -77,14 +77,16 @@ export default defineComponent({
     this.greenLine = new THREE.Line(new THREE.BufferGeometry(), new THREE.LineBasicMaterial({ color: 0x00ff00 }))
     this.blueLine = new THREE.Line(new THREE.BufferGeometry(), new THREE.LineBasicMaterial({ color: 0x0000ff }))
 
-    this.scene.add(this.line)
+    // this.scene.add(this.line)
 
     this.resources.loadObject(this.assets.navigator, this.material)
       .then(obj => {
+
         this.mesh = obj
         this.scene.add(obj)
 
         obj.traverse(node => {
+          // if empty then type is a Group with children
           if (node.isMesh)
             node.layers.enable(BLOOM_LAYER)
         })

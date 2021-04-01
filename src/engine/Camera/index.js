@@ -31,8 +31,8 @@ export default class GCamera {
     this.lookAtTarget = target
   }
 
-  follow (target) {
-    this.followTarget = target
+  follow (transform) {
+    this.followTarget = transform
 
     this.followOffset = this.followTarget.position.clone()
       .sub(this.mainCamera.position)

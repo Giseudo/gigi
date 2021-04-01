@@ -23,7 +23,7 @@ import {
 import { UPDATE, DRAW, RESIZE, INIT_RENDERER } from '@Events'
 import { publish, subscribe, unsubscribe } from '@Messenger'
 
-const TIME_INTERVAL = 1 / 24
+const TIME_INTERVAL = 1 / 30
 
 export default class GRenderer {
   scene = null
@@ -53,11 +53,11 @@ export default class GRenderer {
     this.renderer.setClearColor(0x252428)
     this.renderer.setSize(this.width, this.height)
     this.renderer.shadowMap.enabled = true
-    this.renderer.setPixelRatio(window.devicePixelRatio)
+    this.renderer.setPixelRatio(window.devicePixelRatio / 2)
     this.renderer.toneMapping = CineonToneMapping
     this.renderer.toneMappingExposure = 1
 
-    const pixelRatio = .25 * window.devicePixelRatio
+    const pixelRatio = this.renderer.getPixelRatio() / 2
 
     this.target = new WebGLRenderTarget(this.width * pixelRatio, this.height * pixelRatio)
     this.target.texture.format = RGBFormat
@@ -83,7 +83,6 @@ export default class GRenderer {
 
     this.composer.addPass(renderPass)
     this.composer.addPass(bloomPass)
-    this.composer.addPass(filmPass)
     this.composer.addPass(lensDistortionPass)
 
     this.renderer.setAnimationLoop(this.gameLoop)
@@ -125,9 +124,9 @@ export default class GRenderer {
     this.width = width
     this.height = height
     this.renderer.setSize(width, height)
-    this.renderer.setPixelRatio(window.devicePixelRatio)
+    this.renderer.setPixelRatio(window.devicePixelRatio / 2)
 
-    const pixelRatio = .2 * window.devicePixelRatio
+    const pixelRatio = this.renderer.getPixelRatio() / 2
     this.composer.setSize(width * pixelRatio, height * pixelRatio)
   }
 }

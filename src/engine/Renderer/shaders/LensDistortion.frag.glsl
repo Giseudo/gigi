@@ -5,16 +5,6 @@ uniform vec2 resolution;
 
 varying vec2 vUv;
 
-vec2 distort(vec2 uv, float scale, float distortion, float cubicDistortion)
-{ 
-  vec2 h = uv - vec2(0.5, 0.5);
-  float r2 = h.x * h.x + h.y * h.y;
-
-  float f = 1.0 + r2 * (distortion + cubicDistortion * sqrt(r2));
-
-  return vec2(f * scale * h.x + .5, f * scale * h.y + .5);
-}
-
 vec2 curveRemapUV(vec2 uv)
 {
   vec2 curvature = vec2(5., 5.);
@@ -35,36 +25,22 @@ vec4 scanLineIntensity(float uv, float resolution, float opacity)
 }
 
 void main() {
-  /*float s = .8;
-  float d = .0;
-  float k = .5;
-
-
-  vec2 redUv = distort(vUv, s + offset, d + offset, k);
-  vec2 greenUv = distort(vUv, s, d, k);
-  vec2 blueUv = distort(vUv, s - offset, d - offset, k);
-
-  float red = texture(tDiffuse, redUv).r;
-  float green = texture(tDiffuse, greenUv).g;
-  float blue = texture(tDiffuse, blueUv).b;*/
-
-  float offset = vUv.x - .5;
-  offset = abs(offset);
-  offset *= -.01;
-
-  vec2 redUv = curveRemapUV(vec2(vUv.x + offset, vUv.y + offset));
   vec2 greenUv = curveRemapUV(vec2(vUv.x, vUv.y));
-  vec2 blueUv = curveRemapUV(vec2(vUv.x - offset, vUv.y - offset));
 
   if (greenUv.x < 0.0 || greenUv.y < 0.0 || greenUv.x > 1.0 || greenUv.y > 1.0){
     gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
   } else {
+    float offset = abs(vUv.x - .5) * -.01;
+
+    vec2 redUv = curveRemapUV(vec2(vUv.x + offset, vUv.y + offset));
+    vec2 blueUv = curveRemapUV(vec2(vUv.x - offset, vUv.y - offset));
+
     float red = texture(tDiffuse, redUv).r;
     float green = texture(tDiffuse, greenUv).g;
     float blue = texture(tDiffuse, blueUv).b;
 
     vec4 baseColor = vec4(red, green, blue, 1.0);
-    vec2 scanLineOpacity = vec2(.5);
+    vec2 scanLineOpacity = vec2(.1);
 
     baseColor *= scanLineIntensity(greenUv.x, resolution.y, scanLineOpacity.x);
     baseColor *= scanLineIntensity(greenUv.y, resolution.x, scanLineOpacity.y);

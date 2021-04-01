@@ -5,6 +5,8 @@ import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass'
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass'
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass'
 import { BLOOM_LAYER } from '@Scene/layers'
+import { RESIZE } from '@Events'
+import { subscribe } from '@Messenger'
 import vertexShader from '../shaders/FullScreenQuad.vert.glsl'
 import fragmentShader from '../shaders/Bloom.frag.glsl'
 
@@ -15,6 +17,7 @@ export class BloomPass extends Pass {
   scene = null
   camera = null
   uniforms = null
+  renderer = null
 
   material = null
   darkMaterial = null
@@ -33,11 +36,15 @@ export class BloomPass extends Pass {
 
     this.scene = scene
     this.camera = camera
+    this.renderer = renderer
 
     this.darkMaterial = new MeshBasicMaterial({ color: 0x000000 })
 
-    const pixelRatio = .25 * window.devicePixelRatio
-    this.target = new WebGLRenderTarget(window.innerWidth * pixelRatio, window.innerHeight * pixelRatio)
+    const pixelRatio = renderer.getPixelRatio() / 2
+    const width = (window.innerWidth * pixelRatio) * 4
+    const height = (window.innerHeight * pixelRatio) * 1
+
+    this.target = new WebGLRenderTarget(width, height)
     this.target.texture.minFilter = NearestFilter
     this.target.texture.magFilter = NearestFilter
 
@@ -50,7 +57,7 @@ export class BloomPass extends Pass {
     }
 
     this.renderPass = new RenderPass(scene, camera)
-    this.bloomPass = new UnrealBloomPass(new Vector2(window.innerWidth, window.innerHeight), .5, 0, 0)
+    this.bloomPass = new UnrealBloomPass(new Vector2(width, height), .5, 0, 0)
     this.material = new ShaderMaterial({
       uniforms: this.uniforms,
       vertexShader: vertexShader,
@@ -61,6 +68,8 @@ export class BloomPass extends Pass {
     this.composer.addPass(this.bloomPass)
 
     this.fsQuad = new Pass.FullScreenQuad(this.material)
+
+    subscribe(RESIZE, this.updateResolution)
   }
 
 	render (renderer, writeBuffer, readBuffer, deltaTime) {
@@ -94,5 +103,14 @@ export class BloomPass extends Pass {
       obj.material = this.materials[obj.uuid]
       delete this.materials[obj.uuid]
     }
+  }
+
+  updateResolution = () => {
+    const pixelRatio = this.renderer.getPixelRatio() / 2
+    const width = window.innerWidth * pixelRatio
+    const height = window.innerHeight * pixelRatio
+
+    this.target.setSize(width, height)
+    this.bloomPass.setSize(width, height)
   }
 }

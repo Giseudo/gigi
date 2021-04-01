@@ -28,6 +28,7 @@ const TIME_INTERVAL = 1 / 24
 export default class GRenderer {
   scene = null
   camera = null
+  world = null
   target = null
   renderer = null
   composer = null
@@ -43,9 +44,10 @@ export default class GRenderer {
     uMatrixWorld: { value: new Matrix4() },
   }
 
-  constructor (scene, camera) {
+  constructor (scene, camera, world) {
     this.scene = scene
     this.camera = camera
+    this.world = world
 
     this.renderer = new WebGLRenderer()
     this.renderer.setClearColor(0x252428)
@@ -101,8 +103,12 @@ export default class GRenderer {
       publish(UPDATE, { deltaTime })
 
       this.composer.render(deltaTime)
+      this.world.time = this.time.value
+      this.world.deltaTime = this.deltaTime.value
+      this.world.runSystems('update')
 
       publish(DRAW)
+      this.world.runSystems('draw')
 
       this.time.value += deltaTime
       this.deltaTime.value %= TIME_INTERVAL

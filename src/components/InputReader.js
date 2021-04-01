@@ -1,4 +1,4 @@
-import { Vector2 } from 'three'
+import { Vector2, Vector3 } from 'three'
 import { Component } from 'ape-ecs'
 import { PRIMARY_AXIS } from '@Input'
 import { subscribe, unsubscribe } from '@Messenger'
@@ -13,18 +13,35 @@ export default class InputReader extends Component {
     unsubscribe(AXIS_CHANGED, this.onAxisChange)
   }
 
-  onAxisChange = ({ axis, value }) => {
-    this.axis[axis].x = value.x
-    this.axis[axis].y = value.y
-  }
+  onAxisChange = ({ axis, value }) => this.axes[axis].copy(value)
 
   getAxis (name) {
-    return this.axis[name]
+    const direction = this.axes[name]
+
+    return direction
+  }
+
+  getOrientedAxis (name) {
+    const direction = this.getAxis(name)
+
+    const right = new Vector3(1, 0, 0)
+      .applyQuaternion(this.orientation.quaternion)
+    right.y = 0
+    right.normalize()
+
+    const forward = new Vector3(0, 0, -1)
+      .applyQuaternion(this.orientation.quaternion)
+    forward.y = 0
+    forward.normalize()
+
+    return right.multiplyScalar(direction.x)
+      .add(forward.multiplyScalar(direction.y))
   }
 }
 
 InputReader.properties = {
-  axis: {
+  orientation: null,
+  axes: {
     [PRIMARY_AXIS]: new Vector2() 
   }
 }

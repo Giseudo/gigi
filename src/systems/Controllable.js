@@ -19,7 +19,7 @@ export default class Controllable extends System {
       const body = entity.getOne('Body')
 
       const { velocity, acceleration } = body
-      const direction = this.getOrientedDirection(input, PRIMARY_AXIS)
+      const direction = input.getOrientedAxis(PRIMARY_AXIS)
 
       if (direction.lengthSq() > .1)
         velocity.add(
@@ -32,21 +32,5 @@ export default class Controllable extends System {
 
       velocity.clampLength(0, body.maxVelocity)
     }
-  }
-
-  getOrientedDirection (input, axis) {
-    const { mainCamera } = this.camera
-    const direction = input.getAxis(axis)
-
-    const right = new Vector3(1, 0, 0).applyQuaternion(mainCamera.quaternion)
-    right.y = 0
-    right.normalize()
-
-    const forward = new Vector3(0, 0, -1).applyQuaternion(mainCamera.quaternion)
-    forward.y = 0
-    forward.normalize()
-
-    return right.multiplyScalar(direction.x)
-      .add(forward.multiplyScalar(direction.y))
   }
 }

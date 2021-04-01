@@ -115,8 +115,15 @@ export default defineComponent({
           type: 'Transform',
           position: new Vector3(0, 2, 0)
         },
-        { type: 'Body' },
-        { type: 'InputReader' },
+        {
+          type: 'Body',
+          acceleration: 100,
+          maxVelocity: 30
+        },
+        {
+          type: 'InputReader',
+          orientation: this.camera.mainCamera
+        },
         {
           type: 'MeshRenderer',
           geometry: new CylinderGeometry(4, 4, 3, 16, 1),

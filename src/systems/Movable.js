@@ -2,7 +2,7 @@ import { Vector3 } from 'three'
 import { System } from 'ape-ecs'
 
 export default class Movable extends System {
-  init (camera) {
+  init () {
     this.mainQuery = this.createQuery()
       .fromAll('Transform', 'Body').persist()
   }

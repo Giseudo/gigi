@@ -19,7 +19,7 @@ vec2 curveRemapUV(vec2 uv)
 
 vec4 scanLineIntensity(float uv, float resolution, float opacity)
 {
-  float intensity = sin(uv * resolution * PI * 4.0);
+  float intensity = sin(uv * resolution * PI);
   intensity = ((0.5 * intensity) + 0.5) * 0.9 + 0.1;
   return vec4(vec3(pow(intensity, opacity)), 1.0);
 }
@@ -30,7 +30,7 @@ void main() {
   if (greenUv.x < 0.0 || greenUv.y < 0.0 || greenUv.x > 1.0 || greenUv.y > 1.0){
     gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
   } else {
-    float offset = abs(vUv.x - .5) * -.01;
+    float offset = abs(vUv.x - .5) * -.02;
 
     vec2 redUv = curveRemapUV(vec2(vUv.x + offset, vUv.y + offset));
     vec2 blueUv = curveRemapUV(vec2(vUv.x - offset, vUv.y - offset));
@@ -40,13 +40,13 @@ void main() {
     float blue = texture(tDiffuse, blueUv).b;
 
     vec4 baseColor = vec4(red, green, blue, 1.0);
-    vec2 scanLineOpacity = vec2(.1);
+    vec2 scanLineOpacity = vec2(.25);
 
-    baseColor *= scanLineIntensity(greenUv.x, resolution.y, scanLineOpacity.x);
+    // baseColor *= scanLineIntensity(greenUv.x, resolution.y, scanLineOpacity.x);
     baseColor *= scanLineIntensity(greenUv.y, resolution.x, scanLineOpacity.y);
 
     float vignet = 1.0 - distance(vUv - .5, vec2(0.));
-    vignet = pow(vignet, .8);
+    vignet = pow(vignet, 1.8);
     vignet = clamp(0.0, 1.0, vignet);
 
     baseColor *= vignet;

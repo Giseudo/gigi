@@ -46,11 +46,11 @@ export class LensDistortionPass extends Pass {
 
   updateResolution = () => {
     if (window.innerWidth > window.innerHeight) {
-      this.uniforms.resolution.value.x = 320 * .5
-      this.uniforms.resolution.value.y = 240 * .5
+      this.uniforms.resolution.value.x = 320
+      this.uniforms.resolution.value.y = 240
     } else {
-      this.uniforms.resolution.value.x = 240 / 2
-      this.uniforms.resolution.value.y = 320 / 2
+      this.uniforms.resolution.value.x = 240 * 1.5
+      this.uniforms.resolution.value.y = 320 * 1.5
     }
   }
 }

@@ -20,17 +20,23 @@ module.exports = {
         .end()
 
     config.resolve.alias
-      .set('@Engine', alias('src/engine'))
-      .set('@Audio', alias('src/engine/Audio'))
-      .set('@Camera', alias('src/engine/Camera'))
-      .set('@Input', alias('src/engine/Input'))
-      .set('@Messenger', alias('src/engine/Messenger'))
-      .set('@NavMesh', alias('src/engine/NavMesh'))
-      .set('@Events', alias('src/engine/Messenger/events'))
-      .set('@Physics', alias('src/engine/Physics'))
-      .set('@Renderer', alias('src/engine/Renderer'))
-      .set('@Resources', alias('src/engine/Resources'))
-      .set('@Scene', alias('src/engine/Scene'))
+      .set('@UI', alias('src/ui'))
+      .set('@GEngine', alias('src/engine'))
+      .set('@GComponents', alias('src/components'))
+      .set('@GSystems', alias('src/systems'))
+      .set('@GEntities', alias('src/entities'))
+
+      .set('@GAudio', alias('src/engine/Audio'))
+      .set('@GWorld', alias('src/engine/World'))
+      .set('@GCamera', alias('src/engine/Camera'))
+      .set('@GInput', alias('src/engine/Input'))
+      .set('@GMessenger', alias('src/engine/Messenger'))
+      .set('@GNavMesh', alias('src/engine/NavMesh'))
+      .set('@GEvents', alias('src/engine/Messenger/events'))
+      .set('@GPhysics', alias('src/engine/Physics'))
+      .set('@GRenderer', alias('src/engine/Renderer'))
+      .set('@GResources', alias('src/engine/Resources'))
+      .set('@GScene', alias('src/engine/Scene'))
   },
 
   configureWebpack: {

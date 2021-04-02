@@ -1,6 +1,6 @@
 import { PerspectiveCamera, Vector3 } from 'three'
-import { RESIZE, UPDATE, INIT_CAMERA } from '@Events'
-import { subscribe, unsubscribe, publish } from '@Messenger'
+import { RESIZE, UPDATE, INIT_CAMERA } from '@GEvents'
+import { subscribe, unsubscribe, publish } from '@GMessenger'
 
 export default class GCamera {
   mainCamera

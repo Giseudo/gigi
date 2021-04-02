@@ -20,8 +20,8 @@ import {
   Vector2,
   Matrix4
 } from 'three'
-import { UPDATE, DRAW, RESIZE, INIT_RENDERER } from '@Events'
-import { publish, subscribe, unsubscribe } from '@Messenger'
+import { UPDATE, DRAW, RESIZE, INIT_RENDERER } from '@GEvents'
+import { publish, subscribe, unsubscribe } from '@GMessenger'
 
 const TIME_INTERVAL = 1 / 30
 

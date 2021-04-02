@@ -1,19 +1,26 @@
 import { Vector3 } from 'three'
 import { System } from 'ape-ecs'
+import { scene } from '@GEngine'
 
 export default class Drawable extends System {
-  init (scene) {
-    this.scene = scene
-    this.mainQuery = this.createQuery({ trackAdded: true, trackRemoved: true })
+  init () {
+    this.mainQuery = this.createQuery()
       .fromAll('Transform', 'MeshRenderer')
       .persist()
+
+    this.subscribe('MeshRenderer')
   }
 
   update () {
-    for (const entity of this.mainQuery.added) {
-      const { mesh } = entity.getOne('MeshRenderer')
+    for (const event of this.changes) {
+      if (event.op === 'add') {
+        const { mesh } = this.world.getComponent(event.component)
 
-      this.scene.add(mesh)
+        scene.add(mesh, event.component)
+      }
+
+      if (event.op === 'destroy')
+        scene.remove(event.component)
     }
 
     for (const entity of this.mainQuery.execute()) {
@@ -21,12 +28,6 @@ export default class Drawable extends System {
       const { mesh } = entity.getOne('MeshRenderer')
 
       mesh.position.copy(position)
-    }
-
-    for (const entity of this.mainQuery.removed) {
-      const meshRenderer = entity.getOne('MeshRenderer')
-
-      if (meshRenderer) this.scene.remove(meshRenderer.mesh)
     }
   }
 }

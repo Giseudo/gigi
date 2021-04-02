@@ -1,10 +1,9 @@
 import { Vector3 } from 'three'
 import { System } from 'ape-ecs'
-import { PRIMARY_AXIS } from '@Input'
+import { PRIMARY_AXIS } from '@GInput'
 
 export default class Controllable extends System {
-  init (camera) {
-    this.camera = camera
+  init () {
     this.mainQuery = this.createQuery()
       .fromAll('Transform', 'Body', 'InputReader')
       .persist()

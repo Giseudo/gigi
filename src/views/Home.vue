@@ -1,66 +1,23 @@
 <template>
-  <div class="g-home">
-    <!--g-ripples
-      :amplitude="amplitude"
-      :frequency="frequency"
-      :speed="speed"
-      :time-offset=".0"
-      :size="size"
-      :point-size="pointSize - 2"
-      :color="0xff0000"
-    />
-    <g-ripples
-      :amplitude="amplitude"
-      :frequency="frequency"
-      :speed="speed"
-      :time-offset=".25"
-      :size="size"
-      :point-size="pointSize - 2"
-      :color="0x00ff00"
-    />
-    <g-ripples
-      :amplitude="amplitude"
-      :frequency="frequency"
-      :speed="speed"
-      :time-offset=".5"
-      :size="size"
-      :point-size="pointSize"
-      :color="0x0000ff"
-    /-->
-  </div>
+  <div class="g-home" />
 </template>
 
 <script>
 import { defineComponent, markRaw } from 'vue'
 import { DoubleSide, CylinderGeometry, MeshBasicMaterial, TextureLoader, PointLight, ShaderMaterial, Color, Mesh, BoxGeometry, Vector3 } from 'three'
-import { UPDATE } from '@Events'
-import { BLOOM_LAYER } from '@Scene/layers'
-import { subscribe } from '@Messenger'
-import GProtagonist from '@/components/GProtagonist'
-import GRipples from '@/components/GRipples'
-import vertexShader from '@/components/GBox/box.vert.glsl'
-import fragmentShader from '@/components/GBox/box.frag.glsl'
+import { BLOOM_LAYER } from '@GScene/layers'
+
+import vertexShader from '@UI/GBox/box.vert.glsl'
+import fragmentShader from '@UI/GBox/box.frag.glsl'
 
 export default defineComponent({
   name: 'Home',
 
   inject: ['renderer', 'camera', 'scene', 'resources', 'world'],
 
-  components: {
-    GProtagonist,
-    GRipples
-  },
-
   data: () => markRaw({
     protagonist: null,
     ground: null,
-    warning: null,
-
-    amplitude: 500.0,
-    frequency: 1.0,
-    speed: 2.0,
-    size: 500,
-    pointSize: 6,
   }),
 
   async mounted () {
@@ -98,7 +55,7 @@ export default defineComponent({
           type: 'MeshRenderer',
           geometry: new CylinderGeometry(7.5, 7.5, 3, 16, 1, true),
           material: new MeshBasicMaterial({
-            color: 0xff6600,
+            color: 0xff6622,
             alphaMap: await loader.load(require('@/assets/warning_emission.png')),
             side: DoubleSide,
             transparent: true

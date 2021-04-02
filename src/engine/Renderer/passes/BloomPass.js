@@ -1,14 +1,14 @@
+import vertexShader from '../shaders/FullScreenQuad.vert.glsl'
+import fragmentShader from '../shaders/Bloom.frag.glsl'
 import { WebGLRenderTarget, NearestFilter, ShaderMaterial, UniformsUtils, Layer, MeshBasicMaterial, Vector2, Layers, Color } from 'three'
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer'
 import { Pass } from 'three/examples/jsm/postprocessing/Pass.js'
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass'
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass'
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass'
-import { BLOOM_LAYER } from '@Scene/layers'
-import { RESIZE } from '@Events'
-import { subscribe } from '@Messenger'
-import vertexShader from '../shaders/FullScreenQuad.vert.glsl'
-import fragmentShader from '../shaders/Bloom.frag.glsl'
+import { subscribe } from '@GMessenger'
+import { BLOOM_LAYER } from '@GScene/layers'
+import { RESIZE } from '@GEvents'
 
 const bloomLayer = new Layers()
 bloomLayer.set(BLOOM_LAYER)

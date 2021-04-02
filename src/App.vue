@@ -9,58 +9,27 @@
 </template>
 
 <script>
+import GEngine from '@GEngine'
+import { GTouchAxis } from '@UI'
 import { defineComponent, markRaw, reactive } from 'vue'
-import { publish } from '@Messenger'
-import { World } from 'ape-ecs'
-import { START, RESIZE } from '@Events'
-import { PRIMARY_AXIS } from '@Input'
-
-import GTouchAxis from '@/components/GTouchAxis'
-import GRenderer from '@Renderer'
-import GCamera from '@Camera'
-import GInput from '@Input'
-import GScene from '@Scene'
-import GResources from '@Resources'
-import GNavMesh from '@NavMesh'
-
-import Transform from '@/components/Transform'
-import Body from '@/components/Body'
-import InputReader from '@/components/InputReader'
-import MeshRenderer from '@/components/MeshRenderer'
-
-import Movable from '@/systems/Movable'
-import Controllable from '@/systems/Controllable'
-import Drawable from '@/systems/Drawable'
+import { publish } from '@GMessenger'
+import { START, RESIZE } from '@GEvents'
+import { PRIMARY_AXIS } from '@GInput'
 
 export default defineComponent({
   components: { GTouchAxis },
 
   provide () {
-    this.resources = new GResources()
-    this.camera = new GCamera()
-    this.scene = new GScene(this.camera)
-    this.world = new World()
-    this.renderer = new GRenderer(this.scene, this.camera.mainCamera, this.world)
-    this.navMesh = new GNavMesh()
-    this.input = new GInput()
-
-    this.world.registerComponent(Transform)
-    this.world.registerComponent(Body)
-    this.world.registerComponent(InputReader)
-    this.world.registerComponent(MeshRenderer)
-
-    this.world.registerSystem('update', Movable)
-    this.world.registerSystem('update', Controllable, [ this.camera ])
-    this.world.registerSystem('draw', Drawable, [ this.scene ])
+    this.engine = new GEngine()
 
     return {
-      resources: this.resources,
-      renderer: this.renderer,
-      camera: this.camera,
-      input: this.input,
-      scene: this.scene,
-      navMesh: this.navMesh,
-      world: this.world
+      resources: this.engine.resources,
+      renderer: this.engine.renderer,
+      camera: this.engine.camera,
+      input: this.engine.input,
+      scene: this.engine.scene,
+      navMesh: this.engine.navMesh,
+      world: this.engine.world
     }
   },
 
@@ -76,22 +45,13 @@ export default defineComponent({
   },
 
   beforeUnmount () {
-    this.renderer.destroy()
-    this.camera.destroy()
-    this.input.destroy()
-    this.navMesh.destroy()
-
+    this.engine.destroy()
     window.removeEventListener('resize', this.onResize)
   },
 
   methods: {
     async init () {
-      this.renderer.init(this.$refs.viewport)
-      this.camera.init()
-      this.input.init()
-      this.navMesh.init(
-        await this.resources.loadObject(require('@/assets/NavMesh.fbx').default)
-      )
+      await this.engine.init(this.$refs.viewport)
 
       this.state.isLoading = false
 

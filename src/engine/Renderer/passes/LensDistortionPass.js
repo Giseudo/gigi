@@ -1,9 +1,9 @@
-import { subscribe } from '@Messenger'
-import { RESIZE } from '@Events'
-import { ShaderMaterial, UniformsUtils, NearestFilter, Vector2 } from 'three'
-import { Pass } from 'three/examples/jsm/postprocessing/Pass.js'
 import vertexShader from '../shaders/FullScreenQuad.vert.glsl'
 import fragmentShader from '../shaders/LensDistortion.frag.glsl'
+import { ShaderMaterial, UniformsUtils, NearestFilter, Vector2 } from 'three'
+import { Pass } from 'three/examples/jsm/postprocessing/Pass.js'
+import { subscribe } from '@GMessenger'
+import { RESIZE } from '@GEvents'
 
 export class LensDistortionPass extends Pass {
   uniforms

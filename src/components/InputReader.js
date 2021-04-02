@@ -1,8 +1,8 @@
 import { Vector2, Vector3 } from 'three'
 import { Component } from 'ape-ecs'
-import { PRIMARY_AXIS } from '@Input'
-import { subscribe, unsubscribe } from '@Messenger'
-import { AXIS_CHANGED } from '@Events'
+import { subscribe, unsubscribe } from '@GMessenger'
+import { PRIMARY_AXIS } from '@GInput'
+import { AXIS_CHANGED } from '@GEvents'
 
 export default class InputReader extends Component {
   init () {

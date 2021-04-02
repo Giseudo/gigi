@@ -1,0 +1,5 @@
+export { default as Body } from './Body'
+export { default as Collider } from './Collider'
+export { default as InputReader } from './InputReader'
+export { default as MeshRenderer } from './MeshRenderer'
+export { default as Transform } from './Transform'

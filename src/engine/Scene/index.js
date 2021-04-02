@@ -14,7 +14,14 @@ export default class GScene extends Scene {
 
     if (!object) return
 
+    const { material, geometry } = object
+
+    if (material) material.dispose()
+    if (geometry) geometry.dispose()
+
     super.remove(object)
+
+    object.remove()
 
     delete object[id]
   }

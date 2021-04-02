@@ -16,27 +16,30 @@ export default defineComponent({
   inject: ['camera', 'entityFactory'],
 
   data: () => markRaw({
-    protagonist: null,
-    warning: null,
-    ground: null,
+    objects: []
   }),
 
   async mounted () {
     this.ground = await this.entityFactory.create('Environment')
 
-    this.warning = await this.entityFactory.create('Warning', {
-      position: new Vector3(-2, 3.8, -2),
-      radius: 10
-    })
+    this.objects.push(
+      await this.entityFactory.create('Warning', {
+        position: new Vector3(-2, 6, -2),
+        radius: 8,
+        height: 5
+      })
+    )
 
-    this.protagonist = await this.entityFactory.create('Protagonist', {
+    const protagonist = await this.entityFactory.create('Protagonist', {
       position: new Vector3(0, 2, 10),
       radius: 2,
       height: 2,
       orientation: this.camera.mainCamera
     })
 
-    const transform = this.protagonist.getOne('Transform')
+    this.objects.push(protagonist)
+
+    const transform = protagonist.getOne('Transform')
 
     this.camera.mainCamera.position.set(0, 15, 30)
     this.camera.mainCamera.lookAt(transform.position)
@@ -44,9 +47,7 @@ export default defineComponent({
   },
 
   beforeUnmount () {
-    this.ground.destroy()
-    this.warning.destroy()
-    this.protagonist.destroy()
+    this.objects.forEach(obj => obj.destroy())
   },
 })
 </script>

@@ -2,6 +2,14 @@ import { Vector3 } from 'three'
 import { Component } from 'ape-ecs'
 
 export default class Transform extends Component {
+  static properties  = {
+    position: new Vector3(),
+    rotation: new Vector3(),
+    scale: new Vector3(),
+    parent: null,
+    children: []
+  }
+
   init () {
     this.position = this.position.clone()
     this.rotation = this.rotation.clone()
@@ -31,12 +39,4 @@ export default class Transform extends Component {
 
     return this.children.splice(index, 1)
   }
-}
-
-Transform.properties = {
-  position: new Vector3(),
-  rotation: new Vector3(),
-  scale: new Vector3(),
-  parent: null,
-  children: []
 }

@@ -8,4 +8,8 @@ export default class Body extends Component {
     acceleration: 60.0,
     useGravity: false
   }
+
+  init () {
+    this.velocity = this.velocity.clone()
+  }
 }

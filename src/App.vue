@@ -29,7 +29,8 @@ export default defineComponent({
       input: this.engine.input,
       scene: this.engine.scene,
       navMesh: this.engine.navMesh,
-      world: this.engine.world
+      world: this.engine.world,
+      entityFactory: this.engine.world.entityFactory
     }
   },
 

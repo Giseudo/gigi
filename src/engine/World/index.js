@@ -1,4 +1,5 @@
 import { World } from 'ape-ecs'
+import EntityFactory from './entityFactory'
 
 import {
   Transform,
@@ -14,6 +15,8 @@ import {
 } from '@GSystems'
 
 export default class GWorld extends World {
+  entityFactory = new EntityFactory(this)
+
   init () {
     this.registerComponent(Transform)
     this.registerComponent(Body)

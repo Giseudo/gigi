@@ -39,4 +39,8 @@ export default class GResources {
 
     return object
   }
+
+  async loadTexture (file) {
+    return await this.textureLoader.load(file)
+  }
 }

@@ -54,7 +54,7 @@ export default defineComponent({
   },
 
   beforeUnmount () {
-    this.objects.forEach(obj => obj.destroy())
+    this.objects.forEach(obj => obj.destroy)
   },
 })
 </script>

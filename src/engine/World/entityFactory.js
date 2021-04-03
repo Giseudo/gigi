@@ -9,7 +9,6 @@ export default class EntityFactory {
     const entity = await require(`@GEntities/${id}`).default(params)
 
     return this.world.createEntity({
-      id,
       ...entity
     })
   }

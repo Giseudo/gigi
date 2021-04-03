@@ -1,4 +1,4 @@
-export { default as Controllable } from './Controllable'
-export { default as Drawable } from './Drawable'
-export { default as Movable } from './Movable'
-export { default as Debug } from './Debug'
+export { default as ControllableSystem } from './Controllable'
+export { default as DrawableSystem } from './Drawable'
+export { default as MovableSystem } from './Movable'
+export { default as DebugSystem } from './Debug'

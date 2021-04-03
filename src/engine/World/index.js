@@ -1,35 +1,25 @@
 import { World } from 'ape-ecs'
 import EntityFactory from './entityFactory'
+import * as components from '@GComponents'
 
 import {
-  Transform,
-  Body,
-  InputReader,
-  MeshRenderer,
-  Line
-} from '@GComponents'
-
-import {
-  Movable,
-  Controllable,
-  Drawable,
-  Debug
+  MovableSystem,
+  ControllableSystem,
+  DrawableSystem,
+  DebugSystem
 } from '@GSystems'
 
 export default class GWorld extends World {
   entityFactory = new EntityFactory(this)
 
   init () {
-    this.registerComponent(Transform)
-    this.registerComponent(Body)
-    this.registerComponent(InputReader)
-    this.registerComponent(MeshRenderer)
-    this.registerComponent(Line)
+    for (const key in components)
+      this.registerComponent(components[key])
 
-    this.registerSystem('update', Movable)
-    this.registerSystem('update', Controllable)
-    this.registerSystem('draw', Drawable)
-    this.registerSystem('draw', Debug)
+    this.registerSystem('update', MovableSystem)
+    this.registerSystem('update', ControllableSystem)
+    this.registerSystem('draw', DrawableSystem)
+    this.registerSystem('draw', DebugSystem)
   }
 
   destroy () { }

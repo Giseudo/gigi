@@ -20,7 +20,7 @@ export default async (params) => {
   return {
     components: [
       { type: 'Transform', position, rotation, scale },
-      { type: 'Body', acceleration, maxVelocity, orientation },
+      { type: 'Rigidbody', acceleration, maxVelocity, orientation },
       { type: 'InputReader', orientation },
       {
         type: 'MeshRenderer',

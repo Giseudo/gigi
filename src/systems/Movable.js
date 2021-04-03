@@ -4,7 +4,7 @@ import { System } from 'ape-ecs'
 export default class Movable extends System {
   init () {
     this.mainQuery = this.createQuery()
-      .fromAll('Transform', 'Body').persist()
+      .fromAll('Transform', 'Rigidbody').persist()
   }
 
   update () {
@@ -12,7 +12,7 @@ export default class Movable extends System {
 
     for (const entity of this.mainQuery.execute()) {
       const transform = entity.getOne('Transform')
-      const { velocity } = entity.getOne('Body')
+      const { velocity } = entity.getOne('Rigidbody')
 
       transform.position.add(
         velocity.clone().multiplyScalar(deltaTime)

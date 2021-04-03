@@ -1,7 +1,7 @@
 import { Vector3 } from 'three'
 import { Component } from 'ape-ecs'
 
-export default class Body extends Component {
+export default class Rigidbody extends Component {
   static properties = {
     velocity: new Vector3(),
     maxVelocity: 20.0,

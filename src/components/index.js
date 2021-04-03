@@ -1,4 +1,4 @@
-export { default as BodyComponent } from './Body'
+export { default as RigidbodyComponent } from './Rigidbody'
 export { default as ColliderComponent } from './Collider'
 export { default as InputReaderComponent } from './InputReader'
 export { default as MeshRendererComponent } from './MeshRenderer'

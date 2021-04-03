@@ -5,7 +5,7 @@ import { PRIMARY_AXIS } from '@GInput'
 export default class Controllable extends System {
   init () {
     this.mainQuery = this.createQuery()
-      .fromAll('Transform', 'Body', 'InputReader')
+      .fromAll('Transform', 'Rigidbody', 'InputReader')
       .persist()
   }
 
@@ -15,9 +15,9 @@ export default class Controllable extends System {
     for (const entity of this.mainQuery.execute()) {
       const input = entity.getOne('InputReader')
       const transform = entity.getOne('Transform')
-      const body = entity.getOne('Body')
+      const rigidbody = entity.getOne('Rigidbody')
 
-      const { velocity, acceleration } = body
+      const { velocity, acceleration, maxVelocity } = rigidbody
       const direction = input.getOrientedAxis(PRIMARY_AXIS)
 
       if (direction.lengthSq() > .1)
@@ -29,7 +29,7 @@ export default class Controllable extends System {
       else
         velocity.set(0, 0, 0)
 
-      velocity.clampLength(0, body.maxVelocity)
+      velocity.clampLength(0, maxVelocity)
     }
   }
 }

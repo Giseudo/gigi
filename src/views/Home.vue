@@ -44,6 +44,13 @@ export default defineComponent({
         height: 5
       })
     )
+
+    this.objects.push(
+      await this.entityFactory.create('Line', {
+        origin: transform.position,
+        end: new Vector3(0, 2, -50).add(transform.position)
+      })
+    )
   },
 
   beforeUnmount () {

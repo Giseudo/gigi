@@ -5,13 +5,15 @@ import {
   Transform,
   Body,
   InputReader,
-  MeshRenderer
+  MeshRenderer,
+  Line
 } from '@GComponents'
 
 import {
   Movable,
   Controllable,
-  Drawable
+  Drawable,
+  Debug
 } from '@GSystems'
 
 export default class GWorld extends World {
@@ -22,10 +24,12 @@ export default class GWorld extends World {
     this.registerComponent(Body)
     this.registerComponent(InputReader)
     this.registerComponent(MeshRenderer)
+    this.registerComponent(Line)
 
     this.registerSystem('update', Movable)
     this.registerSystem('update', Controllable)
     this.registerSystem('draw', Drawable)
+    this.registerSystem('draw', Debug)
   }
 
   destroy () { }

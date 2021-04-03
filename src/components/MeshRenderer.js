@@ -1,5 +1,6 @@
 import { Mesh } from 'three'
 import { Component } from 'ape-ecs'
+import { DEFAULT_LAYER } from '@GScene/layers'
 
 export default class MeshRenderer extends Component {
   object
@@ -8,7 +9,7 @@ export default class MeshRenderer extends Component {
     mesh: null,
     geometry: null,
     material: null,
-    layer: null
+    layer: DEFAULT_LAYER
   }
 
   init () {

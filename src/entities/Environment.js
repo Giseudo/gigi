@@ -1,13 +1,17 @@
 import vertexShader from '@UI/GBox/box.vert.glsl'
 import fragmentShader from '@UI/GBox/box.frag.glsl'
-import { Color, ShaderMaterial } from 'three'
+import { Color, ShaderMaterial, Vector3 } from 'three'
 import { world, resources } from '@GEngine'
 import { BLOOM_LAYER } from '@GScene/layers'
 
 export default async (params) => {
+  const {
+    position = new Vector3()
+  } = params
+
   return {
     components: [
-      { type: 'Transform' },
+      { type: 'Transform', position },
       {
         type: 'MeshRenderer',
         mesh: await resources.loadObject(

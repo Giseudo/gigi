@@ -6,16 +6,14 @@ const { FBXLoader } = THREE
 export default class GResources {
   fbxLoader = new FBXLoader()
   textureLoader = new TextureLoader()
+  models = {}
+  textures = {}
 
-  constructor () {
-    //
-  }
-
-  loadTexture () {
-    //
-  }
+  constructor () { }
 
   async loadObject (file, material) {
+    if (this.models[file]) return this.models[file].clone()
+
     const object = await new Promise((resolve, reject) =>
       this.fbxLoader.load(
         file,
@@ -29,7 +27,9 @@ export default class GResources {
 
           resolve(object)
         },
-        event => {},
+        event => {
+          //
+        },
         err => {
           console.error(err)
           reject(err)
@@ -37,10 +37,16 @@ export default class GResources {
       )
     )
 
+    this.models[file] = object.clone()
+
     return object
   }
 
   async loadTexture (file) {
-    return await this.textureLoader.load(file)
+    if (this.textures[file]) return this.textures[file]
+
+    this.textures[file] = await this.textureLoader.load(file)
+
+    return this.textures[file]
   }
 }

@@ -21,7 +21,7 @@ export default async (params) => {
             fragmentShader,
             uniforms: {
               color: { type: 'v3', value: new Color(0x73858e) },
-              fogColor: { type: 'v3', value: new Color(0x252428) },
+              fogColor: { type: 'v3', value: new Color(0xe6e4bd) },
               tMatcap: { value: await resources.loadTexture(require('@/assets/matcap.png')) }
             }
           })

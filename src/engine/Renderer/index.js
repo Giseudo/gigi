@@ -50,7 +50,7 @@ export default class GRenderer {
     this.world = world
 
     this.renderer = new WebGLRenderer()
-    this.renderer.setClearColor(0x252428)
+    this.renderer.setClearColor(0xe6e4bd)
     this.renderer.setSize(this.width, this.height)
     this.renderer.shadowMap.enabled = true
     this.renderer.setPixelRatio(window.devicePixelRatio / 2)

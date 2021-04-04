@@ -10,9 +10,9 @@
     "ape-ecs": "^1.3.1",
     "core-js": "^3.6.5",
     "three": "^0.126.1",
-    "three-pathfinding": "^0.14.0",
     "vue": "^3.0.0",
-    "vue-router": "^4.0.0-0"
+    "vue-router": "^4.0.0-0",
+    "yuka": "^0.7.3"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",

@@ -1,18 +1,14 @@
-import { Pathfinding } from 'three-pathfinding'
+import { NavMesh, NavMeshLoader } from 'yuka'
 
-export default class GNavMesh {
-  pathfinding = new Pathfinding()
+export default class GNavMesh extends NavMesh {
+  loader = new NavMeshLoader()
 
-  constructor () { }
+  async init (object) {
+    const navigator = await this.loader.load(
+      require('@/assets/NavMesh.glb').default, { epsilonCoplanarTest: .25 }
+    )
 
-  init (object) {
-    object.traverse(node => {
-      if (node.isMesh)
-        this.pathfinding.setZoneData(
-          'Level 1',
-          Pathfinding.createZone(node.geometry)
-        )
-    })
+    this.fromPolygons(navigator.regions)
   }
 
   destroy () { }

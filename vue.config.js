@@ -14,7 +14,7 @@ module.exports = {
 
     config.module
       .rule('models')
-      .test(/\.fbx$/)
+      .test(/\.fbx|glb$/)
       .use('file-loader')
         .loader('file-loader')
         .end()

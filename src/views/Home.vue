@@ -21,7 +21,7 @@ export default defineComponent({
 
   async mounted () {
     const protagonist = await this.entityFactory.create('Protagonist', {
-      position: new Vector3(0, 2, 10),
+      position: new Vector3(0, 0, 10),
       radius: 2,
       height: 2,
       orientation: this.camera.mainCamera

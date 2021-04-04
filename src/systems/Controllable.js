@@ -3,6 +3,9 @@ import { System } from 'ape-ecs'
 import { PRIMARY_AXIS } from '@GInput'
 
 export default class Controllable extends System {
+  region = null
+  position = new Vector3()
+
   init () {
     this.mainQuery = this.createQuery()
       .fromAll('Transform', 'Rigidbody', 'InputReader')

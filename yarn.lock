@@ -8699,3 +8699,8 @@ yargs@^16.0.0:
     string-width "^4.2.0"
     y18n "^5.0.5"
     yargs-parser "^20.2.2"
+
+yuka@^0.7.3:
+  version "0.7.3"
+  resolved "https://registry.yarnpkg.com/yuka/-/yuka-0.7.3.tgz#083311999df8e1cb8132943b18d1c8b482c75f9e"
+  integrity sha512-ExTwCudFfmwGO9hMdE4/qb+8n+TRvZ+WwhuThVsSZRvTZGrHyD6V/Ufa/URnb5Dc7l+261Te2k904PGuzSLR8g==

@@ -38,9 +38,7 @@ export default class GEngine {
     this.camera.init()
     this.input.init()
     this.world.init()
-    this.navMesh.init(
-      await this.resources.loadObject(require('@/assets/NavMesh.fbx').default)
-    )
+    await this.navMesh.init()
   }
 
   destroy () {

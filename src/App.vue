@@ -67,7 +67,7 @@ export default defineComponent({
     },
 
     onTouchChange (direction) {
-      this.input.setAxis(PRIMARY_AXIS, direction)
+      this.engine.input.setAxis(PRIMARY_AXIS, direction)
     }
   }
 })

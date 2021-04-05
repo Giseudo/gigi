@@ -1,9 +1,9 @@
 <template>
   <div class="g-app">
-    <router-view  v-if="!state.isLoading" />
-
     <div class="viewport" ref="viewport">
+      <router-view  v-if="!state.isLoading" />
       <g-touch-axis @move="onTouchChange" />
+      <g-dialogue />
     </div>
   </div>
 </template>
@@ -11,13 +11,17 @@
 <script>
 import GEngine from '@GEngine'
 import { GTouchAxis } from '@UI'
+import { GDialogue } from '@UI'
 import { defineComponent, markRaw, reactive } from 'vue'
 import { publish } from '@GMessenger'
 import { START, RESIZE } from '@GEvents'
 import { PRIMARY_AXIS } from '@GInput'
 
 export default defineComponent({
-  components: { GTouchAxis },
+  components: {
+    GTouchAxis,
+    GDialogue
+  },
 
   provide () {
     this.engine = new GEngine()
@@ -81,7 +85,10 @@ export default defineComponent({
   margin: 0;
 }
 
-body, html, #app { height: 100%; }
+body, html, #app {
+  height: 100%;
+  font-family: 'PressStart2P';
+}
 
 .g-app {
   position: relative;
@@ -94,6 +101,11 @@ body, html, #app { height: 100%; }
     bottom: 0;
     left: 0;
     touch-action: none;
+    & > .g-dialogue {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+    }
   }
 }
 </style>

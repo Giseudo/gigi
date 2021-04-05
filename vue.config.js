@@ -48,6 +48,14 @@ module.exports = {
     ]
   },
 
+  css: {
+    loaderOptions: {
+      sass: {
+        prependData: `@import "@/styles/typo.scss";`
+      }
+    }
+  },
+
   devServer: {
     disableHostCheck: true
   }

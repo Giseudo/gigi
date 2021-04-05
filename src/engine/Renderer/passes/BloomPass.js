@@ -41,12 +41,13 @@ export class BloomPass extends Pass {
     this.darkMaterial = new MeshBasicMaterial({ color: 0x000000 })
 
     const pixelRatio = renderer.getPixelRatio() / 2
-    const width = (window.innerWidth * pixelRatio) * 4
-    const height = (window.innerHeight * pixelRatio) * 1
+    const width = window.innerWidth * pixelRatio
+    const height = window.innerHeight * pixelRatio
 
     this.target = new WebGLRenderTarget(width, height)
     this.target.texture.minFilter = NearestFilter
     this.target.texture.magFilter = NearestFilter
+    this.target.texture.generateMipmaps = false
 
     this.composer = new EffectComposer(renderer, this.target)
     this.composer.renderToScreen = false
@@ -110,7 +111,7 @@ export class BloomPass extends Pass {
     const width = window.innerWidth * pixelRatio
     const height = window.innerHeight * pixelRatio
 
-    this.target.setSize(width, height)
+    this.composer.setSize(width, height)
     this.bloomPass.setSize(width, height)
   }
 }

@@ -31,7 +31,7 @@ export default defineComponent({
 
     const transform = protagonist.getOne('Transform')
 
-    this.camera.mainCamera.position.set(0, 15, 30)
+    this.camera.mainCamera.position.set(0, 10, 30)
     this.camera.mainCamera.lookAt(transform.position)
     this.camera.follow(transform)
 
@@ -39,22 +39,21 @@ export default defineComponent({
 
     this.objects.push(
       await this.entityFactory.create('Warning', {
-        position: new Vector3(-2, 6, -2),
+        position: new Vector3(-1, 3, -1),
         radius: 8,
-        height: 5
+        height: 3
       })
     )
 
     this.objects.push(
-      await this.entityFactory.create('Line', {
-        origin: transform.position,
-        end: new Vector3(0, 2, -50).add(transform.position)
+      await this.entityFactory.create('BMO', {
+        position: new Vector3(0, 0, -120)
       })
     )
   },
 
   beforeUnmount () {
-    this.objects.forEach(obj => obj.destroy)
+    this.objects.forEach(obj => obj.destroy())
   },
 })
 </script>

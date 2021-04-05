@@ -1,5 +1,7 @@
-import { CylinderGeometry, MeshBasicMaterial, Vector3 } from 'three'
-import { world } from '@GEngine'
+import vertexShader from '@UI/GBox/box.vert.glsl'
+import fragmentShader from '@UI/GBox/box.frag.glsl'
+import { Color, ShaderMaterial, CylinderGeometry, MeshBasicMaterial, Vector3 } from 'three'
+import { world, resources } from '@GEngine'
 import { BLOOM_LAYER } from '@GScene/layers'
 
 export default async (params) => {
@@ -7,12 +9,38 @@ export default async (params) => {
     position = new Vector3(),
     rotation = new Vector3(),
     scale = new Vector3(),
-    acceleration = 200,
-    maxVelocity = 30,
+    acceleration = 50,
+    maxVelocity = 20,
     radius = 4,
     height = 3,
     orientation,
   } = params
+
+  const navigator = await resources.loadObject(require('@/assets/Navigator.fbx').default)
+  const matcap = await resources.loadTexture(require('@/assets/matcap.png'))
+
+  navigator.traverse(node => {
+    if (node.isMesh) {
+      if (node.name === 'Emission') {
+        node.material = new MeshBasicMaterial({ color: 0xff2200 })
+        node.layers.enable(BLOOM_LAYER)
+      }
+
+      if (node.name === 'Body')
+        node.material = new ShaderMaterial({
+          vertexShader,
+          fragmentShader,
+          uniforms: {
+            color: {
+              value: new Color(0xC0C0C0)
+            },
+            tMatcap: {
+              value: matcap
+            }
+          }
+        })
+    }
+  })
 
   if (!orientation)
     console.warn('InputReader: orientation is required')
@@ -24,9 +52,7 @@ export default async (params) => {
       { type: 'InputReader', orientation },
       {
         type: 'MeshRenderer',
-        geometry: new CylinderGeometry(radius, radius, height, 16, 1),
-        material: new MeshBasicMaterial({ color: 0xff0000 }),
-        layer: BLOOM_LAYER,
+        mesh: navigator,
       },
     ]
   }

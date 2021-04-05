@@ -8,7 +8,7 @@ export default class Controllable extends System {
 
   init () {
     this.mainQuery = this.createQuery()
-      .fromAll('Transform', 'Rigidbody', 'InputReader')
+      .fromAll('Transform', 'MeshRenderer', 'Rigidbody', 'InputReader')
       .persist()
   }
 
@@ -19,6 +19,7 @@ export default class Controllable extends System {
       const input = entity.getOne('InputReader')
       const transform = entity.getOne('Transform')
       const rigidbody = entity.getOne('Rigidbody')
+      const { mesh } = entity.getOne('MeshRenderer')
 
       const { velocity, acceleration, maxVelocity } = rigidbody
       const direction = input.getOrientedAxis(PRIMARY_AXIS)
@@ -33,6 +34,14 @@ export default class Controllable extends System {
         velocity.set(0, 0, 0)
 
       velocity.clampLength(0, maxVelocity)
+
+      const smoothDirection = new Vector3(0, 0, 1)
+        .applyQuaternion(mesh.quaternion)
+        .lerp(direction, deltaTime * 5.)
+        .add(transform.position)
+
+      mesh.lookAt(smoothDirection)
+
     }
   }
 }

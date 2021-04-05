@@ -40,7 +40,7 @@ void main() {
     float blue = texture(tDiffuse, blueUv).b;
 
     vec4 baseColor = vec4(red, green, blue, 1.0);
-    vec2 scanLineOpacity = vec2(.25);
+    vec2 scanLineOpacity = vec2(.05);
 
     // baseColor *= scanLineIntensity(greenUv.x, resolution.y, scanLineOpacity.x);
     baseColor *= scanLineIntensity(greenUv.y, resolution.x, scanLineOpacity.y);

@@ -18,6 +18,7 @@ export default class GResources {
       this.fbxLoader.load(
         file,
         object => {
+          console.log(object)
           object.traverse(e => {
             if (e.isMesh && material) {
               e.material.dispose()

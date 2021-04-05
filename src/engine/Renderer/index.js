@@ -50,7 +50,7 @@ export default class GRenderer {
     this.world = world
 
     this.renderer = new WebGLRenderer()
-    this.renderer.setClearColor(0xe6e4bd)
+    this.renderer.setClearColor(0x00F4B8)
     this.renderer.setSize(this.width, this.height)
     this.renderer.shadowMap.enabled = true
     this.renderer.setPixelRatio(window.devicePixelRatio / 2)
@@ -73,6 +73,7 @@ export default class GRenderer {
     this.uniforms.tDepth.value = this.target.depthTexture
 
     this.composer = new EffectComposer(this.renderer, this.target)
+    subscribe(RESIZE, this.onResize)
   }
 
   init (el) {
@@ -87,7 +88,6 @@ export default class GRenderer {
 
     this.renderer.setAnimationLoop(this.gameLoop)
 
-    subscribe(RESIZE, this.onResize)
     publish(INIT_RENDERER)
 
     el.appendChild(this.renderer.domElement)

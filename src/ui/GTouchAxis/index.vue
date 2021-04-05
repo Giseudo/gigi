@@ -76,7 +76,7 @@ export default {
     onTouchEnd (event) {
       this.direction.set(0, 0)
       this.isDragging = false
-
+      this.$emit('move', this.direction)
     }
   }
 }

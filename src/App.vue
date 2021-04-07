@@ -3,7 +3,7 @@
     <div class="viewport" ref="viewport">
       <router-view  v-if="!state.isLoading" />
       <g-touch-axis @move="onTouchChange" />
-      <g-dialogue />
+      <g-dialogue v-if="state.showDialogue" />
     </div>
   </div>
 </template>
@@ -57,6 +57,7 @@ export default defineComponent({
   methods: {
     async init () {
       await this.engine.init(this.$refs.viewport)
+      this.skybox = this.engine.world.entityFactory.create('Skybox')
 
       this.state.isLoading = false
 

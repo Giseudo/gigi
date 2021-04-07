@@ -31,7 +31,7 @@ export default defineComponent({
 
     const transform = protagonist.getOne('Transform')
 
-    this.camera.mainCamera.position.set(0, 10, 30)
+    this.camera.mainCamera.position.set(0, 10, 25)
     this.camera.mainCamera.lookAt(transform.position)
     this.camera.follow(transform)
 
@@ -45,11 +45,22 @@ export default defineComponent({
       })
     )
 
-    this.objects.push(
-      await this.entityFactory.create('BMO', {
-        position: new Vector3(0, 0, -120)
-      })
-    )
+    const bmo = await this.entityFactory.create('BMO', {
+      position: new Vector3(0, 0, -120)
+    })
+    const { position: bmoPosition } = bmo.getOne('Transform')
+
+    this.objects.push(bmo)
+
+    for (let i = 0; i < 6; i++) {
+      this.objects.push(
+        await this.entityFactory.create('GrassBush', {
+          position: bmoPosition.clone()
+          .sub(new Vector3(3, 0, 0))
+          .add(new Vector3(Math.cos(i) * 5, 0, Math.sin(i) * 5))
+        })
+      )
+    }
   },
 
   beforeUnmount () {

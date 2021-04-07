@@ -1,7 +1,5 @@
 import { TextureLoader } from 'three'
-import 'three/examples/js/loaders/FBXLoader'
-
-const { FBXLoader } = THREE
+import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader'
 
 export default class GResources {
   fbxLoader = new FBXLoader()

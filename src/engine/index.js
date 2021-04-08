@@ -5,6 +5,7 @@ import GInput from '@GInput'
 import GScene from '@GScene'
 import GResources from '@GResources'
 import GNavMesh from '@GNavMesh'
+import GNetwork from '@GNetwork'
 
 export const resources = new GResources()
 export const camera = new GCamera()
@@ -13,6 +14,7 @@ export const world = new GWorld()
 export const renderer = new GRenderer(scene, camera.mainCamera, world)
 export const navMesh = new GNavMesh()
 export const input = new GInput()
+export const network = new GNetwork()
 
 export default class GEngine {
   resources
@@ -22,6 +24,7 @@ export default class GEngine {
   renderer
   navMesh
   input
+  network
 
   constructor () {
     this.resources = resources

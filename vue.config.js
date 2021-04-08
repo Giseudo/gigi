@@ -37,6 +37,7 @@ module.exports = {
       .set('@GRenderer', alias('src/engine/Renderer'))
       .set('@GResources', alias('src/engine/Resources'))
       .set('@GScene', alias('src/engine/Scene'))
+      .set('@GNetwork', alias('src/engine/Network'))
 
     config.optimization
       .minimizer('terser')

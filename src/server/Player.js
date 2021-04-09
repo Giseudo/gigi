@@ -5,7 +5,7 @@ export default class Player {
     }
 
     setInitialPosition () {
-        this.setPosition(0, 0, 105)
+        this.setPosition(0, 0, 10)
     }
 
     setPosition (positionX, positionY, positionZ) {

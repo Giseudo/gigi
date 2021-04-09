@@ -4,6 +4,9 @@
       <router-view  v-if="!state.isLoading" />
       <g-touch-axis @move="onTouchChange" />
       <g-dialogue v-if="state.showDialogue" />
+      <div class="players">
+        {{ players }}
+      </div>
     </div>
   </div>
 </template>
@@ -13,8 +16,8 @@ import GEngine from '@GEngine'
 import { GTouchAxis } from '@UI'
 import { GDialogue } from '@UI'
 import { defineComponent, markRaw, reactive } from 'vue'
-import { publish } from '@GMessenger'
-import { START, RESIZE } from '@GEvents'
+import { publish, subscribe } from '@GMessenger'
+import { START, RESIZE, PLAYER_CONNECTED, PLAYERS_CHANGED } from '@GEvents'
 import { PRIMARY_AXIS } from '@GInput'
 
 export default defineComponent({
@@ -38,19 +41,37 @@ export default defineComponent({
     }
   },
 
+  computed: {
+    players () {
+      return JSON.stringify(this.state.players)
+    }
+  },
+
   data: () => markRaw({
+    protagonistId: null,
+    protagonist: {},
     state: reactive({
       isLoading: true,
+      players: []
     })
   }),
 
   mounted () {
     this.init()
+
+    subscribe(PLAYER_CONNECTED, this.onProtagonistConnected)
+    subscribe(PLAYERS_CHANGED, this.onPlayersChanged)
+
     window.addEventListener('resize', this.onResize)
   },
 
   beforeUnmount () {
     this.engine.destroy()
+    this.protagonist.destroy()
+
+    for (const index in this.state.players)
+      this.state.players[index].destroy()
+
     window.removeEventListener('resize', this.onResize)
   },
 
@@ -60,6 +81,7 @@ export default defineComponent({
       this.skybox = this.engine.world.entityFactory.create('Skybox')
 
       this.state.isLoading = false
+      this.engine.camera.mainCamera.position.set(0, 10, 25)
 
       publish(START)
     },
@@ -73,6 +95,40 @@ export default defineComponent({
 
     onTouchChange (direction) {
       this.engine.input.setAxis(PRIMARY_AXIS, direction)
+    },
+
+    async onProtagonistConnected ({ player }) {
+      const { X, Y, Z } = player.position
+
+      this.protagonistId = player.socketId
+      this.protagonist = await this.engine.world.entityFactory.create('Protagonist', {
+        position: new THREE.Vector3(X, Y, Z),
+        orientation: this.engine.camera.mainCamera
+      })
+
+      const transform = this.protagonist.getOne('Transform')
+
+      this.engine.camera.mainCamera.lookAt(transform.position)
+      this.engine.camera.follow(transform)
+    },
+
+    async onPlayersChanged ({ players }) {
+      for (let j = 0; j < this.state.players.length; j++) {
+        this.state.players[j].destroy()
+        this.state.players.splice(j, 1)
+      }
+
+      for (let i = 0; i < players.length; i++) {
+        const player = players[i]
+
+        if (player.socketId === this.protagonistId) continue
+
+        const entity = await this.engine.world.entityFactory.create('Player', {
+          position: new THREE.Vector3(0, 0, 10)
+        })
+
+        this.state.players.push(entity)
+      }
     }
   }
 })
@@ -106,6 +162,14 @@ body, html, #app {
       position: absolute;
       bottom: 0;
       left: 0;
+    }
+    & > .players {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      padding: 20px;
+      background: black;
+      color: white;
     }
   }
 }

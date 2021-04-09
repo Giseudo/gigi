@@ -20,24 +20,9 @@ export default defineComponent({
   }),
 
   async mounted () {
-    const protagonist = await this.entityFactory.create('Protagonist', {
-      position: new Vector3(0, 0, 10),
-      radius: 2,
-      height: 2,
-      orientation: this.camera.mainCamera
-    })
-
-    this.objects.push(protagonist)
-
-    const transform = protagonist.getOne('Transform')
-
-    this.camera.mainCamera.position.set(0, 10, 25)
-    this.camera.mainCamera.lookAt(transform.position)
-    this.camera.follow(transform)
-
     this.objects.push(await this.entityFactory.create('Environment'))
 
-    this.objects.push(
+    /*this.objects.push(
       await this.entityFactory.create('Warning', {
         position: new Vector3(-1, 3, -1),
         radius: 8,
@@ -60,7 +45,7 @@ export default defineComponent({
           .add(new Vector3(Math.cos(i) * 5, 0, Math.sin(i) * 5))
         })
       )
-    }
+    }*/
   },
 
   beforeUnmount () {

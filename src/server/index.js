@@ -9,9 +9,11 @@ const io = new Server(webserver, {cors: {origin: '*'}})
 
 const players = []
 io.on('connection', function (socket) {
-  
-  players.push(new Player(socket.id))
-  io.emit('refreshPlayersState', players)
+  const player = new Player(socket.id)
+  players.push(player)
+
+  io.emit('connected', player)
+  io.emit('changed:players', players)
 
   socket.on('disconnect', () => {
     for (let i = 0; i < players.length; i++) {
@@ -20,7 +22,7 @@ io.on('connection', function (socket) {
       }
 
       players.splice(i, 1)
-      io.emit('refreshPlayersState', players)
+      io.emit('changed:players', players)
 
       break
     }
@@ -37,7 +39,7 @@ io.on('connection', function (socket) {
       break;
     }
 
-    io.emit('refreshPlayersState', players)
+    io.emit('changed:players', players)
   })
 })
 

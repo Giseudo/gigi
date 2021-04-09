@@ -11,3 +11,7 @@ export const BUTTON_UP = 'input/BUTTON_UP'
 
 export const INIT_CAMERA = 'camera/INIT'
 export const INIT_RENDERER = 'camera/RENDERER'
+
+export const PLAYER_CONNECTED = 'network/PLAYER_CONNECTED'
+export const PLAYER_DISCONNECTED = 'network/PLAYER_DISCONNECTED'
+export const PLAYERS_CHANGED = 'network/PLAYERS_CHANGED'

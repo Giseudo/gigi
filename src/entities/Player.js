@@ -11,7 +11,6 @@ export default async (params) => {
     scale = new Vector3(),
     acceleration = 50,
     maxVelocity = 20,
-    orientation,
   } = params
 
   const navigator = await resources.loadObject(require('@/assets/Navigator.fbx').default)
@@ -40,14 +39,10 @@ export default async (params) => {
     }
   })
 
-  if (!orientation)
-    console.warn('InputReader: orientation is required')
-
   return {
     components: [
       { type: 'Transform', position, rotation, scale },
-      { type: 'Rigidbody', acceleration, maxVelocity, orientation },
-      { type: 'InputReader', orientation },
+      { type: 'Rigidbody', acceleration, maxVelocity },
       {
         type: 'MeshRenderer',
         mesh: navigator,

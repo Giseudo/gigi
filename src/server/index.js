@@ -8,9 +8,11 @@ const webserver = http.createServer(app)
 const io = new Server(webserver, {cors: {origin: '*'}})
 
 const players = []
+const randomPos = (max, min) => Math.random() * (max - min + 1) - min
 
 io.on('connection', function (socket) {
   const player = new Player(socket.id)
+  player.setPosition(0, 0, randomPos(20, 50))
   players.push(player)
 
   socket.emit('connected', player)

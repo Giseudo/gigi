@@ -4,8 +4,10 @@
       <router-view  v-if="!isLoading" />
       <g-touch-axis @move="onTouchChange" />
       <g-dialogue v-if="showDialogue" />
-      <div class="debug">
-        {{ debug }}
+      <div class="debug" v-if="protagonist">
+        <div v-for="player in allPlayers">
+          {{ player.id }}: {{ printPos(player) }}
+        </div>
       </div>
     </div>
   </div>
@@ -19,8 +21,6 @@ import { defineComponent, markRaw, reactive } from 'vue'
 import { publish, subscribe } from '@GMessenger'
 import { START, RESIZE, PLAYER_CONNECTED, PLAYER_DISCONNECTED, PLAYER_JOINED, PLAYERS_INIT } from '@GEvents'
 import { PRIMARY_AXIS } from '@GInput'
-
-const randomPos = (max, min) => Math.random() * (max - min + 1) - min
 
 export default defineComponent({
   components: {
@@ -46,14 +46,14 @@ export default defineComponent({
   data: () => ({
     isLoading: true,
     showDialogue: false,
-    protagonist: {},
+    protagonist: null,
     protagonistId: null,
     players: []
   }),
 
   computed: {
-    debug () {
-      return JSON.stringify(this.players)
+    allPlayers () {
+      return [ this.protagonist, ...this.players ]
     }
   },
 
@@ -86,9 +86,19 @@ export default defineComponent({
       this.skybox = this.engine.world.entityFactory.create('Skybox')
 
       this.isLoading = false
-      this.engine.camera.mainCamera.position.set(0, 10, 25)
+      this.engine.camera.mainCamera.position.set(0, 15, -20)
 
       publish(START)
+    },
+
+    printPos (player) {
+      const { position } = player.getOne('Transform')
+
+      const x = position.x.toFixed(2)
+      const y = position.y.toFixed(2)
+      const z = position.z.toFixed(2)
+
+      return JSON.stringify({ x, y, z })
     },
 
     onResize () {
@@ -135,7 +145,7 @@ export default defineComponent({
 
       const entity = await this.engine.world.entityFactory.create('Player', {
         id: player.socketId,
-        position: new THREE.Vector3(0, 0, randomPos(20, 50))
+        position: new THREE.Vector3(x, y, z)
       })
 
       this.players.push(entity)
@@ -145,9 +155,9 @@ export default defineComponent({
       for (let i = 0; i < players.length; i++) {
         const player = players[i]
 
-        this.onPlayerJoin({ player }, i)
+        this.onPlayerJoin({ player })
       }
-    },
+    }
   }
 })
 </script>
@@ -183,14 +193,14 @@ body, html, #app {
     }
     & > .debug {
       position: absolute;
-      max-width: 500px;
-      top: 20px;
+      bottom: 20px;
       left: 20px;
       padding: 20px;
       background: black;
       color: white;
-      font-size: 16px;
+      font-size: 14px;
       overflow: auto;
+      line-height: 200%;
     }
   }
 }

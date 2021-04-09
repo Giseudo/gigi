@@ -46,12 +46,9 @@ export default async (params) => {
   return {
     components: [
       { type: 'Transform', position, rotation, scale },
-      { type: 'Rigidbody', acceleration, maxVelocity, orientation },
+      { type: 'Rigidbody', acceleration, maxVelocity },
       { type: 'InputReader', orientation },
-      {
-        type: 'MeshRenderer',
-        mesh: navigator,
-      },
+      { type: 'MeshRenderer', mesh: navigator },
     ]
   }
 }

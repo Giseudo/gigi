@@ -8,12 +8,25 @@ const webserver = http.createServer(app)
 const io = new Server(webserver, {cors: {origin: '*'}})
 
 const players = []
+
 io.on('connection', function (socket) {
   const player = new Player(socket.id)
   players.push(player)
 
-  io.emit('connected', player)
-  io.emit('changed:players', players)
+  socket.emit('connected', player)
+  socket.emit('players', players)
+
+  io.emit('joined', player)
+
+  socket.on('disconnect', () =>  {
+    const index = players.indexOf(player)
+
+    io.emit('disconnected', player)
+
+    if (index >= 0) players.splice(index, 1)
+  })
+
+  /*io.emit('changed:players', players)
 
   socket.on('disconnect', () => {
     for (let i = 0; i < players.length; i++) {
@@ -26,7 +39,7 @@ io.on('connection', function (socket) {
 
       break
     }
-  })
+  })*/
 
   socket.on('move', (position) => {
     for (const i = 0; i < players.length; i++) {
@@ -34,7 +47,7 @@ io.on('connection', function (socket) {
         continue
       }
 
-      players[i].setPosition(position.X, position.Y, position.Z)
+      players[i].setPosition(position.x, position.y, position.z)
 
       break;
     }

@@ -1,22 +1,16 @@
 export default class Player {
-    constructor (socketId) {
-        this.socketId = socketId
-        this.setInitialPosition()
-    }
+  constructor (socketId) {
+    this.socketId = socketId
+    this.setInitialPosition()
+  }
 
-    setInitialPosition () {
-        this.setPosition(0, 0, 10)
-    }
+  setInitialPosition (x, y, z) {
+    this.setPosition(z, y, z)
+  }
 
-    setPosition (positionX, positionY, positionZ) {
-        this.position = {
-            X: positionX,
-            Y: positionY,
-            Z: positionZ
-        }
-    }
+  setPosition (x, y, z) {
+    this.position = { x, y, z }
+  }
 
-    getPosition () {
-        return this.position
-    }
+  getPosition = () => this.position
 }

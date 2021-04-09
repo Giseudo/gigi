@@ -1,11 +1,11 @@
 <template>
   <div class="g-app">
     <div class="viewport" ref="viewport">
-      <router-view  v-if="!state.isLoading" />
+      <router-view  v-if="!isLoading" />
       <g-touch-axis @move="onTouchChange" />
-      <g-dialogue v-if="state.showDialogue" />
-      <div class="players">
-        {{ players }}
+      <g-dialogue v-if="showDialogue" />
+      <div class="debug">
+        {{ debug }}
       </div>
     </div>
   </div>
@@ -17,8 +17,10 @@ import { GTouchAxis } from '@UI'
 import { GDialogue } from '@UI'
 import { defineComponent, markRaw, reactive } from 'vue'
 import { publish, subscribe } from '@GMessenger'
-import { START, RESIZE, PLAYER_CONNECTED, PLAYERS_CHANGED } from '@GEvents'
+import { START, RESIZE, PLAYER_CONNECTED, PLAYER_DISCONNECTED, PLAYER_JOINED, PLAYERS_INIT } from '@GEvents'
 import { PRIMARY_AXIS } from '@GInput'
+
+const randomPos = (max, min) => Math.random() * (max - min + 1) - min
 
 export default defineComponent({
   components: {
@@ -41,26 +43,27 @@ export default defineComponent({
     }
   },
 
+  data: () => ({
+    isLoading: true,
+    showDialogue: false,
+    protagonist: {},
+    protagonistId: null,
+    players: []
+  }),
+
   computed: {
-    players () {
-      return JSON.stringify(this.state.players)
+    debug () {
+      return JSON.stringify(this.players)
     }
   },
-
-  data: () => markRaw({
-    protagonistId: null,
-    protagonist: {},
-    state: reactive({
-      isLoading: true,
-      players: []
-    })
-  }),
 
   mounted () {
     this.init()
 
-    subscribe(PLAYER_CONNECTED, this.onProtagonistConnected)
-    subscribe(PLAYERS_CHANGED, this.onPlayersChanged)
+    subscribe(PLAYER_CONNECTED, this.onPlayerConnect)
+    subscribe(PLAYER_DISCONNECTED, this.onPlayerDisconnect)
+    subscribe(PLAYER_JOINED, this.onPlayerJoin)
+    subscribe(PLAYERS_INIT, this.onPlayersInit)
 
     window.addEventListener('resize', this.onResize)
   },
@@ -69,8 +72,10 @@ export default defineComponent({
     this.engine.destroy()
     this.protagonist.destroy()
 
-    for (const index in this.state.players)
-      this.state.players[index].destroy()
+    for (const index in this.players)
+      this.players[index].destroy()
+
+    this.players = []
 
     window.removeEventListener('resize', this.onResize)
   },
@@ -80,7 +85,7 @@ export default defineComponent({
       await this.engine.init(this.$refs.viewport)
       this.skybox = this.engine.world.entityFactory.create('Skybox')
 
-      this.state.isLoading = false
+      this.isLoading = false
       this.engine.camera.mainCamera.position.set(0, 10, 25)
 
       publish(START)
@@ -97,12 +102,13 @@ export default defineComponent({
       this.engine.input.setAxis(PRIMARY_AXIS, direction)
     },
 
-    async onProtagonistConnected ({ player }) {
-      const { X, Y, Z } = player.position
+    async onPlayerConnect ({ player }) {
+      const { x, y, z } = player.position
 
       this.protagonistId = player.socketId
       this.protagonist = await this.engine.world.entityFactory.create('Protagonist', {
-        position: new THREE.Vector3(X, Y, Z),
+        id: player.socketId,
+        position: new THREE.Vector3(x, y, z),
         orientation: this.engine.camera.mainCamera
       })
 
@@ -112,24 +118,36 @@ export default defineComponent({
       this.engine.camera.follow(transform)
     },
 
-    async onPlayersChanged ({ players }) {
-      for (let j = 0; j < this.state.players.length; j++) {
-        this.state.players[j].destroy()
-        this.state.players.splice(j, 1)
-      }
+    async onPlayerDisconnect ({ player }) {
+      const entity = this.engine.world.getEntity(player.socketId)
+      const index = this.players.indexOf(entity)
 
+      entity.destroy()
+
+      if (index >= 0)
+        this.players.splice(index, 1)
+    },
+
+    async onPlayerJoin ({ player }) {
+      if (player.socketId === this.protagonistId) return
+
+      const { x, y, z } = player.position
+
+      const entity = await this.engine.world.entityFactory.create('Player', {
+        id: player.socketId,
+        position: new THREE.Vector3(0, 0, randomPos(20, 50))
+      })
+
+      this.players.push(entity)
+    },
+
+    async onPlayersInit ({ players }) {
       for (let i = 0; i < players.length; i++) {
         const player = players[i]
 
-        if (player.socketId === this.protagonistId) continue
-
-        const entity = await this.engine.world.entityFactory.create('Player', {
-          position: new THREE.Vector3(0, 0, 10)
-        })
-
-        this.state.players.push(entity)
+        this.onPlayerJoin({ player }, i)
       }
-    }
+    },
   }
 })
 </script>
@@ -163,13 +181,16 @@ body, html, #app {
       bottom: 0;
       left: 0;
     }
-    & > .players {
+    & > .debug {
       position: absolute;
+      max-width: 500px;
       top: 20px;
       left: 20px;
       padding: 20px;
       background: black;
       color: white;
+      font-size: 16px;
+      overflow: auto;
     }
   }
 }

@@ -1,6 +1,6 @@
 import socketio from 'socket.io-client'
 import { publish } from '@GMessenger'
-import { PLAYER_CONNECTED, PLAYERS_CHANGED } from '@GEvents'
+import { PLAYER_CONNECTED, PLAYER_DISCONNECTED, PLAYER_JOINED, PLAYERS_INIT } from '@GEvents'
 
 export default class Network {
   constructor () {
@@ -11,14 +11,24 @@ export default class Network {
 
   createListeners() {
     this.socket.on('connected', this.onConnected)
-    this.socket.on('changed:players', this.onPlayersChanged)
+    this.socket.on('disconnected', this.onDisconnected)
+    this.socket.on('joined', this.onJoined)
+    this.socket.on('players', this.onPlayersInit)
   }
 
   onConnected = (player) => {
     publish(PLAYER_CONNECTED, { player })
   }
 
-  onPlayersChanged = (players) => {
-    publish(PLAYERS_CHANGED, { players })
+  onDisconnected = (player) => {
+    publish(PLAYER_DISCONNECTED, { player })
+  }
+
+  onJoined = (player) => {
+    publish(PLAYER_JOINED, { player })
+  }
+ 
+  onPlayersInit = (players) => {
+    publish(PLAYERS_INIT, { players })
   }
 }

@@ -1,27 +1,23 @@
-import { reactive, readonly } from 'vue'
 import { FloatNode } from 'three/examples/jsm/nodes/Nodes'
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer'
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass'
-import { FilmPass } from 'three/examples/jsm/postprocessing/FilmPass'
 import { LensDistortionPass } from './passes/LensDistortionPass'
-import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass'
 import { BloomPass } from './passes/BloomPass'
 import {
   WebGLRenderer,
   WebGLRenderTarget,
   Clock,
-  LinearFilter,
   NearestFilter,
   RGBFormat,
   DepthFormat,
   DepthTexture,
   UnsignedShortType,
   CineonToneMapping,
-  Vector2,
   Matrix4
 } from 'three'
 import { UPDATE, DRAW, RESIZE, INIT_RENDERER } from '@GEvents'
 import { publish, subscribe, unsubscribe } from '@GMessenger'
+import { world as newWorld } from '../../typescript/Game.ts'
 
 const TIME_INTERVAL = 1 / 30
 
@@ -79,7 +75,6 @@ export default class GRenderer {
   init (el) {
     const renderPass = new RenderPass(this.scene, this.camera)
     const bloomPass = new BloomPass(this.scene, this.camera, this.renderer)
-    const filmPass = new FilmPass(.1, .2, 400, false)
     const lensDistortionPass = new LensDistortionPass(1.0)
 
     this.composer.addPass(renderPass)
@@ -105,6 +100,7 @@ export default class GRenderer {
       this.world.time = this.time.value
       this.world.deltaTime = this.deltaTime.value
       this.world.runSystems('update')
+      newWorld.update({ deltaTime })
 
       publish(DRAW)
       this.world.runSystems('draw')

@@ -9,6 +9,8 @@
 </template>
 
 <script>
+import './typescript/Game.ts'
+
 import GEngine from '@GEngine'
 import { GTouchAxis } from '@UI'
 import { GDialogue } from '@UI'

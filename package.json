@@ -11,18 +11,22 @@
     "core-js": "^3.6.5",
     "three": "^0.126.1",
     "vue": "^3.0.0",
+    "vue-class-component": "^8.0.0-0",
     "vue-router": "^4.0.0-0",
     "yuka": "^0.7.3"
   },
   "devDependencies": {
+    "@types/three": "^0.127.1",
     "@vue/cli-plugin-babel": "~4.5.0",
     "@vue/cli-plugin-router": "~4.5.0",
+    "@vue/cli-plugin-typescript": "~4.5.0",
     "@vue/cli-service": "~4.5.0",
     "@vue/compiler-sfc": "^3.0.0",
     "fflate": "^0.6.9",
     "file-loader": "^6.2.0",
     "node-sass": "^4.12.0",
     "raw-loader": "^4.0.2",
-    "sass-loader": "^8.0.2"
+    "sass-loader": "^8.0.2",
+    "typescript": "~4.1.5"
   }
 }

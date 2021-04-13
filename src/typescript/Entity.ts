@@ -17,7 +17,7 @@ export default class Entity extends Messenger implements IStartable, IDestroyabl
   destroy(): void {
     this.disable()
     this.dispose()
-    this.publish('onDestroy')
+    this.publish('onDestroy', { entity: this })
     this.components.forEach(c => c.destroy)
   }
 
@@ -30,6 +30,8 @@ export default class Entity extends Messenger implements IStartable, IDestroyabl
         node.material?.dispose()
       }
     })
+
+    this.object?.remove()
   }
 
   public update(payload: UpdatePayload): void {

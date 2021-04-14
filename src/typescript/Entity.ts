@@ -1,11 +1,11 @@
-import { Mesh } from 'three'
+import { Object3D } from 'three'
 import { UpdatePayload, IStartable, IDestroyable, IActivable, IDisableable, IUpdatable } from './types'
 import Messenger from './Messenger'
 import Component from './Component'
 
 export default class Entity extends Messenger implements IStartable, IDestroyable, IActivable, IDisableable, IUpdatable {
   active: boolean = false
-  object?: Mesh
+  object?: Object3D
   components: Array<Component> = []
 
   async start(): Promise<void> {

@@ -1,44 +1,14 @@
-import { Vector3, Quaternion, SphereGeometry, MeshBasicMaterial, Mesh } from 'three'
+import { Vector3, Object3D, SphereGeometry, MeshBasicMaterial, Mesh } from 'three'
 import { PlayerData } from './types'
-import { scene } from '../engine'
-import Component from './Component'
+import { scene, resources } from '../engine'
 import Entity from './Entity'
 import World from './World'
 
-class Transform extends Component {
-  position: Vector3
-  rotation: Quaternion
-  scale: Vector3
-
-  constructor (
-    position: Vector3 = new Vector3(),
-    rotation: Quaternion = new Quaternion(),
-    scale: Vector3 = new Vector3(1, 1, 1)
-  ) {
-    super()
-
-    this.position = position
-    this.rotation = rotation
-    this.scale = scale
-  }
-
-  update() {
-    if (!this.entity?.object) return
-
-    this.entity.object.position.copy(this.position)
-    this.entity.object.quaternion.copy(this.rotation)
-    this.entity.object.scale.copy(this.scale)
-  }
-}
-
 class Player extends Entity {
   data: PlayerData
-  transform: Transform
 
   constructor(data: PlayerData) {
     super()
-
-    this.transform = this.addComponent(new Transform())
     this.data = data
   }
 
@@ -47,7 +17,40 @@ class Player extends Entity {
     const material = new MeshBasicMaterial({ color: 0xff0000 })
 
     this.object = new Mesh(geometry, material)
-    this.transform.position.copy(this.data.position)
+
+    super.start()
+  }
+
+  update() {
+    if (!this.object) return
+
+    const { x, y, z } = this.data.position
+
+    this.object.position.set(x, y, z)
+  }
+}
+
+class Stand extends Entity {
+  constructor() {
+    super()
+  }
+
+  async start(): Promise<void> {
+    const model: Object3D = await resources.loadObject(
+      require('@/assets/RedStand.fbx').default
+    )
+
+    model.traverse(async (node: any) => {
+      if (node.isMesh) {
+        node.material = new MeshBasicMaterial({
+          map: await resources.loadTexture(require('@/assets/Opaque_Color.png'))
+        })
+      }
+    })
+
+    this.object = model
+    this.object.position.set(0, 0, -30)
+    this.object.scale.set(3.5, 3.5, 3.5)
 
     super.start()
   }
@@ -61,5 +64,6 @@ const playerData = {
 }
 
 world.addEntity(new Player(playerData))
+world.addEntity(new Stand())
 
 export { world }

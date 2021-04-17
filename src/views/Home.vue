@@ -8,9 +8,6 @@ import { Vector3 } from 'three'
 import { BLOOM_LAYER } from '@GScene/layers'
 import { Player, Warning, BMO, Skybox, Stand, Environment } from '@/entities'
 
-import vertexShader from '@UI/GBox/box.vert.glsl'
-import fragmentShader from '@UI/GBox/box.frag.glsl'
-
 export default defineComponent({
   name: 'Home',
 

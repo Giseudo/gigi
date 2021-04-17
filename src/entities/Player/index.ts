@@ -1,5 +1,5 @@
-import vertexShader from '@UI/GBox/box.vert.glsl'
-import fragmentShader from '@UI/GBox/box.frag.glsl'
+import vertexShader from './player.vert.glsl'
+import fragmentShader from './player.frag.glsl'
 import { Object3D, Color, Mesh, ShaderMaterial, MeshBasicMaterial } from 'three'
 import { PlayerData } from '@/typescript/types'
 import { Entity, camera, resources } from '@/engine'
@@ -9,6 +9,7 @@ import InputReader from '@/components/InputReader'
 import Movement from '@/components/Movement'
 
 type PlayerParams = {
+  color: Color,
   acceleration?: number, // 50
   maxVelocity?: number, // 20
   orientation?: Object3D
@@ -16,23 +17,24 @@ type PlayerParams = {
 
 export default class Player extends Entity {
   data: PlayerData
+  color: Color
   inputReader: InputReader
   movement: Movement
 
-  constructor(data: PlayerData, params?: PlayerParams) {
+  constructor(data: PlayerData, params: PlayerParams) {
     super()
     this.data = data
+    this.color = params.color
     this.inputReader = this.addComponent(new InputReader(camera.mainCamera))
     this.movement = this.addComponent(new Movement())
   }
 
   async start(): Promise<void> {
-    const model = await resources.loadObject(require('@/assets/Navigator.fbx').default)
-    const matcap = await resources.loadTexture(require('@/assets/matcap.png'))
+    const model = await resources.loadObject(require('./Navigator.fbx').default)
 
     this.add(model)
 
-    model.traverse((node: Mesh) => {
+    model.traverse(async (node: Mesh) => {
       if (node.isMesh) {
         if (node.name === 'Emission') {
           node.material = new MeshBasicMaterial({ color: 0xff2200 })
@@ -48,7 +50,7 @@ export default class Player extends Entity {
                 value: new Color(0xC0C0C0)
               },
               tMatcap: {
-                value: matcap
+                value: await resources.loadTexture(require('./Player_Matcap.png'))
               }
             }
           })

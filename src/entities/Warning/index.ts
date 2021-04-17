@@ -11,7 +11,7 @@ export default class Warning extends Entity {
     const material = new MeshBasicMaterial({
       color: 0xff6622,
       alphaMap: await resources.loadTexture(
-        require('@/assets/warning_emission.png')
+        require('./Warning_Alpha.png')
       ),
       side: DoubleSide,
       transparent: true

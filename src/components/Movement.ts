@@ -5,8 +5,14 @@ import Component from '@/typescript/Component'
 export default class Movement extends Component {
   velocity: Vector3 = new Vector3()
   direction: Vector3 = new Vector3()
-  acceleration: number = 50
-  maxVelocity: number = 20
+  acceleration: number
+  maxVelocity: number
+
+  constructor(acceleration: number = 50, maxVelocity: number = 20) {
+    super()
+    this.acceleration = acceleration
+    this.maxVelocity = maxVelocity
+  }
 
   update({ deltaTime }: UpdatePayload) {
     const { direction, velocity, acceleration, maxVelocity } = this

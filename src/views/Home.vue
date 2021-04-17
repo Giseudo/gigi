@@ -6,7 +6,7 @@
 import { defineComponent, markRaw } from 'vue'
 import { Vector3 } from 'three'
 import { BLOOM_LAYER } from '@GScene/layers'
-import { Player, Warning, BMO, Skybox, Stand, Environment } from '@/entities'
+import { Player, Warning, BMO, Skybox, RedStand, Environment } from '@/entities'
 
 export default defineComponent({
   name: 'Home',
@@ -25,10 +25,11 @@ export default defineComponent({
     const player = new Player({
       id: 'xgh-1r3-ai2',
       position: new Vector3(0, 0, 0)
-    })
+    },
+    this.camera.mainCamera, 0xffff55)
     this.world.add(player)
 
-    const stand = new Stand()
+    const stand = new RedStand()
     stand.position.set(0, 0, 30)
     stand.scale.set(3.5, 3.5, 3.5)
     this.world.add(stand)
@@ -53,7 +54,7 @@ export default defineComponent({
     this.environment = environment
     this.warning = warning
 
-    this.camera.mainCamera.position.set(0, 10, -20)
+    this.camera.mainCamera.position.set(20, 10, -20)
     this.camera.mainCamera.lookAt(this.player.position)
     this.camera.follow(this.player)
   },

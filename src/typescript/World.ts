@@ -1,30 +1,26 @@
 import { Scene } from 'three'
 import { EntityEventPayload, UpdatePayload } from './types'
-import Messenger from './Messenger'
 import Entity from './Entity'
 
-export default class World extends Messenger {
-  scene: Scene
-  entities: Array<Entity> = []
-
-  constructor(scene: Scene) {
-    super()
-    this.scene = scene
-  }
-
+export default class World extends Scene {
   /**
    * Adds entity to scene.
    * @param entity The entity to be added
    * @returns Promise A promise resolved after the entity is loaded
    */
-  async addEntity(entity: Entity): Promise<Entity> {
+  add(entity: Entity): this {
     entity.subscribe('onActivate', this.onAddToScene)
     entity.subscribe('onDisable', this.onRemoveFromScene)
     entity.subscribe('onDestroy', this.onEntityDestroyed)
 
-    await entity.start()
+    entity.start()
+      .then(() => {
+        entity.components.forEach(c => c.start)
+        entity.publish('onStart')
+        entity.activate()
+      })
 
-    return entity
+    return this
   }
 
   /**
@@ -33,8 +29,7 @@ export default class World extends Messenger {
    * @returns void
    */
   private onAddToScene = ({ entity }: EntityEventPayload): void => {
-    this.scene.add(entity)
-    this.entities.push(entity)
+    super.add(entity)
   }
 
   /**
@@ -43,7 +38,7 @@ export default class World extends Messenger {
    * @returns void
    */
   private onRemoveFromScene = ({ entity }: EntityEventPayload): void => {
-    this.removeEntity(entity)
+    super.remove(entity)
   }
 
   /**
@@ -55,20 +50,17 @@ export default class World extends Messenger {
     entity.unsubscribe('onActivate', this.onAddToScene)
     entity.unsubscribe('onDisable', this.onRemoveFromScene)
     entity.unsubscribe('onDestroy', this.onEntityDestroyed)
-  }
 
-  /**
-   * Removes entity from active list
-   * @param entity Entity event data
-   * @returns void
-   */
-  removeEntity(entity: Entity): void {
-    const index = this.entities.indexOf(entity)
+    entity.components.forEach(c => c.destroy)
 
-    if (index < 0) return
-    if (entity.object) this.scene.remove(entity)
+    entity.traverse((node: any) => {
+      if (node.isMesh) {
+        node.geometry?.dispose()
+        node.material?.dispose()
+      }
+    })
 
-    this.entities.splice(index, 1)
+    entity.remove()
   }
 
   /**
@@ -77,6 +69,8 @@ export default class World extends Messenger {
    * @returns void
    */
   update(payload: UpdatePayload) {
-    this.entities.forEach(entity => entity.update(payload))
+    const entities = this.children as Array<Entity>
+
+    entities.forEach(entity => entity.update && entity.update(payload))
   }
 }

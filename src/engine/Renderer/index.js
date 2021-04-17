@@ -17,7 +17,6 @@ import {
 } from 'three'
 import { UPDATE, DRAW, RESIZE, INIT_RENDERER } from '@GEvents'
 import { publish, subscribe, unsubscribe } from '@GMessenger'
-import { world as newWorld } from '../../typescript/Game.ts'
 
 const TIME_INTERVAL = 1 / 30
 
@@ -97,13 +96,13 @@ export default class GRenderer {
       publish(UPDATE, { deltaTime })
 
       this.composer.render(deltaTime)
-      this.world.time = this.time.value
-      this.world.deltaTime = this.deltaTime.value
-      this.world.runSystems('update')
-      newWorld.update({ deltaTime })
+      // this.world.time = this.time.value
+      // this.world.deltaTime = this.deltaTime.value
+      // this.world.runSystems('update')
+      this.scene.update({ deltaTime })
 
       publish(DRAW)
-      this.world.runSystems('draw')
+      // this.world.runSystems('draw')
 
       this.time.value += deltaTime
       this.deltaTime.value %= TIME_INTERVAL

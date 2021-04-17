@@ -8,30 +8,11 @@ export default class Entity extends Messenger implements IStartable, IDestroyabl
   object?: Object3D
   components: Array<Component> = []
 
-  async start(): Promise<void> {
-    this.components.forEach(c => c.start)
-    this.activate()
-    this.publish('onStart')
-  }
+  async start(): Promise<void> { }
 
   destroy(): void {
     this.disable()
-    this.dispose()
     this.publish('onDestroy', { entity: this })
-    this.components.forEach(c => c.destroy)
-  }
-
-  dispose(): void {
-    this.traverse((node: any) => {
-      if (node.isMesh) {
-        console.log('yey, disposed!', node.geometry, node.material)
-
-        node.geometry?.dispose()
-        node.material?.dispose()
-      }
-    })
-
-    // this.remove()
   }
 
   public update(payload: UpdatePayload): void {

@@ -19,7 +19,7 @@ export default defineComponent({
     objects: []
   }),
 
-  async mounted () {
+  /*async mounted () {
     const protagonist = await this.entityFactory.create('Protagonist', {
       position: new Vector3(0, 0, 10),
       radius: 2,
@@ -65,6 +65,6 @@ export default defineComponent({
 
   beforeUnmount () {
     this.objects.forEach(obj => obj.destroy())
-  },
+  },*/
 })
 </script>

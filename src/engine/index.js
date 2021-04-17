@@ -2,13 +2,15 @@ import GRenderer from '@GRenderer'
 import GCamera from '@GCamera'
 import GWorld from '@GWorld'
 import GInput from '@GInput'
-import GScene from '@GScene'
 import GResources from '@GResources'
 import GNavMesh from '@GNavMesh'
 
+import World from '../typescript/World'
+import Entity from '../typescript/Entity'
+
 export const resources = new GResources()
 export const camera = new GCamera()
-export const scene = new GScene()
+export const scene = new World()
 export const world = new GWorld()
 export const renderer = new GRenderer(scene, camera.mainCamera, world)
 export const navMesh = new GNavMesh()
@@ -37,7 +39,7 @@ export default class GEngine {
     this.renderer.init(el)
     this.camera.init()
     this.input.init()
-    this.world.init()
+    // this.world.init()
     await this.navMesh.init()
   }
 
@@ -48,4 +50,9 @@ export default class GEngine {
     this.navMesh.destroy()
     this.world.destroy()
   }
+}
+
+export {
+  World,
+  Entity
 }

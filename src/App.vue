@@ -59,7 +59,6 @@ export default defineComponent({
   methods: {
     async init () {
       await this.engine.init(this.$refs.viewport)
-      this.skybox = this.engine.world.entityFactory.create('Skybox')
 
       this.state.isLoading = false
 

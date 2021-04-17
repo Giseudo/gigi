@@ -1,8 +1,9 @@
 import { Vector3, Object3D, SphereGeometry, MeshBasicMaterial, Mesh } from 'three'
 import { PlayerData } from './types'
-import { scene, resources } from '../engine'
+import { scene as world, resources } from '../engine'
 import Entity from './Entity'
 import World from './World'
+import Skybox from '@/entities/Skybox'
 
 class Player extends Entity {
   data: PlayerData
@@ -16,25 +17,17 @@ class Player extends Entity {
     const geometry = new SphereGeometry(5, 5)
     const material = new MeshBasicMaterial({ color: 0xff0000 })
 
-    this.object = new Mesh(geometry, material)
-
-    super.start()
+    this.add(new Mesh(geometry, material))
   }
 
   update() {
-    if (!this.object) return
-
     const { x, y, z } = this.data.position
 
-    this.object.position.set(x, y, z)
+    this.position.set(x, y, z)
   }
 }
 
 class Stand extends Entity {
-  constructor() {
-    super()
-  }
-
   async start(): Promise<void> {
     const model: Object3D = await resources.loadObject(
       require('@/assets/RedStand.fbx').default
@@ -49,23 +42,22 @@ class Stand extends Entity {
     })
 
     this.add(model)
-
-    super.start()
   }
 }
 
-const world: World = new World(scene)
-
 const playerData = {
   id: 'xgh-1r3-ai2',
-  position: new Vector3(0, 0, 20)
+  position: new Vector3(0, 15, -20)
 }
 
 const stand: Entity = new Stand()
 stand.position.set(0, 0, -30)
 stand.scale.set(3.5, 3.5, 3.5)
 
-world.addEntity(stand)
-world.addEntity(new Player(playerData))
+const skybox: Skybox = new Skybox()
+
+world.add(stand)
+world.add(skybox)
+world.add(new Player(playerData))
 
 export { world }

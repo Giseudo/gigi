@@ -48,9 +48,7 @@ class Stand extends Entity {
       }
     })
 
-    this.object = model
-    this.object.position.set(0, 0, -30)
-    this.object.scale.set(3.5, 3.5, 3.5)
+    this.add(model)
 
     super.start()
   }
@@ -63,7 +61,11 @@ const playerData = {
   position: new Vector3(0, 0, 20)
 }
 
+const stand: Entity = new Stand()
+stand.position.set(0, 0, -30)
+stand.scale.set(3.5, 3.5, 3.5)
+
+world.addEntity(stand)
 world.addEntity(new Player(playerData))
-world.addEntity(new Stand())
 
 export { world }

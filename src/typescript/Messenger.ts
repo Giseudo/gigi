@@ -1,6 +1,6 @@
-import { EventDispatcher } from 'three'
+import { Object3D, EventDispatcher } from 'three'
 
-export default class Messenger extends EventDispatcher {
+export default class Messenger extends Object3D {
   subscribe (type: string, callback: (value: any) => void): void {
     this.addEventListener(type, callback)
   }

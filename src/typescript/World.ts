@@ -33,9 +33,7 @@ export default class World extends Messenger {
    * @returns void
    */
   private onAddToScene = ({ entity }: EntityEventPayload): void => {
-    if (!entity?.object) return
-
-    this.scene.add(entity.object)
+    this.scene.add(entity)
     this.entities.push(entity)
   }
 
@@ -45,8 +43,6 @@ export default class World extends Messenger {
    * @returns void
    */
   private onRemoveFromScene = ({ entity }: EntityEventPayload): void => {
-    if (!entity?.object) return
-
     this.removeEntity(entity)
   }
 
@@ -70,7 +66,7 @@ export default class World extends Messenger {
     const index = this.entities.indexOf(entity)
 
     if (index < 0) return
-    if (entity.object) this.scene.remove(entity.object)
+    if (entity.object) this.scene.remove(entity)
 
     this.entities.splice(index, 1)
   }

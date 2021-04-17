@@ -22,7 +22,7 @@ export default class Entity extends Messenger implements IStartable, IDestroyabl
   }
 
   dispose(): void {
-    this.object?.traverse((node: any) => {
+    this.traverse((node: any) => {
       if (node.isMesh) {
         console.log('yey, disposed!', node.geometry, node.material)
 
@@ -31,7 +31,7 @@ export default class Entity extends Messenger implements IStartable, IDestroyabl
       }
     })
 
-    this.object?.remove()
+    // this.remove()
   }
 
   public update(payload: UpdatePayload): void {
@@ -61,7 +61,7 @@ export default class Entity extends Messenger implements IStartable, IDestroyabl
     return component
   }
 
-  public removeComponent<T extends Component>(type: (new () => T)): void { }
+  // public removeComponent<T extends Component>(type: (new () => T)): void { }
 
   activate() {
     this.active = true

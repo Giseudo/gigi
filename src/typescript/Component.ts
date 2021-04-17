@@ -8,14 +8,14 @@ export default class Component extends Messenger implements IStartable, IDestroy
 
   setEntity = (entity: Entity) => this.entity = entity
 
-  start = () => {
+  start() {
     this.subscribe('onActivate', this.onActivate)
     this.subscribe('onDisable', this.onDisable)
     this.activate()
     this.publish('onStart')
   }
 
-  destroy = () => {
+  destroy() {
     this.disable()
     this.unsubscribe('onActivate', this.onActivate)
     this.unsubscribe('onDisable', this.onDisable)

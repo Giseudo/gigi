@@ -9,8 +9,6 @@
 </template>
 
 <script>
-import './typescript/Game.ts'
-
 import GEngine from '@GEngine'
 import { GTouchAxis } from '@UI'
 import { GDialogue } from '@UI'
@@ -33,10 +31,8 @@ export default defineComponent({
       renderer: this.engine.renderer,
       camera: this.engine.camera,
       input: this.engine.input,
-      scene: this.engine.scene,
+      world: this.engine.scene,
       navMesh: this.engine.navMesh,
-      world: this.engine.world,
-      entityFactory: this.engine.world.entityFactory
     }
   },
 
@@ -61,8 +57,6 @@ export default defineComponent({
       await this.engine.init(this.$refs.viewport)
 
       this.state.isLoading = false
-      this.engine.camera.mainCamera.position.set(0, 5, -20)
-      this.engine.camera.mainCamera.lookAt(new THREE.Vector3())
 
       publish(START)
     },

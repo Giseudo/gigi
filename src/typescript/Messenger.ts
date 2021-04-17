@@ -1,5 +1,7 @@
-import { Object3D, EventDispatcher } from 'three'
+import { Object3D } from 'three'
 
+// FIXME this should be a mixin
+// We cannot extend everything from Object3D
 export default class Messenger extends Object3D {
   subscribe (type: string, callback: (value: any) => void): void {
     this.addEventListener(type, callback)

@@ -2,8 +2,11 @@ import vertexShader from '@UI/GBox/box.vert.glsl'
 import fragmentShader from '@UI/GBox/box.frag.glsl'
 import { Object3D, Color, Mesh, ShaderMaterial, MeshBasicMaterial } from 'three'
 import { PlayerData } from '@/typescript/types'
-import { Entity, resources } from '@/engine'
+import { Entity, camera, resources } from '@/engine'
 import { BLOOM_LAYER } from '@/engine/Scene/layers'
+import { PRIMARY_AXIS } from '@/engine/Input'
+import InputReader from '@/components/InputReader'
+import Movement from '@/components/Movement'
 
 type PlayerParams = {
   acceleration?: number, // 50
@@ -13,10 +16,14 @@ type PlayerParams = {
 
 export default class Player extends Entity {
   data: PlayerData
+  inputReader: InputReader
+  movement: Movement
 
   constructor(data: PlayerData, params?: PlayerParams) {
     super()
     this.data = data
+    this.inputReader = this.addComponent(new InputReader(camera.mainCamera))
+    this.movement = this.addComponent(new Movement())
   }
 
   async start(): Promise<void> {
@@ -47,13 +54,36 @@ export default class Player extends Entity {
           })
       }
     })
-
   }
 
-  update() {
-    const { x, y, z } = this.data.position
+  update(payload: any) {
+    super.update(payload)
+    this.movement.move(this.inputReader.getOrientedAxis(PRIMARY_AXIS))
 
-    this.position.set(x, y, z)
+    this.position.add(
+      this.movement.velocity.clone().multiplyScalar(payload.deltaTime)
+    )
   }
 }
 
+/* Stick to navmesh
+const { velocity } = entity.getOne('Rigidbody')
+const transform = entity.getOne('Transform')
+const region = navMesh.getRegionForPoint(transform.position)
+const startPosition = transform.position.clone()
+
+if (region) this.region = region
+
+  transform.position.add(
+    velocity.clone().multiplyScalar(deltaTime)
+  )
+
+  const endPosition = transform.position.clone()
+
+  navMesh.clampMovement(
+    this.region,
+    startPosition,
+    endPosition,
+    transform.position
+  )
+ */

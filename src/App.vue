@@ -61,6 +61,8 @@ export default defineComponent({
       await this.engine.init(this.$refs.viewport)
 
       this.state.isLoading = false
+      this.engine.camera.mainCamera.position.set(0, 5, -20)
+      this.engine.camera.mainCamera.lookAt(new THREE.Vector3())
 
       publish(START)
     },

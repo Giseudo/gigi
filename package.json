@@ -6,7 +6,9 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "startServer": "set DEBUG=socket.io*&&ts-node-dev --respawn --transpile-only src/server/index.ts"
+    "serverBuild": "echo \"NONE SO FAR\"",
+    "serverLocal": "set DEBUG=socket.io*&&ts-node-dev --respawn --transpile-only src/server/index.ts",
+    "serverProd": "ts-node-dev --respawn --transpile-only src/server/index.ts"
   },
   "dependencies": {
     "ape-ecs": "^1.3.1",

@@ -82,8 +82,6 @@ export class SocketManager {
         }
     }
 
-    
-
     public emmit(eventName: string, payload: object) {
         const data = {
             event: eventName,

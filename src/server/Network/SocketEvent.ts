@@ -1,3 +1,4 @@
 export enum SocketEvent {
-    DISCONNECT = "disconnect"
+    DISCONNECT = "disconnect",
+    MOVE = "move"
 }

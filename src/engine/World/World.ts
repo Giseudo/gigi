@@ -1,6 +1,7 @@
 import { Scene } from 'three'
-import { EntityEventPayload, UpdatePayload } from './types'
+import { EntityEventPayload, UpdatePayload } from '@/types'
 import Entity from './Entity'
+import Component from './Component'
 
 export default class World extends Scene {
   /**
@@ -15,7 +16,7 @@ export default class World extends Scene {
 
     entity.start()
       .then(() => {
-        entity.components.forEach(c => c.start)
+        entity.components.forEach(c => c.start())
         entity.publish('onStart')
         entity.enable()
       })
@@ -51,7 +52,7 @@ export default class World extends Scene {
     entity.unsubscribe('onDisable', this.onRemoveFromScene)
     entity.unsubscribe('onDestroy', this.onEntityDestroyed)
 
-    entity.components.forEach(c => c.destroy)
+    entity.components.forEach((c: Component) => c.destroy())
 
     entity.traverse((node: any) => {
       if (node.isMesh) {

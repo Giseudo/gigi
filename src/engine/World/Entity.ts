@@ -1,5 +1,5 @@
 import { Object3D } from 'three'
-import { UpdatePayload, IStartable, IDestroyable, IActivatable, IUpdatable } from './types'
+import { UpdatePayload, IStartable, IDestroyable, IActivatable, IUpdatable } from '@/types'
 import Component from './Component'
 
 export default class Entity extends Object3D implements IStartable, IDestroyable, IActivatable, IUpdatable {

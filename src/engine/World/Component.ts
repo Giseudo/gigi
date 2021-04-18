@@ -1,5 +1,5 @@
 import { EventDispatcher } from 'three'
-import { UpdatePayload, IStartable, IDestroyable, IActivatable, IUpdatable } from './types'
+import { UpdatePayload, IStartable, IDestroyable, IActivatable, IUpdatable } from '@/types'
 import Entity from './Entity'
 
 export default class Component extends EventDispatcher implements IStartable, IDestroyable, IActivatable, IUpdatable {

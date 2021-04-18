@@ -1,6 +1,5 @@
 import { Mesh, CylinderGeometry, DoubleSide, MeshBasicMaterial } from 'three'
-import { Resources, Entity } from '@/engine'
-import { BLOOM_LAYER } from '@/engine/Scene/layers'
+import { Resources, Entity, BLOOM_LAYER } from '@/engine'
 
 export default class Warning extends Entity {
   radius: number = 7.5

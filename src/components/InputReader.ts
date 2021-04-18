@@ -1,8 +1,5 @@
 import { Object3D, Vector2, Vector3 } from 'three'
-import { subscribe, unsubscribe } from '@/engine/Messenger'
-import { PRIMARY_AXIS } from '@/engine/Input'
-import { AXIS_CHANGED } from '@/engine/Messenger/events'
-import Component from '@/typescript/Component'
+import { Component, subscribe, unsubscribe, AXIS_CHANGED, PRIMARY_AXIS } from '@/engine'
 
 export default class InputReader extends Component {
   orientation: Object3D

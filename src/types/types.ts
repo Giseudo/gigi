@@ -1,8 +1,12 @@
-import { Vector3 } from 'three'
+export type Point = {
+  x: number
+  y: number
+  z: number
+}
 
 export type PlayerData = {
   id: string
-  position: Vector3
+  position: Point
 }
 
 export type GameState = {

@@ -3,9 +3,8 @@
 </template>
 
 <script>
-import { defineComponent, markRaw } from 'vue'
 import { Vector3 } from 'three'
-import { BLOOM_LAYER } from '@GScene/layers'
+import { defineComponent, markRaw } from 'vue'
 import { Player, Warning, BMO, Skybox, RedStand, Environment } from '@/entities'
 
 export default defineComponent({
@@ -14,12 +13,12 @@ export default defineComponent({
   inject: ['camera', 'world'],
 
   data: () => markRaw({
-    playerData: { id: 'xgh-1r3-ai2', position: new Vector3(0, 0, 0) },
+    playerData: { id: 'abcd-1234-ddff-uuaa', position: { x: 0, y: 0, z: 0 } },
     entities: []
   }),
   
   async mounted () {
-    const player = new Player(this.playerData, this.camera.mainCamera, 0xffff55)
+    const player = new Player(this.playerData, this.camera, 0xffff55)
     const stand = new RedStand()
     const skybox = new Skybox()
     const bmo = new BMO()
@@ -31,8 +30,8 @@ export default defineComponent({
     warning.position.set(0, 2, 0)
     bmo.position.set(0, 0, 5)
 
-    this.camera.mainCamera.position.set(20, 10, -20)
-    this.camera.mainCamera.lookAt(player.position)
+    this.camera.position.set(20, 10, -20)
+    this.camera.lookAt(player.position)
     this.camera.follow(player)
 
     this.entities = [ player, stand, skybox, environment, warning ]

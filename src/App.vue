@@ -8,14 +8,10 @@
   </div>
 </template>
 
-<script>
-import GEngine from '@GEngine'
-import { GTouchAxis } from '@UI'
-import { GDialogue } from '@UI'
+<script lang="ts">
+import { Engine, publish, START, RESIZE, PRIMARY_AXIS } from '@/engine'
+import { GTouchAxis, GDialogue } from '@/ui'
 import { defineComponent, markRaw, reactive } from 'vue'
-import { publish } from '@GMessenger'
-import { START, RESIZE } from '@GEvents'
-import { PRIMARY_AXIS } from '@GInput'
 
 export default defineComponent({
   components: {
@@ -23,20 +19,24 @@ export default defineComponent({
     GDialogue
   },
 
-  provide () {
-    this.engine = new GEngine()
-
+  setup () {
     return {
-      resources: this.engine.resources,
+      engine: new Engine()
+    }
+  },
+
+  provide () {
+    return {
       renderer: this.engine.renderer,
       camera: this.engine.camera,
       input: this.engine.input,
-      world: this.engine.scene,
+      world: this.engine.world,
       navMesh: this.engine.navMesh,
     }
   },
 
   data: () => markRaw({
+    engine: Engine,
     state: reactive({
       isLoading: true,
     })
@@ -54,7 +54,7 @@ export default defineComponent({
 
   methods: {
     async init () {
-      await this.engine.init(this.$refs.viewport)
+      await this.engine.init(this.$refs.viewport as HTMLElement)
 
       this.state.isLoading = false
 
@@ -68,7 +68,7 @@ export default defineComponent({
       publish(RESIZE, { width, height })
     },
 
-    onTouchChange (direction) {
+    onTouchChange (direction: any) {
       this.engine.input.setAxis(PRIMARY_AXIS, direction)
     }
   }

@@ -1,8 +1,6 @@
 import { Object3D, Color, Mesh, ShaderMaterial, MeshBasicMaterial } from 'three'
-import { PlayerData } from '@/typescript/types'
-import { Entity, Resources } from '@/engine'
-import { BLOOM_LAYER } from '@/engine/Scene/layers'
-import { PRIMARY_AXIS } from '@/engine/Input'
+import { PlayerData } from '@/types'
+import { Entity, Resources, BLOOM_LAYER, PRIMARY_AXIS } from '@/engine'
 import { InputReader, Movement } from '@/components'
 import { MatcapVertex, MatcapFragment } from '@/assets/shaders'
 

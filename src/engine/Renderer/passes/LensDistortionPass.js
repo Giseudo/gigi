@@ -1,9 +1,8 @@
 import vertexShader from '../shaders/FullScreenQuad.vert.glsl'
 import fragmentShader from '../shaders/LensDistortion.frag.glsl'
-import { ShaderMaterial, UniformsUtils, NearestFilter, Vector2 } from 'three'
+import { ShaderMaterial, Vector2 } from 'three'
 import { Pass } from 'three/examples/jsm/postprocessing/Pass.js'
-import { subscribe } from '@GMessenger'
-import { RESIZE } from '@GEvents'
+import { subscribe, RESIZE } from '@/engine'
 
 export class LensDistortionPass extends Pass {
   uniforms

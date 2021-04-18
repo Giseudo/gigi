@@ -1,6 +1,6 @@
 import { Vector3 } from 'three'
-import { UpdatePayload } from '@/typescript/types'
-import Component from '@/typescript/Component'
+import { UpdatePayload } from '@/types'
+import { Component } from '@/engine'
 
 export default class Movement extends Component {
   velocity: Vector3 = new Vector3()

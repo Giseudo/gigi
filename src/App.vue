@@ -1,10 +1,8 @@
 <template>
   <div class="g-app">
-    <div class="viewport" ref="viewport">
-      <router-view  v-if="!state.isLoading" />
-      <g-touch-axis @move="onTouchChange" />
-      <g-dialogue v-if="state.showDialogue" />
-    </div>
+    <router-view  v-if="!isLoading" />
+    <g-touch-axis @move="onTouchChange" />
+    <g-dialogue v-if="showDialogue" />
   </div>
 </template>
 
@@ -14,18 +12,13 @@ import { GTouchAxis, GDialogue } from '@/ui'
 import { defineComponent, markRaw, reactive } from 'vue'
 
 export default defineComponent({
-  components: {
-    GTouchAxis,
-    GDialogue
-  },
+  components: { GTouchAxis, GDialogue },
 
-  setup () {
-    return {
-      engine: new Engine()
-    }
-  },
+  setup: () => ({
+    engine: new Engine()
+  }),
 
-  provide () {
+  provide() {
     return {
       renderer: this.engine.renderer,
       camera: this.engine.camera,
@@ -35,40 +28,32 @@ export default defineComponent({
     }
   },
 
-  data: () => markRaw({
+  data: () => ({
     engine: Engine,
-    state: reactive({
-      isLoading: true,
-    })
+    isLoading: true,
+    showDialogue: false
   }),
 
-  mounted () {
+  mounted() {
     this.init()
-    window.addEventListener('resize', this.onResize)
   },
 
-  beforeUnmount () {
-    this.engine.destroy()
-    window.removeEventListener('resize', this.onResize)
+  beforeUnmount() {
+    this.destroy()
   },
 
   methods: {
-    async init () {
-      await this.engine.init(this.$refs.viewport as HTMLElement)
+    async init() {
+      await this.engine.init(this.$el)
 
-      this.state.isLoading = false
-
-      publish(START)
+      this.isLoading = false
     },
 
-    onResize () {
-      const width = window.innerWidth
-      const height = window.innerHeight
-
-      publish(RESIZE, { width, height })
+    destroy() {
+      this.engine.destroy()
     },
 
-    onTouchChange (direction: any) {
+    onTouchChange(direction: any) {
       this.engine.input.setAxis(PRIMARY_AXIS, direction)
     }
   }
@@ -89,21 +74,16 @@ body, html, #app {
 }
 
 .g-app {
-  position: relative;
-  height: 100%;
-  overflow: hidden;
-  & > .viewport {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  touch-action: none;
+  & > .g-dialogue {
     position: absolute;
-    top: 0;
-    right: 0;
     bottom: 0;
     left: 0;
-    touch-action: none;
-    & > .g-dialogue {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-    }
   }
 }
 </style>

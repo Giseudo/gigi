@@ -66,7 +66,6 @@ export default class Renderer {
     this.uniforms.tDepth.value = this.target.depthTexture
 
     this.composer = new EffectComposer(this.renderer, this.target)
-    subscribe(RESIZE, this.onResize)
   }
 
   init (el) {
@@ -83,6 +82,8 @@ export default class Renderer {
     publish(INIT_RENDERER)
 
     el.appendChild(this.renderer.domElement)
+
+    window.addEventListener('resize', this.onResize)
   }
 
   gameLoop = () => {
@@ -106,16 +107,22 @@ export default class Renderer {
   destroy () {
     this.renderer.setAnimationLoop(null)
 
-    unsubscribe(RESIZE, this.onResize)
+    window.removeEventListener('resize', this.onResize)
   }
 
-  onResize = ({ width, height }) => {
+  onResize = () => {
+    const width = window.innerWidth
+    const height = window.innerHeight
+
     this.width = width
     this.height = height
+
     this.renderer.setSize(width, height)
     this.renderer.setPixelRatio(window.devicePixelRatio / 2)
 
     const pixelRatio = this.renderer.getPixelRatio() / 2
     this.composer.setSize(width * pixelRatio, height * pixelRatio)
+
+    publish(RESIZE, { width, height })
   }
 }

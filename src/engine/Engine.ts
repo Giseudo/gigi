@@ -1,4 +1,4 @@
-import { World, Camera, Renderer, Input, NavMesh } from './'
+import { World, Camera, Renderer, Input, NavMesh, publish, START } from './'
 
 export default class Engine {
   renderer: Renderer
@@ -16,6 +16,8 @@ export default class Engine {
     this.renderer.init(element)
     this.input.init()
     await this.navMesh.init()
+
+    publish(START)
   }
 
   destroy() {

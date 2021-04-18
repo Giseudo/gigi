@@ -13,12 +13,10 @@ export default defineComponent({
   inject: ['camera', 'world'],
 
   data: () => markRaw({
-    playerData: { id: 'abcd-1234-ddff-uuaa', position: { x: 0, y: 0, z: 0 } },
     entities: []
   }),
   
   async mounted () {
-    const player = new Player(this.playerData, this.camera, 0xffff55)
     const stand = new RedStand()
     const skybox = new Skybox()
     const bmo = new BMO()
@@ -30,11 +28,7 @@ export default defineComponent({
     warning.position.set(0, 2, 0)
     bmo.position.set(0, 0, 5)
 
-    this.camera.position.set(20, 10, -20)
-    this.camera.lookAt(player.position)
-    this.camera.follow(player)
-
-    this.entities = [ player, stand, skybox, environment, warning ]
+    this.entities = [ stand, skybox, environment, warning ]
     this.entities.forEach(e => this.world.add(e))
   },
 

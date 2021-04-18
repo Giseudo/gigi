@@ -1,13 +1,16 @@
 <template>
   <div class="g-app">
-    <router-view  v-if="!isLoading" />
+    <router-view  v-if="!state.isLoading" />
     <g-touch-axis @move="onTouchChange" />
-    <g-dialogue v-if="showDialogue" />
+    <g-dialogue v-if="state.showDialogue" />
+
+    <div class="debug"></div>
   </div>
 </template>
 
 <script lang="ts">
-import { Engine, publish, START, RESIZE, PRIMARY_AXIS } from '@/engine'
+import { Engine, Entity, publish, subscribe, START, RESIZE, PRIMARY_AXIS, PLAYER_CONNECTED, PLAYER_DISCONNECTED, PLAYER_JOINED, PLAYERS_INIT } from '@/engine'
+import { Player } from '@/entities'
 import { GTouchAxis, GDialogue } from '@/ui'
 import { defineComponent, markRaw, reactive } from 'vue'
 
@@ -28,33 +31,93 @@ export default defineComponent({
     }
   },
 
-  data: () => ({
-    engine: Engine,
-    isLoading: true,
-    showDialogue: false
+  data: () => markRaw({
+    engine: {} as Engine,
+    protagonist: {} as Entity,
+    protagonistId: null,
+    players: new Array<Entity>(),
+    state: reactive({
+      isLoading: true,
+      showDialogue: false,
+    })
   }),
 
-  mounted() {
+  mounted () {
     this.init()
+
+    subscribe(PLAYER_CONNECTED, this.onPlayerConnect)
+    subscribe(PLAYER_DISCONNECTED, this.onPlayerDisconnect)
+    subscribe(PLAYER_JOINED, this.onPlayerJoin)
+    subscribe(PLAYERS_INIT, this.onPlayersInit)
   },
 
-  beforeUnmount() {
-    this.destroy()
+  beforeUnmount () {
+    this.engine.destroy()
+    this.protagonist?.destroy()
+
+    for (const index in this.players)
+      this.players[index].destroy()
+
+    this.players = []
   },
 
   methods: {
     async init() {
       await this.engine.init(this.$el)
 
-      this.isLoading = false
+      this.state.isLoading = false
+      this.engine.camera.position.set(0, 15, -20)
+
+      publish(START)
     },
 
-    destroy() {
-      this.engine.destroy()
+    onResize () {
+      const width = window.innerWidth
+      const height = window.innerHeight
+
+      publish(RESIZE, { width, height })
     },
 
     onTouchChange(direction: any) {
       this.engine.input.setAxis(PRIMARY_AXIS, direction)
+    },
+
+    async onPlayerConnect ({ player }: any) {
+      const entity = new Player({ id: player.socketId, position: player.position }, this.engine.camera, 0xffff55)
+
+      this.protagonistId = player.socketId
+      this.protagonist = entity
+      this.engine.world.add(entity)
+
+      this.engine.camera.position.set(20, 10, -30)
+      this.engine.camera.lookAt(entity.position)
+      this.engine.camera.follow(entity)
+    },
+
+    async onPlayerDisconnect ({ player }: any) {
+      this.players.forEach((p: any, index: number) => {
+        if (p.data.id === player.who) {
+          p.destroy()
+          this.players.splice(index, 1)
+        }
+      })
+    },
+
+    async onPlayerJoin ({ player }: any) {
+      if (player.socketId === this.protagonistId) return
+
+      const entity = new Player({ id: player.socketId, position: player.position }, this.engine.camera, 0xffff55)
+      this.engine.world.add(entity)
+
+      this.players.push(entity)
+    },
+
+    async onPlayersInit ({ players }: any) {
+      for (let i = 0; i < players.length; i++) {
+        const player = players[i]
+
+        this.onPlayerJoin({ player })
+      }
     }
   }
 })
@@ -84,6 +147,23 @@ body, html, #app {
     position: absolute;
     bottom: 0;
     left: 0;
+    touch-action: none;
+    & > .g-dialogue {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+    }
+    & > .debug {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      padding: 20px;
+      background: black;
+      color: white;
+      font-size: 14px;
+      overflow: auto;
+      line-height: 200%;
+    }
   }
 }
 </style>

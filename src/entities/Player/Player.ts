@@ -22,6 +22,9 @@ export default class Player extends Entity {
   async start(): Promise<void> {
     const model = await Resources.loadObject(require('./Player_Model.fbx').default)
 
+    const { x, y, z } = this.data.position
+    this.position.set(x, y, z)
+
     this.add(model)
 
     model.traverse(async (node: Mesh) => {

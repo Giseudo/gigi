@@ -14,57 +14,33 @@ export default defineComponent({
   inject: ['camera', 'world'],
 
   data: () => markRaw({
-    player: null,
-    stand: null,
-    skybox: null,
-    environment: null,
-    warning: null
+    playerData: { id: 'xgh-1r3-ai2', position: new Vector3(0, 0, 0) },
+    entities: []
   }),
   
   async mounted () {
-    const player = new Player({
-      id: 'xgh-1r3-ai2',
-      position: new Vector3(0, 0, 0)
-    },
-    this.camera.mainCamera, 0xffff55)
-    this.world.add(player)
-
+    const player = new Player(this.playerData, this.camera.mainCamera, 0xffff55)
     const stand = new RedStand()
+    const skybox = new Skybox()
+    const bmo = new BMO()
+    const environment = new Environment()
+    const warning = new Warning()
+
     stand.position.set(0, 0, 30)
     stand.scale.set(3.5, 3.5, 3.5)
-    this.world.add(stand)
-
-    const skybox = new Skybox()
-    this.world.add(skybox)
-
-    const bmo = new BMO()
-    bmo.position.set(0, 0, 5)
-    this.world.add(bmo)
-
-    const environment = new Environment()
-    this.world.add(environment)
-
-    const warning = new Warning()
     warning.position.set(0, 2, 0)
-    this.world.add(warning)
-
-    this.player = player
-    this.stand = stand
-    this.skybox = skybox
-    this.environment = environment
-    this.warning = warning
+    bmo.position.set(0, 0, 5)
 
     this.camera.mainCamera.position.set(20, 10, -20)
-    this.camera.mainCamera.lookAt(this.player.position)
-    this.camera.follow(this.player)
+    this.camera.mainCamera.lookAt(player.position)
+    this.camera.follow(player)
+
+    this.entities = [ player, stand, skybox, environment, warning ]
+    this.entities.forEach(e => this.world.add(e))
   },
 
   beforeUnmount () {
-    this.player.destroy()
-    this.stand.destroy()
-    this.skybox.destroy()
-    this.environment.destroy()
-    this.warning.destroy()
+    this.entities.forEach(e => e.destroy())
   }
 })
 </script>

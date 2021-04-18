@@ -1,9 +1,9 @@
-import { UpdatePayload, IStartable, IDestroyable, IActivable, IDisableable, IUpdatable } from './types'
-import Messenger from './Messenger'
+import { EventDispatcher } from 'three'
+import { UpdatePayload, IStartable, IDestroyable, IActivatable, IUpdatable } from './types'
 import Entity from './Entity'
 
-export default class Component extends Messenger implements IStartable, IDestroyable, IActivable, IDisableable, IUpdatable {
-  active: boolean = false
+export default class Component extends EventDispatcher implements IStartable, IDestroyable, IActivatable, IUpdatable {
+  isEnabled: boolean = false
   entity?: Entity
 
   setEntity = (entity: Entity) => this.entity = entity
@@ -11,7 +11,7 @@ export default class Component extends Messenger implements IStartable, IDestroy
   start() {
     this.subscribe('onActivate', this.onActivate)
     this.subscribe('onDisable', this.onDisable)
-    this.activate()
+    this.enable()
     this.publish('onStart')
   }
 
@@ -24,16 +24,28 @@ export default class Component extends Messenger implements IStartable, IDestroy
 
   update(payload: UpdatePayload): void { }
 
-  activate() {
-    this.active = true
+  enable() {
+    this.isEnabled = true
     this.publish('onActivate')
   }
 
   disable() {
-    this.active = false
+    this.isEnabled = false
     this.publish('onDisable')
   }
 
   onActivate(): void { }
   onDisable(): void { }
+
+  subscribe (type: string, callback: (value: any) => void): void {
+    this.addEventListener(type, callback)
+  }
+
+  publish (type: string, data?: any): void {
+    this.dispatchEvent({ type, ...(data ? data : {}) })
+  }
+
+  unsubscribe(type: string, callback: (value: any) => void): void {
+    this.removeEventListener(type, callback)
+  }
 }

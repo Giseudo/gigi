@@ -1,9 +1,9 @@
-import { UpdatePayload, IStartable, IDestroyable, IActivable, IDisableable, IUpdatable } from './types'
-import Messenger from './Messenger'
+import { Object3D } from 'three'
+import { UpdatePayload, IStartable, IDestroyable, IActivatable, IUpdatable } from './types'
 import Component from './Component'
 
-export default class Entity extends Messenger implements IStartable, IDestroyable, IActivable, IDisableable, IUpdatable {
-  active: boolean = false
+export default class Entity extends Object3D implements IStartable, IDestroyable, IActivatable, IUpdatable {
+  isEnabled: boolean = false
   components: Array<Component> = []
 
   async start(): Promise<void> { }
@@ -14,7 +14,9 @@ export default class Entity extends Messenger implements IStartable, IDestroyabl
   }
 
   public update(payload: UpdatePayload): void {
-    this.components.forEach(component => component.active && component.update(payload))
+    this.components.forEach(component =>
+      component.isEnabled && component.update(payload)
+    )
   }
 
   public getComponent<T extends Component>(type: (new () => T)): T {
@@ -40,15 +42,28 @@ export default class Entity extends Messenger implements IStartable, IDestroyabl
     return component
   }
 
+  // TODO
   // public removeComponent<T extends Component>(type: (new () => T)): void { }
 
-  activate() {
-    this.active = true
-    this.publish('onActivate', { entity: this })
+  enable() {
+    this.isEnabled = true
+    this.publish('onEnable', { entity: this })
   }
 
   disable() {
-    this.active = false
+    this.isEnabled = false
     this.publish('onDisable', { entity: this })
+  }
+
+  subscribe (type: string, callback: (value: any) => void): void {
+    this.addEventListener(type, callback)
+  }
+
+  publish (type: string, data?: any): void {
+    this.dispatchEvent({ type, ...(data ? data : {}) })
+  }
+
+  unsubscribe(type: string, callback: (value: any) => void): void {
+    this.removeEventListener(type, callback)
   }
 }

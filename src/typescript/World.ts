@@ -9,7 +9,7 @@ export default class World extends Scene {
    * @returns Promise A promise resolved after the entity is loaded
    */
   add(entity: Entity): this {
-    entity.subscribe('onActivate', this.onAddToScene)
+    entity.subscribe('onEnable', this.onAddToScene)
     entity.subscribe('onDisable', this.onRemoveFromScene)
     entity.subscribe('onDestroy', this.onEntityDestroyed)
 
@@ -17,7 +17,7 @@ export default class World extends Scene {
       .then(() => {
         entity.components.forEach(c => c.start)
         entity.publish('onStart')
-        entity.activate()
+        entity.enable()
       })
 
     return this
@@ -47,7 +47,7 @@ export default class World extends Scene {
    * @returns void
    */
   private onEntityDestroyed = ({ entity }: EntityEventPayload): void => {
-    entity.unsubscribe('onActivate', this.onAddToScene)
+    entity.unsubscribe('onEnable', this.onAddToScene)
     entity.unsubscribe('onDisable', this.onRemoveFromScene)
     entity.unsubscribe('onDestroy', this.onEntityDestroyed)
 

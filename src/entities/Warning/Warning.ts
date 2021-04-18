@@ -1,5 +1,5 @@
 import { Mesh, CylinderGeometry, DoubleSide, MeshBasicMaterial } from 'three'
-import { resources, Entity } from '@/engine'
+import { Resources, Entity } from '@/engine'
 import { BLOOM_LAYER } from '@/engine/Scene/layers'
 
 export default class Warning extends Entity {
@@ -10,7 +10,7 @@ export default class Warning extends Entity {
     const geometry = new CylinderGeometry(this.radius, this.radius, this.height, 16, 1, true)
     const material = new MeshBasicMaterial({
       color: 0xff6622,
-      alphaMap: await resources.loadTexture(
+      alphaMap: await Resources.loadTexture(
         require('./Warning_Alpha.png')
       ),
       side: DoubleSide,

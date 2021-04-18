@@ -1,50 +1,36 @@
 import { TextureLoader } from 'three'
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader'
 
-export default class GResources {
-  fbxLoader = new FBXLoader()
-  textureLoader = new TextureLoader()
-  models = {}
-  textures = {}
+const fbxLoader = new FBXLoader()
+const textureLoader = new TextureLoader()
+const textures = []
+const models = []
 
+export default class Resources {
   constructor () { }
 
-  async loadObject (file, material) {
-    if (this.models[file]) return this.models[file].clone()
+  static async loadObject (file) {
+    if (models[file]) return models[file].clone()
 
     const object = await new Promise((resolve, reject) =>
-      this.fbxLoader.load(
+      fbxLoader.load(
         file,
-        object => {
-          object.traverse(e => {
-            if (e.isMesh && material) {
-              e.material.dispose()
-              e.material = material
-            }
-          })
-
-          resolve(object)
-        },
-        event => {
-          //
-        },
-        err => {
-          console.error(err)
-          reject(err)
-        }
+        object => resolve(object),
+        _ => { },
+        err => reject(err)
       )
     )
 
-    this.models[file] = object.clone()
+    models[file] = object.clone()
 
     return object
   }
 
-  async loadTexture (file) {
-    if (this.textures[file]) return this.textures[file]
+  static async loadTexture (file) {
+    if (textures[file]) return textures[file]
 
-    this.textures[file] = await this.textureLoader.load(file)
+    textures[file] = textureLoader.load(file)
 
-    return this.textures[file]
+    return textures[file]
   }
 }

@@ -12,12 +12,8 @@ export interface IDestroyable {
   destroy(): void
 }
 
-export interface IActivable {
-  active: boolean
-  activate(): void
-}
-
-export interface IDisableable {
-  active: boolean
+export interface IActivatable {
+  isEnabled: boolean
+  enable(): void
   disable(): void
 }

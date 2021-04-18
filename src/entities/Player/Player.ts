@@ -1,6 +1,6 @@
 import { Object3D, Color, Mesh, ShaderMaterial, MeshBasicMaterial } from 'three'
 import { PlayerData } from '@/typescript/types'
-import { Entity, resources } from '@/engine'
+import { Entity, Resources } from '@/engine'
 import { BLOOM_LAYER } from '@/engine/Scene/layers'
 import { PRIMARY_AXIS } from '@/engine/Input'
 import { InputReader, Movement } from '@/components'
@@ -22,7 +22,7 @@ export default class Player extends Entity {
   }
 
   async start(): Promise<void> {
-    const model = await resources.loadObject(require('./Player_Model.fbx').default)
+    const model = await Resources.loadObject(require('./Player_Model.fbx').default)
 
     this.add(model)
 
@@ -42,7 +42,7 @@ export default class Player extends Entity {
                 value: new Color(0xC0C0C0)
               },
               tMatcap: {
-                value: await resources.loadTexture(require('./Player_Matcap.png'))
+                value: await Resources.loadTexture(require('./Player_Matcap.png'))
               }
             }
           })

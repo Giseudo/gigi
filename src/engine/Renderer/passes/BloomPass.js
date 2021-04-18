@@ -58,7 +58,7 @@ export class BloomPass extends Pass {
     }
 
     this.renderPass = new RenderPass(scene, camera)
-    this.bloomPass = new UnrealBloomPass(new Vector2(width, height), .5, 0, 0)
+    this.bloomPass = new UnrealBloomPass(new Vector2(width, height), .3, 0, 0)
     this.material = new ShaderMaterial({
       uniforms: this.uniforms,
       vertexShader: vertexShader,
@@ -73,7 +73,7 @@ export class BloomPass extends Pass {
     subscribe(RESIZE, this.updateResolution)
   }
 
-	render (renderer, writeBuffer, readBuffer, deltaTime) {
+	render (renderer, writeBuffer, readBuffer) {
     renderer.setClearColor(0x000000)
  		this.uniforms.tDiffuse.value = readBuffer.texture
 

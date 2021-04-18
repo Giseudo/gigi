@@ -1,24 +1,17 @@
 import { Object3D, Color, Mesh, ShaderMaterial, MeshBasicMaterial } from 'three'
 import { PlayerData } from '@/types'
 import { Entity, Resources, BLOOM_LAYER, PRIMARY_AXIS } from '@/engine'
-import { InputReader, Movement } from '@/components'
+import { Movement } from '@/components'
 import { MatcapVertex, MatcapFragment } from '@/assets/shaders'
 
-export default class Player extends Entity {
+export default class NonPlayer extends Entity {
   data: PlayerData
   color: Color
-  inputReader: InputReader
-  movement: Movement
 
-  constructor(data: PlayerData, orientation: Object3D, color: number = 0xff2200) {
+  constructor(data: PlayerData, color: number = 0xff2200) {
     super()
     this.data = data
     this.color = new Color(color)
-
-    this.inputReader = this.addComponent(new InputReader(orientation))
-    this.movement = this.addComponent(new Movement(50, 20))
-
-    this.inputReader.subscribe('onAxisChange', () => this.publish('onMove', this.position))
   }
 
   async start(): Promise<void> {
@@ -56,34 +49,7 @@ export default class Player extends Entity {
   update(payload: any) {
     super.update(payload)
 
-    this.movement.move(
-      this.inputReader.getOrientedAxis(PRIMARY_AXIS)
-    )
-
-    this.position.add(
-      this.movement.velocity.clone().multiplyScalar(payload.deltaTime)
-    )
+    const { x, y, z } = this.data.position
+    this.position.set(x, y, z)
   }
 }
-
-/* Stick to navmesh
-const { velocity } = entity.getOne('Rigidbody')
-const transform = entity.getOne('Transform')
-const region = navMesh.getRegionForPoint(transform.position)
-const startPosition = transform.position.clone()
-
-if (region) this.region = region
-
-  transform.position.add(
-    velocity.clone().multiplyScalar(deltaTime)
-  )
-
-  const endPosition = transform.position.clone()
-
-  navMesh.clampMovement(
-    this.region,
-    startPosition,
-    endPosition,
-    transform.position
-  )
- */

@@ -23,7 +23,11 @@ export default class InputReader extends Component {
     unsubscribe(AXIS_CHANGED, this.onAxisChange)
   }
 
-  onAxisChange = ({ axis, value }: any) => this.axes[axis].copy(value)
+  onAxisChange = ({ axis, value }: any) => {
+    this.axes[axis].copy(value)
+
+    this.publish('onAxisChange', axis)
+  }
 
   getAxis (name: string) {
     const direction = this.axes[name]

@@ -5,7 +5,7 @@ export type Point = {
 }
 
 export type PlayerData = {
-  id: string
+  socketId: string
   position: Point
 }
 

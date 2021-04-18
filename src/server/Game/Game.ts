@@ -18,6 +18,7 @@ export class Game {
     public initListeners(): void {
         SocketManager.subscribe(this.onPlayerConnect)
         SocketManager.subscribe(this.onPlayerDisconnect)
+        SocketManager.subscribe(this.onPlayerMove)
     }
 
     /**
@@ -27,7 +28,7 @@ export class Game {
      * @returns void
      */
     public onPlayerConnect = (payload: any): void => {
-        if (payload.event != 'socket.connection') {
+        if (payload.event != "socket.connection") {
             return
         }
 
@@ -35,17 +36,17 @@ export class Game {
 
         this.players.push(player)
 
-        console.log('Jogador %s acabou de se conectar ao servidor.', payload.payload.who)
+        console.log("Jogador %s acabou de se conectar ao servidor.", payload.payload.who)
 
-        this.emmit('socket.connected', {
+        this.emmit("socket.connected", {
             who: payload.payload.who,
-            to: 'player',
+            to: "player",
             data: player
         })
 
-        this.emmit('socket.players', {
-            who: 'server',
-            to: 'all',
+        this.emmit("socket.players", {
+            who: "server",
+            to: "all",
             data: this.players
         })
     }
@@ -57,7 +58,7 @@ export class Game {
      * @returns void
      */
     public onPlayerDisconnect = (payload: any): void => {
-        if (payload.event != 'socket.disconnect') {
+        if (payload.event != "socket.disconnect") {
             return
         }
 
@@ -67,9 +68,35 @@ export class Game {
             }
 
             this.players.splice(index, 1)
-        });
+        })
 
-        console.log('Jogador %s acabou de desconectar.', payload.payload.who)
+        console.log("Jogador %s acabou de desconectar.", payload.payload.who)
+    }
+
+    /**
+     * Código executado sempre que recebemos um evento de movimento do jogador.
+     * 
+     * @param payload
+     * @returns void
+     */
+    public onPlayerMove = (payload: any): void => {
+        if (payload.event != "socket.move") {
+            return
+        }
+
+        this.players.forEach((player: Player, index: number) => {
+            if (player.socketId != payload.payload.who) {
+                return
+            }
+
+            this.players[index].position = payload.payload.data
+        })
+
+        this.emmit("socket.players", {
+            who: "server",
+            to: "all",
+            data: this.players
+        })
     }
 
     /**

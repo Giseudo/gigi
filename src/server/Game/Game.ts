@@ -10,12 +10,23 @@ export class Game {
         this.initListeners()
     }
 
+    /**
+     * Inicia todos os escutadores de evento do Game.
+     *
+     * @returns void
+     */
     public initListeners(): void {
         SocketManager.subscribe(this.onPlayerConnect)
         SocketManager.subscribe(this.onPlayerDisconnect)
     }
 
-    onPlayerConnect = (payload: any): void => {
+    /**
+     * Código executado sempre que recebemos um evento de conexão do jogador.
+     * 
+     * @param payload 
+     * @returns void
+     */
+    public onPlayerConnect = (payload: any): void => {
         if (payload.event != 'socket.connection') {
             return
         }
@@ -39,7 +50,13 @@ export class Game {
         })
     }
 
-    onPlayerDisconnect = (payload: any): void => {
+    /**
+     * Código executado sempre que recebemos um evento de desconexão do jogador.
+     * 
+     * @param payload 
+     * @returns void
+     */
+    public onPlayerDisconnect = (payload: any): void => {
         if (payload.event != 'socket.disconnect') {
             return
         }
@@ -55,7 +72,15 @@ export class Game {
         console.log('Jogador %s acabou de desconectar.', payload.payload.who)
     }
 
-    public emmit(eventName: string, payload: object) {
+    /**
+     * Emite o evento que foi recebido por parâmetro para todos que estão ouvindo
+     * os eventos de Game.
+     * 
+     * @param eventName 
+     * @param payload
+     * @returns void
+     */
+    public emmit(eventName: string, payload: object): void {
         const data = {
             event: eventName,
             payload: payload
@@ -64,11 +89,28 @@ export class Game {
         Game.notifyAll(data)
     }
 
+    /**
+     * Método recebe um callback que deve ser executado sempre que nós executamos
+     * disparamos evento. Quem está ouvindo (o callback) deve sempre fazer o
+     * tratamento da mensagem para verificar qual mensagem ele quer ouvir.
+     * 
+     * @param callback 
+     * @returns void
+     */
     public static subscribe(callback: any): void
     {
         Game.observers.push(callback)
     }
 
+    /**
+     * Executa todos os callbacks das entidades que estão nos escutando
+     * (e que foram previamente cadastradas). Quem está ouvindo (o callback)
+     * deve sempre fazer o tratamento da mensagem para verificar qual mensagem
+     * ele quer ouvir.
+     * 
+     * @param command 
+     * @returns void
+     */
     public static notifyAll(command: any): void
     {
         for (const observer of Game.observers) {

@@ -70,6 +70,12 @@ export class Game {
             this.players.splice(index, 1)
         })
 
+        this.emmit('socket.disconnected', {
+            who: 'server',
+            to: 'all',
+            data: payload.payload
+        })
+
         console.log("Jogador %s acabou de desconectar.", payload.payload.who)
     }
 

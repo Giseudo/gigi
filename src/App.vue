@@ -1,63 +1,46 @@
 <template>
   <div class="g-app">
-    <div class="viewport" ref="viewport">
-      <router-view  v-if="!isLoading" />
-      <g-touch-axis @move="onTouchChange" />
-      <g-dialogue v-if="showDialogue" />
-      <div class="debug" v-if="protagonist">
-        <div v-for="player in allPlayers">
-          {{ player.id }}: {{ printPos(player) }}
-        </div>
-      </div>
-    </div>
+    <router-view  v-if="!state.isLoading" />
+    <g-touch-axis @move="onTouchChange" />
+    <g-dialogue v-if="state.showDialogue" />
+
+    <div class="debug"></div>
   </div>
 </template>
 
-<script>
-import './typescript/Game.ts'
-
-import GEngine from '@GEngine'
-import { GTouchAxis } from '@UI'
-import { GDialogue } from '@UI'
+<script lang="ts">
+import { Engine, Entity, publish, subscribe, START, RESIZE, PRIMARY_AXIS, PLAYER_CONNECTED, PLAYER_DISCONNECTED, PLAYER_JOINED, PLAYERS_INIT } from '@/engine'
+import { Player } from '@/entities'
+import { GTouchAxis, GDialogue } from '@/ui'
 import { defineComponent, markRaw, reactive } from 'vue'
-import { publish, subscribe } from '@GMessenger'
-import { START, RESIZE, PLAYER_CONNECTED, PLAYER_DISCONNECTED, PLAYER_JOINED, PLAYERS_INIT } from '@GEvents'
-import { PRIMARY_AXIS } from '@GInput'
 
 export default defineComponent({
-  components: {
-    GTouchAxis,
-    GDialogue
-  },
+  components: { GTouchAxis, GDialogue },
 
-  provide () {
-    this.engine = new GEngine()
+  setup: () => ({
+    engine: new Engine()
+  }),
 
+  provide() {
     return {
-      resources: this.engine.resources,
       renderer: this.engine.renderer,
       camera: this.engine.camera,
       input: this.engine.input,
-      scene: this.engine.scene,
-      navMesh: this.engine.navMesh,
       world: this.engine.world,
-      entityFactory: this.engine.world.entityFactory
+      navMesh: this.engine.navMesh,
     }
   },
 
-  data: () => ({
-    isLoading: true,
-    showDialogue: false,
-    protagonist: null,
+  data: () => markRaw({
+    engine: {} as Engine,
+    protagonist: {} as Entity,
     protagonistId: null,
-    players: []
+    players: new Array<Entity>(),
+    state: reactive({
+      isLoading: true,
+      showDialogue: false,
+    })
   }),
-
-  computed: {
-    allPlayers () {
-      return [ this.protagonist, ...this.players ]
-    }
-  },
 
   mounted () {
     this.init()
@@ -66,41 +49,26 @@ export default defineComponent({
     subscribe(PLAYER_DISCONNECTED, this.onPlayerDisconnect)
     subscribe(PLAYER_JOINED, this.onPlayerJoin)
     subscribe(PLAYERS_INIT, this.onPlayersInit)
-
-    window.addEventListener('resize', this.onResize)
   },
 
   beforeUnmount () {
     this.engine.destroy()
-    this.protagonist.destroy()
+    this.protagonist?.destroy()
 
     for (const index in this.players)
       this.players[index].destroy()
 
     this.players = []
-
-    window.removeEventListener('resize', this.onResize)
   },
 
   methods: {
-    async init () {
-      await this.engine.init(this.$refs.viewport)
-      this.skybox = this.engine.world.entityFactory.create('Skybox')
+    async init() {
+      await this.engine.init(this.$el)
 
-      this.isLoading = false
-      this.engine.camera.mainCamera.position.set(0, 15, -20)
+      this.state.isLoading = false
+      this.engine.camera.position.set(0, 15, -20)
 
       publish(START)
-    },
-
-    printPos (player) {
-      const { position } = player.getOne('Transform')
-
-      const x = position.x.toFixed(2)
-      const y = position.y.toFixed(2)
-      const z = position.z.toFixed(2)
-
-      return JSON.stringify({ x, y, z })
     },
 
     onResize () {
@@ -110,50 +78,41 @@ export default defineComponent({
       publish(RESIZE, { width, height })
     },
 
-    onTouchChange (direction) {
+    onTouchChange(direction: any) {
       this.engine.input.setAxis(PRIMARY_AXIS, direction)
     },
 
-    async onPlayerConnect ({ player }) {
-      const { x, y, z } = player.position
+    async onPlayerConnect ({ player }: any) {
+      const entity = new Player({ id: player.socketId, position: player.position }, this.engine.camera, 0xffff55)
 
       this.protagonistId = player.socketId
-      this.protagonist = await this.engine.world.entityFactory.create('Protagonist', {
-        id: player.socketId,
-        position: new THREE.Vector3(x, y, z),
-        orientation: this.engine.camera.mainCamera
+      this.protagonist = entity
+      this.engine.world.add(entity)
+
+      this.engine.camera.position.set(20, 10, -30)
+      this.engine.camera.lookAt(entity.position)
+      this.engine.camera.follow(entity)
+    },
+
+    async onPlayerDisconnect ({ player }: any) {
+      this.players.forEach((p: any, index: number) => {
+        if (p.data.id === player.who) {
+          p.destroy()
+          this.players.splice(index, 1)
+        }
       })
-
-      const transform = this.protagonist.getOne('Transform')
-
-      this.engine.camera.mainCamera.lookAt(transform.position)
-      this.engine.camera.follow(transform)
     },
 
-    async onPlayerDisconnect ({ player }) {
-      const entity = this.engine.world.getEntity(player.socketId)
-      const index = this.players.indexOf(entity)
-
-      entity.destroy()
-
-      if (index >= 0)
-        this.players.splice(index, 1)
-    },
-
-    async onPlayerJoin ({ player }) {
+    async onPlayerJoin ({ player }: any) {
       if (player.socketId === this.protagonistId) return
 
-      const { x, y, z } = player.position
-
-      const entity = await this.engine.world.entityFactory.create('Player', {
-        id: player.socketId,
-        position: new THREE.Vector3(x, y, z)
-      })
+      const entity = new Player({ id: player.socketId, position: player.position }, this.engine.camera, 0xffff55)
+      this.engine.world.add(entity)
 
       this.players.push(entity)
     },
 
-    async onPlayersInit ({ players }) {
+    async onPlayersInit ({ players }: any) {
       for (let i = 0; i < players.length; i++) {
         const player = players[i]
 
@@ -178,13 +137,14 @@ body, html, #app {
 }
 
 .g-app {
-  position: relative;
-  height: 100%;
-  overflow: hidden;
-  & > .viewport {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  touch-action: none;
+  & > .g-dialogue {
     position: absolute;
-    top: 0;
-    right: 0;
     bottom: 0;
     left: 0;
     touch-action: none;

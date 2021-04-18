@@ -1,6 +1,2 @@
-export { default as RigidbodyComponent } from './Rigidbody'
-export { default as ColliderComponent } from './Collider'
-export { default as InputReaderComponent } from './InputReader'
-export { default as MeshRendererComponent } from './MeshRenderer'
-export { default as TransformComponent } from './Transform'
-export { default as LineComponent } from './Line'
+export { default as InputReader } from './InputReader'
+export { default as Movement } from './Movement'

@@ -40,10 +40,10 @@ void main() {
     float blue = texture(tDiffuse, blueUv).b;
 
     vec4 baseColor = vec4(red, green, blue, 1.0);
-    vec2 scanLineOpacity = vec2(.1);
+    vec2 scanLineOpacity = vec2(1.);
 
     // baseColor *= scanLineIntensity(greenUv.x, resolution.y, scanLineOpacity.x, 8.0);
-    // baseColor *= scanLineIntensity(greenUv.y, resolution.x, scanLineOpacity.y, 1.0);
+    baseColor -= scanLineIntensity(greenUv.y, resolution.x, scanLineOpacity.y, 1.) * .2;
 
     float vignet = 1.0 - distance(vUv - .5, vec2(0.));
     vignet = pow(vignet, 1.8);

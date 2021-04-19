@@ -35,7 +35,7 @@ export default class Camera extends PerspectiveCamera {
       .sub(this.followOffset)
 
     this.position.lerp(desiredPosition, deltaTime * 2.)
-    this.lookAt(this.followTarget.position)
+    // this.lookAt(this.followTarget.position)
   }
 
   onResize = ({ width, height }: any) => {

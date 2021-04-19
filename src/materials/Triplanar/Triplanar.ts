@@ -11,7 +11,7 @@ export default class TriplanarMaterial extends ShaderMaterial {
 
     Resources.loadTexture(require('@/assets/textures/PixelNoise.jpeg'))
       .then(texture => {
-        texture.magFilter = NearestFilter
+        texture.minFilter = NearestFilter
         texture.wrapS = RepeatWrapping
         texture.wrapT = RepeatWrapping
         this.uniforms.tNoise = { value: texture }

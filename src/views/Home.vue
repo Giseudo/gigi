@@ -25,7 +25,7 @@ export default defineComponent({
 
     stand.position.set(0, 0, 30)
     stand.scale.set(3.5, 3.5, 3.5)
-    warning.position.set(0, 2, 0)
+    warning.position.set(-1, 12, -4)
     bmo.position.set(0, 0, 5)
 
     this.entities = [ stand, skybox, environment, warning ]

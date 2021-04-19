@@ -93,7 +93,7 @@ export default defineComponent({
       this.protagonist = entity
       this.engine.world.add(entity)
 
-      this.engine.camera.position.set(20, 10, -30)
+      this.engine.camera.position.set(10, 20, -10)
       this.engine.camera.lookAt(entity.position)
       this.engine.camera.follow(entity)
     },

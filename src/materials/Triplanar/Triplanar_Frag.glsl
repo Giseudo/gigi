@@ -20,9 +20,9 @@ vec3 getTriPlanarBlend(vec3 normal){
 }
 
 void main(){
-  float xnoise = texture2D(tNoise, vPos.yz * normalRepeat).r;
-  float ynoise = texture2D(tNoise, vPos.xz * normalRepeat).r;
-  float znoise = texture2D(tNoise, vPos.xy * normalRepeat).r;
+  float xnoise = texture2D(tNoise, vPos.yz * normalRepeat / 2.).r;
+  float ynoise = texture2D(tNoise, vPos.xz * normalRepeat / 2.).r;
+  float znoise = texture2D(tNoise, vPos.xy * normalRepeat / 2.).r;
 
   vec3 blending = abs(vWorldNormal.xyz);
 
@@ -37,9 +37,9 @@ void main(){
   if (h.z < .9) h.z = 0.;
   blending = h / dot(h, vec3(1.,1.,1.));
 
-  vec3 xaxis = texture2D( tSide, vPos.yz * normalRepeat / 2.).rgb;
-  vec3 yaxis = texture2D( tTop, vPos.xz * normalRepeat / 5.).rgb;
-  vec3 zaxis = texture2D( tSide, vPos.xy * normalRepeat / 2.).rgb;
+  vec3 xaxis = texture2D( tSide, vPos.yz * normalRepeat / 4.).rgb;
+  vec3 yaxis = texture2D( tTop, vPos.xz * normalRepeat / 4.).rgb;
+  vec3 zaxis = texture2D( tSide, vPos.xy * normalRepeat / 4.).rgb;
 
   vec3 color = xaxis * blending.x + yaxis * blending.y + zaxis * blending.z;
 

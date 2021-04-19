@@ -2,6 +2,7 @@ import { Color, ShaderMaterial, Object3D } from 'three'
 import { MatcapVertex, MatcapFragment } from '@/assets/shaders'
 import { Resources, Entity } from '@/engine'
 import { TriplanarMaterial } from '@/materials'
+import { Warning } from '@/entities'
 console.log(TriplanarMaterial)
 
 export default class Environment extends Entity {
@@ -16,7 +17,13 @@ export default class Environment extends Entity {
     terrainModel.traverse((node: any) => {
       if (node.isMesh) node.material = terrainMaterial
     })
-    terrainModel.position.y = 5
+
+    const warningModel = new Warning()
+    warningModel.position.set(-1, 5, -4)
+    await warningModel.start()
+    terrainModel.attach(warningModel)
+
+    terrainModel.position.set(20, 5, -20)
 
     const model: Object3D = await Resources.loadObject(
       require('./Environment.fbx').default,

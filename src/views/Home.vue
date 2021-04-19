@@ -21,14 +21,12 @@ export default defineComponent({
     const skybox = new Skybox()
     const bmo = new BMO()
     const environment = new Environment()
-    const warning = new Warning()
 
     stand.position.set(0, 0, 30)
     stand.scale.set(3.5, 3.5, 3.5)
-    warning.position.set(-1, 12, -4)
     bmo.position.set(0, 0, 5)
 
-    this.entities = [ stand, skybox, environment, warning ]
+    this.entities = [ stand, skybox, environment ]
     this.entities.forEach(e => this.world.add(e))
   },
 

@@ -17,6 +17,7 @@ export default class Engine {
     this.camera.init()
     this.renderer.init(element)
     this.input.init()
+    this.network.init()
     await this.navMesh.init()
 
     publish(START)
@@ -27,5 +28,7 @@ export default class Engine {
     this.renderer.destroy()
     this.input.destroy()
     this.navMesh.destroy()
+    this.network.destroy()
+    this.world.destroy()
   }
 }

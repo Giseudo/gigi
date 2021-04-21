@@ -74,4 +74,8 @@ export default class World extends Scene {
 
     entities.forEach(entity => entity.update && entity.update(payload))
   }
+
+  destroy() {
+    this.children.forEach((obj: any) => obj.destroy())
+  }
 }

@@ -3,14 +3,13 @@
 </template>
 
 <script>
-import { Vector3 } from 'three'
-import { defineComponent, markRaw } from 'vue'
-import { Player, Warning, BMO, Skybox, RedStand, Environment } from '@/entities'
+import { markRaw } from 'vue'
+import { Warning, BMO, Skybox, RedStand, Environment } from '@/entities'
 
-export default defineComponent({
+export default ({
   name: 'Home',
 
-  inject: ['camera', 'world'],
+  inject: [ 'world'],
 
   data: () => markRaw({
     entities: []

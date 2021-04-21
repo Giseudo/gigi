@@ -66,6 +66,9 @@ export default class PlayerEntity extends Entity {
     const { x, y, z } = this.data.position
 
     this.position.set(x, y, z)
+
+    if (this.data.direction)
+      this.lookAt(this.position.clone().sub(this.data.direction))
   }
 }
 

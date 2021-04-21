@@ -1,25 +1,16 @@
 <template>
   <div class="g-app">
-    <router-view  v-if="!state.isLoading" />
-    <g-touch-axis @move="onTouchChange" />
-    <g-dialogue v-if="state.showDialogue" />
+    <router-view />
 
     <div class="debug"></div>
   </div>
 </template>
 
-<script lang="ts">
-import { Engine, Entity, publish, subscribe, START, RESIZE, PRIMARY_AXIS, PLAYER_CONNECTED, PLAYER_DISCONNECTED, PLAYER_JOINED, PLAYERS_INIT } from '@/engine'
-import { PlayerEntity } from '@/entities'
-import { GTouchAxis, GDialogue } from '@/ui'
-import { defineComponent, markRaw, reactive } from 'vue'
+<script>
+import { markRaw } from 'vue'
+import { Engine } from '@/engine'
 
-export default defineComponent({
-  components: { GTouchAxis, GDialogue },
-
-  setup: () => ({
-    engine: new Engine()
-  }),
+export default ({
 
   provide() {
     return {
@@ -28,100 +19,28 @@ export default defineComponent({
       input: this.engine.input,
       world: this.engine.world,
       navMesh: this.engine.navMesh,
+      network: this.engine.network,
     }
   },
 
-  data: () => markRaw({
-    engine: {} as Engine,
-    protagonist: {} as Entity,
-    protagonistId: null,
-    players: new Array<Entity>(),
-    state: reactive({
-      isLoading: true,
-      showDialogue: false,
-    })
+  data: () => ({
+    engine: markRaw(new Engine()),
+    isLoading: true
   }),
 
   mounted () {
     this.init()
-
-    subscribe(PLAYER_CONNECTED, this.onPlayerConnect)
-    subscribe(PLAYER_DISCONNECTED, this.onPlayerDisconnect)
-    subscribe(PLAYER_JOINED, this.onPlayerJoin)
-    subscribe(PLAYERS_INIT, this.onPlayersInit)
   },
 
   beforeUnmount () {
     this.engine.destroy()
-    this.protagonist?.destroy()
-
-    for (const index in this.players)
-      this.players[index].destroy()
-
-    this.players = []
   },
 
   methods: {
     async init() {
       await this.engine.init(this.$el)
 
-      this.state.isLoading = false
-      this.engine.camera.position.set(0, 15, -20)
-
-      publish(START)
-    },
-
-    onResize () {
-      const width = window.innerWidth
-      const height = window.innerHeight
-
-      publish(RESIZE, { width, height })
-    },
-
-    onTouchChange(direction: any) {
-      this.engine.input.setAxis(PRIMARY_AXIS, direction)
-    },
-
-    async onPlayerConnect ({ player: data }: any) {
-      const entity = new PlayerEntity(data, 0xffff55, true, this.engine.camera)
-
-      entity.subscribe('changedPosition', ({ x, y, z }: any) => {
-        console.log('player moved', x, y, z)
-      })
-
-      this.protagonistId = data.socketId
-      this.protagonist = entity
-      this.engine.world.add(entity)
-
-      this.engine.camera.position.set(10, 20, -10)
-      this.engine.camera.lookAt(entity.position)
-      this.engine.camera.follow(entity)
-    },
-
-    async onPlayerDisconnect ({ player }: any) {
-      this.players.forEach((p: any, index: number) => {
-        if (p.data.id === player.who) {
-          p.destroy()
-          this.players.splice(index, 1)
-        }
-      })
-    },
-
-    async onPlayerJoin ({ player: data }: any) {
-      if (data.socketId === this.protagonistId) return
-
-      const entity = new PlayerEntity(data, 0x00ff00, false)
-      this.engine.world.add(entity)
-
-      this.players.push(entity)
-    },
-
-    async onPlayersInit ({ players }: any) {
-      for (let i = 0; i < players.length; i++) {
-        const player = players[i]
-
-        this.onPlayerJoin({ player })
-      }
+      this.isLoading = false
     }
   }
 })

@@ -38,6 +38,9 @@ export default class Movement extends Component {
         .lerp(direction, deltaTime * 5.)
         .add(this.entity.position)
 
+      if (this.isMoving)
+        this.publish('moved', { position: this.entity.position })
+
       this.entity.lookAt(smoothDirection)
   }
 

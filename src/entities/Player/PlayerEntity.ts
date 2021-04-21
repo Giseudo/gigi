@@ -1,33 +1,28 @@
-import { Object3D, Color, Mesh, ShaderMaterial, MeshBasicMaterial } from 'three'
+import { Object3D, Color, Mesh, MeshBasicMaterial } from 'three'
 import { PlayerData } from '@/types'
 import { Entity, Resources, BLOOM_LAYER, PRIMARY_AXIS } from '@/engine'
 import { InputReader, Movement } from '@/components'
-import { MatcapVertex, MatcapFragment } from '@/assets/shaders'
+import { MatcapMaterial } from '@/materials'
 
-export default class Player extends Entity {
+export default class PlayerEntity extends Entity {
   data: PlayerData
   color: Color
   inputReader: InputReader
   movement: Movement
+  isControllable: boolean
 
-  constructor(data: PlayerData, orientation: Object3D, color: number = 0xff2200) {
+  constructor(data: PlayerData, color: number = 0xff2200, isControllable: boolean = false, orientation?: Object3D) {
     super()
     this.data = data
     this.color = new Color(color)
+    this.isControllable = isControllable
 
     this.inputReader = this.addComponent(new InputReader(orientation))
     this.movement = this.addComponent(new Movement(50, 20))
-
-    this.inputReader.subscribe('onAxisChange', () => this.publish('onMove', this.position))
   }
 
   async start(): Promise<void> {
-    const model = await Resources.loadObject(require('./Player_Model.fbx').default)
-
-    const { x, y, z } = this.data.position
-    this.position.set(x, y, z)
-
-    this.add(model)
+    const model = await Resources.loadObject(require('./PlayerModel.fbx').default)
 
     model.traverse(async (node: Mesh) => {
       if (node.isMesh) {
@@ -37,32 +32,40 @@ export default class Player extends Entity {
         }
 
         if (node.name === 'Body')
-          node.material = new ShaderMaterial({
-            vertexShader: MatcapVertex,
-            fragmentShader: MatcapFragment,
-            uniforms: {
-              color: {
-                value: new Color(0xC0C0C0)
-              },
-              tMatcap: {
-                value: await Resources.loadTexture(require('./Player_Matcap.png'))
-              }
-            }
-          })
+          node.material = new MatcapMaterial(await Resources.loadTexture(require('./PlayerMatcap.png')))
       }
     })
+
+    this.syncPosition()
+    this.add(model)
   }
 
   update(payload: any) {
     super.update(payload)
+
+    if (this.isControllable)
+      return this.updatePosition(payload.deltaTime)
+
+    this.syncPosition()
+  }
+
+  updatePosition(deltaTime: number): void {
+    if (this.movement.isMoving)
+      this.publish('changedPosition', this.position)
 
     this.movement.move(
       this.inputReader.getOrientedAxis(PRIMARY_AXIS)
     )
 
     this.position.add(
-      this.movement.velocity.clone().multiplyScalar(payload.deltaTime)
+      this.movement.velocity.clone().multiplyScalar(deltaTime)
     )
+  }
+
+  syncPosition(): void {
+    const { x, y, z } = this.data.position
+
+    this.position.set(x, y, z)
   }
 }
 

@@ -3,6 +3,7 @@ import { UpdatePayload } from '@/types'
 import { Component } from '@/engine'
 
 export default class Movement extends Component {
+  isMoving: boolean = false
   velocity: Vector3 = new Vector3()
   direction: Vector3 = new Vector3()
   acceleration: number
@@ -16,6 +17,8 @@ export default class Movement extends Component {
 
   update({ deltaTime }: UpdatePayload) {
     const { direction, velocity, acceleration, maxVelocity } = this
+
+    this.isMoving = velocity.lengthSq() > .5
 
     if (direction.lengthSq() > .1)
       velocity.add(

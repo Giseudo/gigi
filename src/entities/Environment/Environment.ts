@@ -3,7 +3,6 @@ import { MatcapVertex, MatcapFragment } from '@/assets/shaders'
 import { Resources, Entity } from '@/engine'
 import { TriplanarMaterial } from '@/materials'
 import { Warning } from '@/entities'
-console.log(TriplanarMaterial)
 
 export default class Environment extends Entity {
   async start(): Promise<void> {

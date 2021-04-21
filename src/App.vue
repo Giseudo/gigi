@@ -10,7 +10,7 @@
 
 <script lang="ts">
 import { Engine, Entity, publish, subscribe, START, RESIZE, PRIMARY_AXIS, PLAYER_CONNECTED, PLAYER_DISCONNECTED, PLAYER_JOINED, PLAYERS_INIT } from '@/engine'
-import { Player, NonPlayer } from '@/entities'
+import { PlayerEntity } from '@/entities'
 import { GTouchAxis, GDialogue } from '@/ui'
 import { defineComponent, markRaw, reactive } from 'vue'
 
@@ -82,14 +82,14 @@ export default defineComponent({
       this.engine.input.setAxis(PRIMARY_AXIS, direction)
     },
 
-    async onPlayerConnect ({ player: playerData }: any) {
-      const entity = new Player(playerData, this.engine.camera, 0xffff55)
+    async onPlayerConnect ({ player: data }: any) {
+      const entity = new PlayerEntity(data, 0xffff55, true, this.engine.camera)
 
-      entity.subscribe('onMove', ({ x, y, z }: any) => {
+      entity.subscribe('changedPosition', ({ x, y, z }: any) => {
         console.log('player moved', x, y, z)
       })
 
-      this.protagonistId = playerData.socketId
+      this.protagonistId = data.socketId
       this.protagonist = entity
       this.engine.world.add(entity)
 
@@ -107,10 +107,10 @@ export default defineComponent({
       })
     },
 
-    async onPlayerJoin ({ player: playerData }: any) {
-      if (playerData.socketId === this.protagonistId) return
+    async onPlayerJoin ({ player: data }: any) {
+      if (data.socketId === this.protagonistId) return
 
-      const entity = new NonPlayer(playerData, 0x00ff00)
+      const entity = new PlayerEntity(data, 0x00ff00, false)
       this.engine.world.add(entity)
 
       this.players.push(entity)

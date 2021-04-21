@@ -2,9 +2,9 @@ import { Object3D, Vector2, Vector3 } from 'three'
 import { Component, subscribe, unsubscribe, AXIS_CHANGED, PRIMARY_AXIS } from '@/engine'
 
 export default class InputReader extends Component {
-  orientation: Object3D
+  orientation?: Object3D
 
-  constructor(orientation: Object3D) {
+  constructor(orientation?: Object3D) {
     super()
     this.orientation = orientation
   }
@@ -26,7 +26,7 @@ export default class InputReader extends Component {
   onAxisChange = ({ axis, value }: any) => {
     this.axes[axis].copy(value)
 
-    this.publish('onAxisChange', axis)
+    this.publish('axisChanged', { axis, value })
   }
 
   getAxis (name: string) {

@@ -16,7 +16,7 @@ import {
   Matrix4
 } from 'three'
 import { UPDATE, DRAW, RESIZE, INIT_RENDERER } from '@GEvents'
-import { publish, subscribe, unsubscribe } from '@GMessenger'
+import { publish } from '@GMessenger'
 
 const TIME_INTERVAL = 1 / 30
 
@@ -84,6 +84,16 @@ export default class Renderer {
     el.appendChild(this.renderer.domElement)
 
     window.addEventListener('resize', this.onResize)
+    window.addEventListener('focus', this.onWindowFocus)
+    window.addEventListener('blur', this.onWindowBlur)
+  }
+
+  onWindowFocus = () => {
+    // this.clock.start()
+  }
+
+  onWindowBlur = () => {
+    // this.clock.stop()
   }
 
   gameLoop = () => {

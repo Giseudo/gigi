@@ -46,6 +46,7 @@ export default class Input {
   init () {
     document.addEventListener('keydown', this.onKeyDown)
     document.addEventListener('keyup', this.onKeyUp)
+    window.addEventListener('blur', this.reset)
   }
 
   destroy () {
@@ -112,5 +113,10 @@ export default class Input {
 
       publish(BUTTON_UP, { button })
     }
+  }
+
+  reset = () => {
+    this.state.pressing = []
+    this.setAxis(PRIMARY_AXIS, new Vector2())
   }
 }

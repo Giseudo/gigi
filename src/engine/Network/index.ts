@@ -63,12 +63,18 @@ export default class Network {
       if (player) {
         const { x: x1, y: y1, z: z1 } = player.position
         const { x: x2, y: y2, z: z2 } = position
-        const direction = new Vector3(x1, y1, z1)
-          .sub(new Vector3(x2, y2, z2))
+        const initialPosition = new Vector3(x1, y1, z1)
+        const finalPosition = new Vector3(x2, y2, z2)
+
+        if (initialPosition.clone().sub(finalPosition).lengthSq() > .1) {
+          const direction = initialPosition
+          .sub(finalPosition)
           .normalize()
 
+          player.direction = direction
+        }
+
         player.position = position
-        player.direction = direction
       } else {
         this.onJoined(players[i])
       }

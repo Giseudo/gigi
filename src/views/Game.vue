@@ -19,7 +19,7 @@ import { PRIMARY_AXIS } from '@/engine/Input'
 export default {
   name: 'Game',
 
-  inject: [ 'world', 'camera', 'network' ],
+  inject: [ 'input', 'world', 'camera', 'network' ],
 
   components: { GTouchAxis, GDialogue },
 
@@ -87,7 +87,8 @@ export default {
     },
 
     onTouchChange (direction) {
-      this.engine.input.setAxis(PRIMARY_AXIS, direction)
+      console.log(direction)
+      this.input.setAxis(PRIMARY_AXIS, direction)
     },
 
     onPlayerMove ({ position }) {
@@ -96,3 +97,6 @@ export default {
   }
 }
 </script>
+
+<style lang="scss">
+</style>

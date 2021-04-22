@@ -10,7 +10,7 @@ export default class Network {
   player: any
 
   constructor() {
-    this.socket = socketio('http://localhost:3000')
+    this.socket = socketio(process.env.VUE_APP_SERVER_ADDRESS)
   }
 
   init() {

@@ -9,3 +9,9 @@ declare module '*.glsl' {
   const value: string
   export default value
 }
+
+declare var process : {
+  env: {
+    VUE_APP_SERVER_ADDRESS: string
+  }
+}

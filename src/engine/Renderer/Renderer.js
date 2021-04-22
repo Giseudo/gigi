@@ -16,6 +16,7 @@ import {
   Matrix4
 } from 'three'
 import { UPDATE, DRAW, RESIZE, INIT_RENDERER } from '@GEvents'
+import * as events from '@GEvents'
 import { publish } from '@GMessenger'
 
 const TIME_INTERVAL = 1 / 30
@@ -88,16 +89,8 @@ export default class Renderer {
     window.addEventListener('blur', this.onWindowBlur)
   }
 
-  onWindowFocus = () => {
-    // this.clock.start()
-  }
-
-  onWindowBlur = () => {
-    // this.clock.stop()
-  }
-
   gameLoop = () => {
-    this.deltaTime.value += this.clock.getDelta()
+    this.deltaTime.value += Math.min(this.clock.getDelta(), .1)
 
     const deltaTime = this.deltaTime.value
 
@@ -118,6 +111,8 @@ export default class Renderer {
     this.renderer.setAnimationLoop(null)
 
     window.removeEventListener('resize', this.onResize)
+    window.removeEventListener('focus', this.onWindowFocus)
+    window.removeEventListener('blur', this.onWindowBlur)
   }
 
   onResize = () => {
@@ -134,5 +129,13 @@ export default class Renderer {
     this.composer.setSize(width * pixelRatio, height * pixelRatio)
 
     publish(RESIZE, { width, height })
+  }
+
+  onWindowFocus = () => {
+    publish(events.WINDOW_FOCUS)
+  }
+
+  onWindowBlur = () => {
+    publish(events.WINDOW_BLUR)
   }
 }

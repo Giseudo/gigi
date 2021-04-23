@@ -1,17 +1,26 @@
 import { Object3D } from 'three'
 import { UpdatePayload, IStartable, IDestroyable, IActivatable, IUpdatable } from '@/types'
+import { publish } from '../'
+import * as events from './events'
 import Component from './Component'
 
 export default class Entity extends Object3D implements IStartable, IDestroyable, IActivatable, IUpdatable {
   isEnabled: boolean = false
   components: Array<Component> = []
 
-  async start(): Promise<void> { }
+  static async Instantiate(entity: Entity, parent: Object3D): Promise<Entity> {
+    await entity.start()
 
-  destroy(): void {
-    this.disable()
-    this.publish('onDestroy', { entity: this })
+    entity.components.forEach((c: Component) => c.start())
+    entity.publish('started')
+
+    publish(events.ADD_ENTITY, { entity, parent })
+
+    return entity
   }
+
+  async start(): Promise<void> {}
+  destroy = () => this.publish('destroyed', { entity: this })
 
   public update(payload: UpdatePayload): void {
     this.components.forEach(component =>
@@ -46,13 +55,15 @@ export default class Entity extends Object3D implements IStartable, IDestroyable
   // public removeComponent<T extends Component>(type: (new () => T)): void { }
 
   enable() {
+    this.visible = true
     this.isEnabled = true
-    this.publish('onEnable', { entity: this })
+    this.publish('enabled', { entity: this })
   }
 
   disable() {
+    this.visible = false
     this.isEnabled = false
-    this.publish('onDisable', { entity: this })
+    this.publish('disabled', { entity: this })
   }
 
   subscribe (type: string, callback: (value: any) => void): void {

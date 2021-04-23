@@ -18,6 +18,7 @@ export default class Engine {
     this.renderer.init(element)
     this.input.init()
     this.network.init()
+    this.world.init()
     await this.navMesh.init()
 
     publish(START)

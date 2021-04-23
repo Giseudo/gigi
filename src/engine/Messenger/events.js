@@ -19,3 +19,6 @@ export const PLAYERS_INIT = 'network/PLAYERS_INIT'
 
 export const WINDOW_FOCUS = 'renderer/WINDOWS_FOCUS'
 export const WINDOW_BLUR = 'renderer/WINDOWS_BLUR'
+
+export const ADD_ENTITY = 'world/ADD_ENTITY'
+export const REMOVE_ENTITY = 'world/REMOVE_ENTITY'

@@ -1,21 +1,19 @@
 import { Object3D, Color, Mesh, MeshBasicMaterial } from 'three'
-import { PlayerData } from '@/types'
-import { Entity, Resources, BLOOM_LAYER, PRIMARY_AXIS } from '@/engine'
+import { Entity, NavMesh, Resources, BLOOM_LAYER, PRIMARY_AXIS } from '@/engine'
 import { InputReader, Movement } from '@/components'
 import { MatcapMaterial } from '@/materials'
 
 export default class PlayerEntity extends Entity {
-  data: PlayerData
   color: Color
   inputReader: InputReader
   movement: Movement
   isControllable: boolean
 
-  constructor(data: PlayerData, color: number = 0xff2200, isControllable: boolean = false, orientation?: Object3D) {
+  constructor(data: any, color: number = 0xff2200, isControllable: boolean = false, orientation?: Object3D) {
     super()
-    this.data = data
     this.color = new Color(color)
     this.isControllable = isControllable
+    this.userData.player = data
 
     this.inputReader = this.addComponent(new InputReader(orientation))
     this.movement = this.addComponent(new Movement(50, 20))
@@ -57,39 +55,20 @@ export default class PlayerEntity extends Entity {
       this.inputReader.getOrientedAxis(PRIMARY_AXIS)
     )
 
-    this.position.add(
+    const desiredPosition = this.position.clone().add(
       this.movement.velocity.clone().multiplyScalar(deltaTime)
     )
+    const clampedPosition = NavMesh.ClampPosition(this.position, desiredPosition)
+
+    this.position.copy(clampedPosition)
   }
 
   syncPosition(): void {
-    const { x, y, z } = this.data.position
+    const { x, y, z } = this.userData.player.position
 
     this.position.set(x, y, z)
 
-    if (this.data.direction)
-      this.lookAt(this.position.clone().sub(this.data.direction))
+    if (this.userData.player.direction)
+      this.lookAt(this.position.clone().sub(this.userData.player.direction))
   }
 }
-
-/* Stick to navmesh
-const { velocity } = entity.getOne('Rigidbody')
-const transform = entity.getOne('Transform')
-const region = navMesh.getRegionForPoint(transform.position)
-const startPosition = transform.position.clone()
-
-if (region) this.region = region
-
-  transform.position.add(
-    velocity.clone().multiplyScalar(deltaTime)
-  )
-
-  const endPosition = transform.position.clone()
-
-  navMesh.clampMovement(
-    this.region,
-    startPosition,
-    endPosition,
-    transform.position
-  )
- */

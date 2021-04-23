@@ -8,24 +8,24 @@
 </template>
 
 <script>
-import { markRaw } from 'vue'
-import { subscribe, unsubscribe } from '@/engine'
+import { Entity, subscribe, unsubscribe } from '@/engine'
 import { PlayerEntity } from '@/entities'
 import { GTouchAxis, GDialogue } from '@/ui'
 import { Movement } from '@/components'
-import { PLAYER_CONNECTED, PLAYER_JOINED, PLAYER_DISCONNECTED } from '@/engine/Messenger/events'
 import { PRIMARY_AXIS } from '@/engine/Input'
+import * as events from '@/engine/events'
+
+const entities = []
 
 export default {
   name: 'Game',
 
-  inject: [ 'input', 'world', 'camera', 'network' ],
+  inject: [ 'input', 'camera', 'network' ],
 
   components: { GTouchAxis, GDialogue },
 
   data: () => ({
     showDialogue: false,
-    players: markRaw([])
   }),
 
   mounted () {
@@ -39,29 +39,31 @@ export default {
   methods: {
     init () {
       // Fix for hot reload
-      if (this.network.player)
-        this.onPlayerConnected({ player: this.network.player })
       this.network.players.forEach(player => this.onPlayerJoined({ player }))
+      if (this.network.player) this.onPlayerConnected({ player: this.network.player })
 
-      subscribe(PLAYER_CONNECTED, this.onPlayerConnected)
-      subscribe(PLAYER_JOINED, this.onPlayerJoined)
-      subscribe(PLAYER_DISCONNECTED, this.onPlayerDisconnected)
+      subscribe(events.PLAYER_CONNECTED, this.onPlayerConnected)
+      subscribe(events.PLAYER_JOINED, this.onPlayerJoined)
+      subscribe(events.PLAYER_DISCONNECTED, this.onPlayerDisconnected)
     },
 
     destroy () {
-      unsubscribe(PLAYER_CONNECTED, this.onPlayerConnected)
-      unsubscribe(PLAYER_JOINED, this.onPlayerJoined)
-      unsubscribe(PLAYER_DISCONNECTED, this.onPlayerDisconnected)
+      unsubscribe(events.PLAYER_CONNECTED, this.onPlayerConnected)
+      unsubscribe(events.PLAYER_JOINED, this.onPlayerJoined)
+      unsubscribe(events.PLAYER_DISCONNECTED, this.onPlayerDisconnected)
 
-      this.players.forEach(e => e.destroy())
+      entities.forEach(e => e.destroy())
+      entities.splice(0, entities.length)
     },
 
-    onPlayerConnected ({ player }) {
-      const entity = new PlayerEntity(player, 0x33ff44, true, this.camera)
-      this.players.push(entity)
-      this.world.add(entity)
+    async onPlayerConnected ({ player }) {
+      const entity = await Entity.Instantiate(
+        new PlayerEntity(player, 0x33ff44, true, this.camera)
+      )
+      entities.push(entity)
 
-      this.camera.position.set(0, 15, -20)
+      this.camera.position.set(15, 30, -15)
+      this.camera.position.add(entity.position)
       this.camera.lookAt(entity.position)
       this.camera.follow(entity)
 
@@ -69,25 +71,26 @@ export default {
         .subscribe('moved', this.onPlayerMove)
     },
 
-    onPlayerJoined ({ player }) {
+    async onPlayerJoined ({ player }) {
       if (player.socketId === this.network.player?.socketId) return
 
-      const entity = new PlayerEntity(player, 0xcc5522, false)
-      this.players.push(entity)
-      this.world.add(entity)
+      const entity = await Entity.Instantiate(
+        new PlayerEntity(player, 0xcc5522, false)
+      )
+
+      entities.push(entity)
     },
 
     onPlayerDisconnected ({ player }) {
-      for (let i = 0; i < this.players.length; i++) {
-        const entity = this.players[i]
+      for (let i = 0; i < entities.length; i++) {
+        const entity = entities[i]
 
-        if (player.socketId === entity.data.socketId)
-          this.world.remove(entity)
+        if (player.socketId === entity.userData.player.socketId)
+          entity.destroy()
       }
     },
 
     onTouchChange (direction) {
-      console.log(direction)
       this.input.setAxis(PRIMARY_AXIS, direction)
     },
 
@@ -97,6 +100,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss">
-</style>

@@ -1,0 +1,8 @@
+export const ADD_OBJECT = 'world/ADD_OBJECT'
+export const ADDED_OBJECT = 'world/ADDED_OBJECT'
+export const REMOVE_OBJECT = 'world/REMOVE_OBJECT'
+export const REMOVED_OBJECT = 'world/REMOVED_OBJECT'
+export const ADD_ENTITY = 'world/ADD_ENTITY'
+export const ADDED_ENTITY = 'world/ADDED_ENTITY'
+export const REMOVE_ENTITY = 'world/REMOVE_ENTITY'
+export const REMOVED_ENTITY = 'world/REMOVED_ENTITY'

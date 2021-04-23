@@ -5,32 +5,29 @@
 <script>
 import { markRaw } from 'vue'
 import { Warning, BMO, Skybox, RedStand, Environment } from '@/entities'
+import { Entity } from '@/engine'
+
+const entities = []
 
 export default ({
-  name: 'Home',
+  name: 'Village',
 
-  inject: [ 'world'],
-
-  data: () => markRaw({
-    entities: []
-  }),
-  
   async mounted () {
-    const stand = new RedStand()
-    const skybox = new Skybox()
-    const bmo = new BMO()
-    const environment = new Environment()
+    const skybox = await Entity.Instantiate(new Skybox())
+    const stand = await Entity.Instantiate(new RedStand())
+    const environment = await Entity.Instantiate(new Environment())
 
-    stand.position.set(0, 0, 30)
+    stand.position.set(0, 0, 0)
     stand.scale.set(3.5, 3.5, 3.5)
-    bmo.position.set(0, 0, 5)
 
-    this.entities = [ stand, skybox, environment ]
-    this.entities.forEach(e => this.world.add(e))
+    entities.push(skybox)
+    entities.push(stand)
+    entities.push(environment)
   },
 
   beforeUnmount () {
-    this.entities.forEach(e => e.destroy())
+    entities.forEach(e => e.destroy())
+    entities.splice(entities.length)
   }
 })
 </script>

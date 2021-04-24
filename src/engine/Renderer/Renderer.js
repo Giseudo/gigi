@@ -15,7 +15,7 @@ import {
   CineonToneMapping,
   Matrix4
 } from 'three'
-import { UPDATE, DRAW, RESIZE, INIT_RENDERER, WINDOW_FOCUS, WINDOW_BLUR } from './events'
+import { UPDATE, DRAW, RESIZE, INIT_RENDERER, WINDOW_FOCUS, WINDOW_BLUR } from '../events'
 import { publish } from '@GMessenger'
 
 const TIME_INTERVAL = 1 / 30

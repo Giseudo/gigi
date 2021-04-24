@@ -19,8 +19,13 @@ export default class Entity extends Object3D implements IStartable, IDestroyable
     return entity
   }
 
-  async start(): Promise<void> {}
-  destroy = () => this.publish('destroyed', { entity: this })
+  async start(): Promise<void> {
+    //
+  }
+
+  destroy (): void {
+    this.publish('destroyed', { entity: this })
+  } 
 
   public update(payload: UpdatePayload): void {
     this.components.forEach(component =>
@@ -51,8 +56,9 @@ export default class Entity extends Object3D implements IStartable, IDestroyable
     return component
   }
 
-  // TODO
-  // public removeComponent<T extends Component>(type: (new () => T)): void { }
+  public removeComponent<T extends Component>(type: (new () => T)): void {
+    // TODO
+  }
 
   enable() {
     this.visible = true

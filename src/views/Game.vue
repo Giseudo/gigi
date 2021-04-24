@@ -69,7 +69,7 @@ export default {
       )
       this.entities.push(entity)
 
-      this.camera.position.set(15, 30, -15)
+      this.camera.position.set(15, 40, -15)
       this.camera.position.add(entity.position)
       this.camera.lookAt(entity.position)
       this.camera.follow(entity)

@@ -1,5 +1,5 @@
 import { Object3D, Color, Mesh, MeshBasicMaterial } from 'three'
-import { Entity, NavMesh, Resources, BLOOM_LAYER, PRIMARY_AXIS } from '@/engine'
+import { Entity, NavMesh, Resources, Debug, BLOOM_LAYER, PRIMARY_AXIS } from '@/engine'
 import { InputReader, Movement } from '@/components'
 import { MatcapMaterial } from '@/materials'
 
@@ -40,6 +40,8 @@ export default class PlayerEntity extends Entity {
 
   update(payload: any) {
     super.update(payload)
+
+    Debug.DrawBoundingBox(this)
 
     if (this.isControllable)
       return this.updatePosition(payload.deltaTime)

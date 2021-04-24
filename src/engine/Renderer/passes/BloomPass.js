@@ -90,7 +90,7 @@ export class BloomPass extends Pass {
 	}
 
   darkenNonBloomed = (obj) => {
-    if (obj.isMesh && bloomLayer.test(obj.layers) === false) {
+    if (bloomLayer.test(obj.layers) === false) {
       this.materials[obj.uuid] = obj.material
       obj.material = this.darkMaterial
     }

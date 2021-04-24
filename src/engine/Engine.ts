@@ -1,4 +1,4 @@
-import { World, Camera, Renderer, Input, NavMesh, publish } from './'
+import { World, Camera, Renderer, Input, NavMesh, Debug, publish } from './'
 import { START } from './events'
 import Network from './Network'
 
@@ -8,6 +8,7 @@ export default class Engine {
   world: World = new World()
   input: Input = new Input()
   network: Network = new Network()
+  debug: Debug = new Debug()
   navMesh: NavMesh = new NavMesh()
 
   constructor() {

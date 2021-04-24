@@ -15,3 +15,5 @@ declare var process : {
     VUE_APP_SERVER_ADDRESS: string
   }
 }
+
+declare const TAU = 6.28318530718

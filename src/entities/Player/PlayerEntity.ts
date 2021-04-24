@@ -37,9 +37,9 @@ export default class PlayerEntity extends Entity {
     this.syncPosition()
     this.add(model)
 
-    const box = Debug.CreateBox(8, 0x00ff00)
-    box.position.set(0, 4, 0)
-    this.add(box)
+    const circle = Debug.CreateSphere(8)
+    circle.position.set(0, 4, 0)
+    this.add(circle)
   }
 
   update(payload: any) {

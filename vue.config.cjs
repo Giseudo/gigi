@@ -54,6 +54,9 @@ module.exports = {
       new webpack.ProvidePlugin({
         THREE: 'three',
         fflate: 'fflate'
+      }),
+      new webpack.DefinePlugin({
+        TAU: 6.28318530718
       })
     ]
   },

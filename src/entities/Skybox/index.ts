@@ -1,2 +1,2 @@
-export { default as Skybox } from './Skybox'
+export { default as SkyboxEntity } from './SkyboxEntity'
 

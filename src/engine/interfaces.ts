@@ -1,4 +1,4 @@
-import { UpdatePayload } from './events'
+import { UpdatePayload } from './payloads'
 
 export interface IUpdatable {
   update(payload: UpdatePayload): void

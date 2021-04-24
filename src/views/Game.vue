@@ -8,14 +8,13 @@
 </template>
 
 <script>
-import { Entity, subscribe, unsubscribe } from '@/engine'
-import { PlayerEntity } from '@/entities'
+import { markRaw } from 'vue'
 import { GTouchAxis, GDialogue } from '@/ui'
+import { Entity, subscribe, unsubscribe } from '@/engine'
+import { PlayerEntity, SkyboxEntity } from '@/entities'
 import { Movement } from '@/components'
 import { PRIMARY_AXIS } from '@/engine/Input'
 import * as events from '@/engine/events'
-
-const entities = []
 
 export default {
   name: 'Game',
@@ -25,6 +24,7 @@ export default {
   components: { GTouchAxis, GDialogue },
 
   data: () => ({
+    entities: markRaw([]),
     showDialogue: false,
   }),
 
@@ -37,14 +37,21 @@ export default {
   },
 
   methods: {
-    init () {
+    async init () {
       // Fix for hot reload
-      this.network.players.forEach(player => this.onPlayerJoined({ player }))
-      if (this.network.player) this.onPlayerConnected({ player: this.network.player })
+      this.network.players.forEach(player =>
+        this.onPlayerJoined({ player })
+      )
+      if (this.network.player)
+        this.onPlayerConnected({ player: this.network.player })
 
       subscribe(events.PLAYER_CONNECTED, this.onPlayerConnected)
       subscribe(events.PLAYER_JOINED, this.onPlayerJoined)
       subscribe(events.PLAYER_DISCONNECTED, this.onPlayerDisconnected)
+
+      this.entities.push(
+        await Entity.Instantiate(new SkyboxEntity())
+      )
     },
 
     destroy () {
@@ -52,15 +59,15 @@ export default {
       unsubscribe(events.PLAYER_JOINED, this.onPlayerJoined)
       unsubscribe(events.PLAYER_DISCONNECTED, this.onPlayerDisconnected)
 
-      entities.forEach(e => e.destroy())
-      entities.splice(0, entities.length)
+      this.entities.forEach(e => e.destroy())
+      this.entities = []
     },
 
     async onPlayerConnected ({ player }) {
       const entity = await Entity.Instantiate(
         new PlayerEntity(player, 0x33ff44, true, this.camera)
       )
-      entities.push(entity)
+      this.entities.push(entity)
 
       this.camera.position.set(15, 30, -15)
       this.camera.position.add(entity.position)
@@ -78,12 +85,12 @@ export default {
         new PlayerEntity(player, 0xcc5522, false)
       )
 
-      entities.push(entity)
+      this.entities.push(entity)
     },
 
     onPlayerDisconnected ({ player }) {
-      for (let i = 0; i < entities.length; i++) {
-        const entity = entities[i]
+      for (let i = 0; i < this.entities.length; i++) {
+        const entity = this.entities[i]
 
         if (player.socketId === entity.userData.player.socketId)
           entity.destroy()

@@ -1,4 +1,5 @@
-import { World, Camera, Renderer, Input, NavMesh, publish, START } from './'
+import { World, Camera, Renderer, Input, NavMesh, publish } from './'
+import { START } from './events'
 import Network from './Network'
 
 export default class Engine {

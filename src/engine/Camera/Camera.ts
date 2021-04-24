@@ -1,6 +1,6 @@
 import { Object3D, PerspectiveCamera, Vector3 } from 'three'
-import { RESIZE, UPDATE, INIT_CAMERA } from '@/engine/Messenger/events'
-import { subscribe, unsubscribe, publish } from '@/engine/Messenger'
+import { RESIZE, UPDATE, INIT_CAMERA } from '../events'
+import { subscribe, unsubscribe, publish } from '../Messenger'
 
 export default class Camera extends PerspectiveCamera {
   followOffset: Vector3 = new Vector3()
@@ -35,7 +35,6 @@ export default class Camera extends PerspectiveCamera {
       .sub(this.followOffset)
 
     this.position.lerp(desiredPosition, deltaTime * 2.)
-    // this.lookAt(this.followTarget.position)
   }
 
   onResize = ({ width, height }: any) => {

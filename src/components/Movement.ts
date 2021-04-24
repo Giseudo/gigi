@@ -1,6 +1,5 @@
 import { Vector3 } from 'three'
-import { UpdatePayload } from '@/types'
-import { Component } from '@/engine'
+import { Component, UpdatePayload } from '@/engine'
 
 export default class Movement extends Component {
   isMoving: boolean = false

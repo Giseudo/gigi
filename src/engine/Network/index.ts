@@ -1,8 +1,7 @@
 import socketio from 'socket.io-client'
 import { Vector3 } from 'three'
-import { PlayerEntity } from '@/entities'
-import { World, publish } from '@/engine'
-import { PLAYER_CONNECTED, PLAYER_DISCONNECTED, PLAYER_JOINED, PLAYERS_INIT } from '@/engine/Messenger/events'
+import { publish } from '../Messenger'
+import { PLAYER_CONNECTED, PLAYER_DISCONNECTED, PLAYER_JOINED } from './events'
 
 export default class Network {
   socket: any

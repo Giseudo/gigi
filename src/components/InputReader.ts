@@ -1,5 +1,6 @@
 import { Object3D, Vector2, Vector3 } from 'three'
-import { Component, subscribe, unsubscribe, AXIS_CHANGED, PRIMARY_AXIS } from '@/engine'
+import { Component, subscribe, unsubscribe, PRIMARY_AXIS } from '@/engine'
+import { AXIS_CHANGED } from '@/engine/events'
 
 export default class InputReader extends Component {
   orientation?: Object3D

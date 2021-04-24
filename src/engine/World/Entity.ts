@@ -1,7 +1,7 @@
 import { Object3D } from 'three'
-import { UpdatePayload, IStartable, IDestroyable, IActivatable, IUpdatable } from '@/types'
-import { publish } from '../'
-import * as events from './events'
+import { IStartable, IDestroyable, IActivatable, IUpdatable } from '../interfaces'
+import { UpdatePayload, publish } from '../'
+import { ADD_ENTITY } from './events'
 import Component from './Component'
 
 export default class Entity extends Object3D implements IStartable, IDestroyable, IActivatable, IUpdatable {
@@ -14,7 +14,7 @@ export default class Entity extends Object3D implements IStartable, IDestroyable
     entity.components.forEach((c: Component) => c.start())
     entity.publish('started')
 
-    publish(events.ADD_ENTITY, { entity, parent })
+    publish(ADD_ENTITY, { entity, parent })
 
     return entity
   }

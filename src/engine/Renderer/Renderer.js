@@ -15,8 +15,7 @@ import {
   CineonToneMapping,
   Matrix4
 } from 'three'
-import { UPDATE, DRAW, RESIZE, INIT_RENDERER } from '@GEvents'
-import * as events from '@GEvents'
+import { UPDATE, DRAW, RESIZE, INIT_RENDERER, WINDOW_FOCUS, WINDOW_BLUR } from './events'
 import { publish } from '@GMessenger'
 
 const TIME_INTERVAL = 1 / 30
@@ -132,10 +131,10 @@ export default class Renderer {
   }
 
   onWindowFocus = () => {
-    publish(events.WINDOW_FOCUS)
+    publish(WINDOW_FOCUS)
   }
 
   onWindowBlur = () => {
-    publish(events.WINDOW_BLUR)
+    publish(WINDOW_BLUR)
   }
 }

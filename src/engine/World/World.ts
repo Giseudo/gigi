@@ -1,14 +1,14 @@
 import { Scene, Object3D } from 'three'
-import {  EntityPayload, UpdatePayload, Object3DPayload, subscribe, publish } from '@/engine'
+import { EntityPayload, UpdatePayload, subscribe } from '@/engine'
+import { ADD_ENTITY } from './events'
 import Entity from './Entity'
 import Component from './Component'
-import * as events from '@/engine/Messenger/events'
 
 export default class World extends Scene {
   entities: Array<Entity> = []
 
   init() {
-    subscribe(events.ADD_ENTITY, this.onAddEntity)
+    subscribe(ADD_ENTITY, this.onAddEntity)
   }
 
   private onAddEntity = ({ entity, parent }: EntityPayload): void => {
@@ -28,7 +28,7 @@ export default class World extends Scene {
     this.entities.push(entity)
     entity.subscribe('destroyed', this.onEntityDestroy)
 
-    if (parent) parent.add(entity)
+    if (parent) parent.attach(entity)
     else super.add(entity)
     entity.enable()
   }

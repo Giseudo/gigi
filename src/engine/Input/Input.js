@@ -1,7 +1,7 @@
 import { reactive } from 'vue'
 import { Vector2 } from 'three'
 import { publish } from '@GMessenger'
-import { AXIS_CHANGED, BUTTON_DOWN, BUTTON_PRESS, BUTTON_UP } from '@GEvents'
+import { AXIS_CHANGED, BUTTON_DOWN, BUTTON_PRESS, BUTTON_UP } from './events'
 
 export const PRIMARY_AXIS = 'input/PRIMARY_AXIS'
 export const SECONDARY_AXIS = 'input/SECONDARY_AXIS'

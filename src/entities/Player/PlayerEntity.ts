@@ -36,12 +36,16 @@ export default class PlayerEntity extends Entity {
 
     this.syncPosition()
     this.add(model)
+
+    const box = Debug.CreateBox(8, 0x00ff00)
+    box.position.set(0, 4, 0)
+    this.add(box)
   }
 
   update(payload: any) {
     super.update(payload)
 
-    Debug.DrawBoundingBox(this)
+    // Debug.DrawBoundingBox(this)
 
     if (this.isControllable)
       return this.updatePosition(payload.deltaTime)

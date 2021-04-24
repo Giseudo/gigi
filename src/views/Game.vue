@@ -50,7 +50,7 @@ export default {
       subscribe(events.PLAYER_DISCONNECTED, this.onPlayerDisconnected)
 
       this.entities.push(
-        await Entity.Instantiate(new SkyboxEntity())
+        await Entity.Instantiate(new SkyboxEntity(0xafdfcf, 0x01130d))
       )
     },
 

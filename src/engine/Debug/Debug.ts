@@ -1,11 +1,59 @@
+import { EventDispatcher, Color, BoxHelper, Object3D, BufferGeometry, BufferAttribute, Line, LineBasicMaterial } from 'three'
 import { publish } from '../Messenger'
-import { EventDispatcher, Color, BoxHelper, Object3D } from 'three'
 import { ADD_OBJECT, REMOVE_OBJECT } from '../events'
 
 export default class Debug extends EventDispatcher {
   static boxes: { [uuid: string]: any } = {}
 
-  // TODO static DrawBox(position: Vector3, dimensions: Vector3, color: number|string) { }
+  static CreateBox(size: number = 1, color: number|string = 0xff0000): Line {
+    const geo = new BufferGeometry()
+    size /= 2
+
+    const vertices = new Float32Array([
+      -size,  size,  size,
+       size,  size,  size,
+
+       size,  size,  size,
+       size, -size,  size,
+
+       size, -size,  size,
+      -size, -size,  size,
+
+      -size, -size,  size,
+      -size,  size,  size,
+
+      -size,  size,  size,
+      -size,  size, -size,
+
+      -size,  size, -size,
+       size,  size, -size,
+
+       size,  size, -size,
+       size,  size,  size,
+
+       size,  size, -size,
+       size, -size, -size,
+
+       size, -size, -size,
+       size, -size,  size,
+
+       size, -size, -size,
+      -size, -size, -size,
+
+      -size, -size, -size,
+      -size,  size, -size,
+
+      -size, -size, -size,
+      -size, -size,  size,
+    ])
+
+    geo.setAttribute('position', new BufferAttribute(vertices, 3))
+
+    const mat = new LineBasicMaterial({ color, toneMapped: false })
+    const mesh = new Line(geo, mat)
+
+    return mesh
+  }
 
   static DrawBoundingBox(object: Object3D, color: number|string = 0x00ff00): void {
     let helper = Debug.boxes[object.uuid]

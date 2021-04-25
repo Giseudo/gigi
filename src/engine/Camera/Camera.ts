@@ -5,10 +5,10 @@ import { subscribe, unsubscribe, publish } from '../Messenger'
 export default class Camera extends PerspectiveCamera {
   followOffset: Vector3 = new Vector3()
   followTarget?: Object3D
-  height: Vector3 = new Vector3(0, 2, 0)
+  height: Vector3 = new Vector3(0, 4, 0)
 
   constructor() {
-    super(90, window.innerWidth / window.innerHeight, .1, 1000)
+    super(60, window.innerWidth / window.innerHeight, .1, 1000)
   }
 
   init () {
@@ -35,7 +35,7 @@ export default class Camera extends PerspectiveCamera {
       .position.clone()
       .sub(this.followOffset)
 
-    this.position.lerp(desiredPosition, deltaTime * 3.)
+    this.position.lerp(desiredPosition, deltaTime * 5.)
   }
 
   lookAt (position: Vector3): void {

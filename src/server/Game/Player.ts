@@ -5,7 +5,7 @@ export class Player {
     public position = {
         x: 0,
         y: 0,
-        z: randomPos(0, 20),
+        z: randomPos(-10, 0),
         o: 0
     }
 

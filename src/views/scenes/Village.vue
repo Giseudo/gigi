@@ -21,7 +21,7 @@ export default ({
     stand.position.set(0, 0, 0)
 
     this.entities = [
-      await Entity.Instantiate(stand),
+      // await Entity.Instantiate(stand),
       await Entity.Instantiate(environment)
     ]
   },

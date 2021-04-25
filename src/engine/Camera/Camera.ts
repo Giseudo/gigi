@@ -5,7 +5,7 @@ import { subscribe, unsubscribe, publish } from '../Messenger'
 export default class Camera extends PerspectiveCamera {
   followOffset: Vector3 = new Vector3()
   followTarget?: Object3D
-  height: Vector3 = new Vector3(0, 8, 0)
+  height: Vector3 = new Vector3(0, 2, 0)
 
   constructor() {
     super(90, window.innerWidth / window.innerHeight, .1, 1000)

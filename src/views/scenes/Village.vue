@@ -19,10 +19,9 @@ export default ({
     const environment = new Environment()
 
     stand.position.set(0, 0, 0)
-    stand.scale.set(3.5, 3.5, 3.5)
 
     this.entities = [
-      // await Entity.Instantiate(stand),
+      await Entity.Instantiate(stand),
       await Entity.Instantiate(environment)
     ]
   },

@@ -15,7 +15,7 @@ export default class PlayerEntity extends Entity {
     this.userData.player = data
 
     this.inputReader = this.addComponent(new InputReader(orientation))
-    this.movement = this.addComponent(new Movement(50, 20))
+    this.movement = this.addComponent(new Movement(25, 10))
     this.fresnelMaterial = new FresnelMaterial(new Color(color), .5)
   }
 

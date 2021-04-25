@@ -10,12 +10,16 @@ float frac(float v) {
 
 void main() {
   float fog = vWorldPosition.y;
-  fog += 30.;
-  fog /= 30.;
+  fog += 100.;
+  fog /= 100.;
   fog = clamp(fog, 0., 1.);
+  fog = pow(fog, 2.);
 
   vec4 matcapTex = texture2D(tMatcap, vN);
-  vec3 blend = mix(fogColor, matcapTex.rgb, fog);
+  vec3 color = mix(fogColor, matcapTex.rgb, fog);
 
-  gl_FragColor = vec4(blend, 1.0);
+  float depth = clamp(((vWorldPosition.y + 150.) / 100.), 0., 1.);
+  color = mix(vec3(0.), color, depth);
+
+  gl_FragColor = vec4(color, 1.0);
 }

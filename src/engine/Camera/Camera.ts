@@ -5,6 +5,7 @@ import { subscribe, unsubscribe, publish } from '../Messenger'
 export default class Camera extends PerspectiveCamera {
   followOffset: Vector3 = new Vector3()
   followTarget?: Object3D
+  height: Vector3 = new Vector3(0, 8, 0)
 
   constructor() {
     super(90, window.innerWidth / window.innerHeight, .1, 1000)
@@ -34,7 +35,11 @@ export default class Camera extends PerspectiveCamera {
       .position.clone()
       .sub(this.followOffset)
 
-    this.position.lerp(desiredPosition, deltaTime * 2.)
+    this.position.lerp(desiredPosition, deltaTime * 3.)
+  }
+
+  lookAt (position: Vector3): void {
+    super.lookAt(position.clone().add(this.height))
   }
 
   onResize = ({ width, height }: any) => {

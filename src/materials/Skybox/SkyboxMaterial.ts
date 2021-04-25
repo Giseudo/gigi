@@ -5,6 +5,7 @@ export default class SkyboxMaterial extends ShaderMaterial {
   vertexShader: string = SkyboxVertexShader
   fragmentShader: string =  SkyboxFragmentShader
   side: number = BackSide
+  toneMapped: boolean = false
 
   constructor (skyColor: number, groundColor: number) {
     super()

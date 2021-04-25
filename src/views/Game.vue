@@ -50,7 +50,7 @@ export default {
       subscribe(events.PLAYER_DISCONNECTED, this.onPlayerDisconnected)
 
       this.entities.push(
-        await Entity.Instantiate(new SkyboxEntity(0xafdfcf, 0x01130d))
+        await Entity.Instantiate(new SkyboxEntity(0x66c2ff, 0x4d0014))
       )
     },
 
@@ -69,7 +69,7 @@ export default {
       )
       this.entities.push(entity)
 
-      this.camera.position.set(15, 10, -15)
+      this.camera.position.set(0, 15, 20)
       this.camera.position.add(entity.position)
       this.camera.lookAt(entity.position)
       this.camera.follow(entity)

@@ -25,7 +25,7 @@ export default class PlayerEntity extends Entity {
     model.traverse(async (node: Mesh) => {
       if (node.isMesh) {
         if (node.name === 'Emission') {
-          node.material = new MeshBasicMaterial({ color: this.color })
+          node.material = new MeshBasicMaterial({ color: this.color, toneMapped: false  })
           node.layers.enable(BLOOM_LAYER)
         }
 
@@ -37,7 +37,7 @@ export default class PlayerEntity extends Entity {
     this.syncPosition()
     this.add(model)
 
-    const circle = Debug.CreateSphere(8)
+    const circle = Debug.CreateSphere(8, 0x0000ff)
     circle.position.set(0, 4, 0)
     this.add(circle)
   }

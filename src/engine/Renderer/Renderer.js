@@ -41,16 +41,17 @@ export default class Renderer {
   constructor (scene, camera) {
     this.scene = scene
     this.camera = camera
+    console.log(window.devicePixelRatio)
 
     this.renderer = new WebGLRenderer()
     this.renderer.setClearColor(0x000000)
     this.renderer.setSize(this.width, this.height)
     this.renderer.shadowMap.enabled = true
-    this.renderer.setPixelRatio(window.devicePixelRatio / 2)
+    this.renderer.setPixelRatio(Math.min(.75, window.devicePixelRatio * .5))
     this.renderer.toneMapping = CineonToneMapping
     this.renderer.toneMappingExposure = 1
 
-    const pixelRatio = this.renderer.getPixelRatio() / 2
+    const pixelRatio = this.renderer.getPixelRatio()
 
     this.target = new WebGLRenderTarget(this.width * pixelRatio, this.height * pixelRatio)
     this.target.texture.format = RGBFormat
@@ -122,9 +123,9 @@ export default class Renderer {
     this.height = height
 
     this.renderer.setSize(width, height)
-    this.renderer.setPixelRatio(window.devicePixelRatio / 2)
+    this.renderer.setPixelRatio(Math.min(.75, window.devicePixelRatio * .5))
 
-    const pixelRatio = this.renderer.getPixelRatio() / 2
+    const pixelRatio = this.renderer.getPixelRatio()
     this.composer.setSize(width * pixelRatio, height * pixelRatio)
 
     publish(RESIZE, { width, height })

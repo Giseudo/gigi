@@ -37,7 +37,7 @@ export class BloomPass extends Pass {
 
     this.darkMaterial = new MeshBasicMaterial({ color: 0x000000 })
 
-    const pixelRatio = renderer.getPixelRatio() / 2
+    const pixelRatio = renderer.getPixelRatio()
     const width = window.innerWidth * pixelRatio
     const height = window.innerHeight * pixelRatio
 
@@ -55,7 +55,7 @@ export class BloomPass extends Pass {
     }
 
     this.renderPass = new RenderPass(scene, camera)
-    this.bloomPass = new UnrealBloomPass(new Vector2(width, height), .5, .2, .2)
+    this.bloomPass = new UnrealBloomPass(new Vector2(width, height), .5, .25, .5)
     this.material = new ShaderMaterial({
       uniforms: this.uniforms,
       vertexShader: vertexShader,

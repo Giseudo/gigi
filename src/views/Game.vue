@@ -50,7 +50,7 @@ export default {
       subscribe(events.PLAYER_DISCONNECTED, this.onPlayerDisconnected)
 
       this.entities.push(
-        await Entity.Instantiate(new SkyboxEntity(0x66c2ff, 0x4d0014))
+        await Entity.Instantiate(new SkyboxEntity(0xf00f35, 0x4b1b3b))
       )
     },
 
@@ -65,7 +65,7 @@ export default {
 
     async onPlayerConnected ({ player }) {
       const entity = await Entity.Instantiate(
-        new PlayerEntity(player, 0x33ff44, true, this.camera)
+        new PlayerEntity(player, 0xff7777, true, this.camera)
       )
       this.entities.push(entity)
 
@@ -82,7 +82,7 @@ export default {
       if (player.socketId === this.network.player?.socketId) return
 
       const entity = await Entity.Instantiate(
-        new PlayerEntity(player, 0xcc5522, false)
+        new PlayerEntity(player, 0x486588, false)
       )
 
       this.entities.push(entity)

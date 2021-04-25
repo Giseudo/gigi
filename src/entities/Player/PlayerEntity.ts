@@ -1,7 +1,7 @@
 import { Object3D, Color, Mesh, MeshBasicMaterial } from 'three'
 import { Entity, NavMesh, Resources, Debug, BLOOM_LAYER, PRIMARY_AXIS } from '@/engine'
 import { InputReader, Movement } from '@/components'
-import { MatcapMaterial } from '@/materials'
+import { MatcapMaterial, FresnelMaterial } from '@/materials'
 
 export default class PlayerEntity extends Entity {
   color: Color
@@ -25,8 +25,10 @@ export default class PlayerEntity extends Entity {
     model.traverse(async (node: Mesh) => {
       if (node.isMesh) {
         if (node.name === 'Emission') {
-          node.material = new MeshBasicMaterial({ color: this.color, toneMapped: false  })
-          node.layers.enable(BLOOM_LAYER)
+          node.material = new FresnelMaterial(new Color(0xff0000), new Color(this.color), .5)
+
+          if (this.isControllable)
+            node.layers.enable(BLOOM_LAYER)
         }
 
         if (node.name === 'Body')
@@ -36,16 +38,10 @@ export default class PlayerEntity extends Entity {
 
     this.syncPosition()
     this.add(model)
-
-    const circle = Debug.CreateSphere(8, 0x0000ff)
-    circle.position.set(0, 4, 0)
-    this.add(circle)
   }
 
   update(payload: any) {
     super.update(payload)
-
-    // Debug.DrawBoundingBox(this)
 
     if (this.isControllable)
       return this.updatePosition(payload.deltaTime)

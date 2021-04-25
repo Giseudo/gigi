@@ -15,7 +15,7 @@ export default class Skybox extends Entity {
   async start(): Promise<void> {
     const skybox = new Mesh(this.geometry, this.material)
 
-    skybox.layers.enable(BLOOM_LAYER)
+    // skybox.layers.enable(BLOOM_LAYER)
     this.add(skybox)
   }
 }

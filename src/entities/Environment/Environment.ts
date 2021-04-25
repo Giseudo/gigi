@@ -34,7 +34,7 @@ export default class Environment extends Entity {
 
     const material = new MatcapMaterial(
       await Resources.loadTexture(require('./Environment_Matcap.png')),
-      0x4d0014
+      0x4b1b3b
     )
 
     structure.traverse((node: any) => {

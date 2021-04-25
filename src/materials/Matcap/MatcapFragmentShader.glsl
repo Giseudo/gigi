@@ -18,8 +18,5 @@ void main() {
   vec4 matcapTex = texture2D(tMatcap, vN);
   vec3 color = mix(fogColor, matcapTex.rgb, fog);
 
-  float depth = clamp(((vWorldPosition.y + 150.) / 100.), 0., 1.);
-  color = mix(vec3(0.), color, depth);
-
   gl_FragColor = vec4(color, 1.0);
 }

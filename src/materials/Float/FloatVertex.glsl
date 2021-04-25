@@ -1,5 +1,8 @@
+varying vec3 vWorldPosition;
 varying vec3 vWorldNormal;
-varying vec3 vViewDirection;
+
+uniform float time;
+attribute vec3 color;
 
 void main() {
   vec4 localPosition = vec4(position, 1.);
@@ -7,9 +10,11 @@ void main() {
   vec4 viewPosition = viewMatrix * worldPosition;
   vec4 projectedPosition = projectionMatrix * viewPosition;
 
-  vWorldNormal = normalize(mat3(normalMatrix[0].xyz, normalMatrix[1].xyz, normalMatrix[2].xyz) * normal).rgb;
-  // vWorldNormal = normalize(normalMatrix * normal);
-  vViewDirection = normalize(-worldPosition.xyz);
+  vWorldPosition = worldPosition.xyz;
+  vWorldNormal = normalize(normalMatrix * normal);
+
+  if (color.b > 0.)
+    projectedPosition.y += sin(modelMatrix[0].x * 20. + time * .5) * 10.;
 
   gl_Position = projectedPosition;
 }

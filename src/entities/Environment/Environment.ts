@@ -1,6 +1,6 @@
 import { Object3D } from 'three'
 import { Resources, Entity } from '@/engine'
-import { TriplanarMaterial, MatcapMaterial } from '@/materials'
+import { TriplanarMaterial, MatcapMaterial, FloatMaterial } from '@/materials'
 
 export default class Environment extends Entity {
   async start(): Promise<void> {
@@ -32,10 +32,7 @@ export default class Environment extends Entity {
       require('./Environment.fbx').default
     )
 
-    const material = new MatcapMaterial(
-      await Resources.loadTexture(require('./Environment_Matcap.png')),
-      0x4b1b3b
-    )
+    const material = new FloatMaterial(0x7f9eae)
 
     structure.traverse((node: any) => {
       if (node.isMesh) node.material = material

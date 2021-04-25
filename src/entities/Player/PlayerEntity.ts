@@ -16,23 +16,17 @@ export default class PlayerEntity extends Entity {
 
     this.inputReader = this.addComponent(new InputReader(orientation))
     this.movement = this.addComponent(new Movement(25, 10))
-    this.fresnelMaterial = new FresnelMaterial(new Color(color), .5)
+    this.fresnelMaterial = new FresnelMaterial(new Color(color), isControllable, .5)
   }
 
   async start(): Promise<void> {
     const model = await Resources.loadObject(require('./PlayerModel.fbx').default)
+    const matcapMaterial = new MatcapMaterial(await Resources.loadTexture(require('./PlayerMatcap.png')))
 
     model.traverse(async (node: Mesh) => {
       if (node.isMesh) {
-        if (node.name === 'Emission') {
-          node.material = this.fresnelMaterial
-
-          if (this.isControllable)
-            node.layers.enable(BLOOM_LAYER)
-        }
-
-        if (node.name === 'Body')
-          node.material = new MatcapMaterial(await Resources.loadTexture(require('./PlayerMatcap.png')))
+        if (node.name === 'Emission') node.material = this.fresnelMaterial
+        if (node.name === 'Body') node.material = matcapMaterial
       }
     })
 

@@ -1,4 +1,5 @@
 import { ShaderMaterial, Color, BackSide } from 'three'
+import { Renderer } from '@/engine'
 import { SkyboxVertexShader, SkyboxFragmentShader } from './'
 
 export default class SkyboxMaterial extends ShaderMaterial {
@@ -7,11 +8,11 @@ export default class SkyboxMaterial extends ShaderMaterial {
   side: number = BackSide
   toneMapped: boolean = false
 
-  constructor (skyColor: number, groundColor: number) {
+  constructor (skyColor: Color|string|number) {
     super()
     this.uniforms = {
       skyColor: { value: new Color(skyColor) },
-      groundColor: { value: new Color(groundColor) }
+      groundColor: Renderer.fogColor 
     }
   }
 }

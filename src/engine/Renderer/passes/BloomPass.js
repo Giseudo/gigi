@@ -6,6 +6,7 @@ import { Pass } from 'three/examples/jsm/postprocessing/Pass.js'
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass'
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass'
 import { BLOOM_LAYER, RESIZE, subscribe } from '@/engine'
+import { Passes, Renderer } from '../'
 
 const bloomLayer = new Layers()
 bloomLayer.set(BLOOM_LAYER)
@@ -74,9 +75,11 @@ export class BloomPass extends Pass {
     renderer.setClearColor(0x000000)
  		this.uniforms.tDiffuse.value = readBuffer.texture
 
-    this.scene.traverse(this.darkenNonBloomed)
+    Renderer.currentPass.value = Passes.BLOOM_PASS
+    // this.scene.traverse(this.darkenNonBloomed)
     this.composer.render()
-    this.scene.traverse(this.restoreMaterial)
+    // this.scene.traverse(this.restoreMaterial)
+    Renderer.currentPass.value = Passes.COLOR_PASS
     renderer.setClearColor(this.clearColor)
 
 		if (this.renderToScreen) {
@@ -104,7 +107,7 @@ export class BloomPass extends Pass {
   }
 
   updateResolution = () => {
-    const pixelRatio = this.renderer.getPixelRatio() / 2
+    const pixelRatio = this.renderer.getPixelRatio()
     const width = window.innerWidth * pixelRatio
     const height = window.innerHeight * pixelRatio
 

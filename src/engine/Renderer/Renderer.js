@@ -1,3 +1,4 @@
+import { ref } from 'vue'
 import { FloatNode } from 'three/examples/jsm/nodes/Nodes'
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer'
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass'
@@ -13,14 +14,24 @@ import {
   DepthTexture,
   UnsignedShortType,
   CineonToneMapping,
-  Matrix4
+  Matrix4,
+  Color
 } from 'three'
 import { UPDATE, DRAW, RESIZE, INIT_RENDERER, WINDOW_FOCUS, WINDOW_BLUR } from '../events'
 import { publish } from '@GMessenger'
+import { Time } from '../'
 
-const TIME_INTERVAL = 1 / 30
+export const Passes = {
+  COLOR_PASS: 0,
+  BLOOM_PASS: 1
+}
+
+export const TIME_INTERVAL = 1 / 30
 
 export default class Renderer {
+  static currentPass = ref(Passes.COLOR_PASS)
+  static fogColor = ref(new Color(0x4b1b3b))
+
   scene = null
   camera = null
   target = null
@@ -41,7 +52,6 @@ export default class Renderer {
   constructor (scene, camera) {
     this.scene = scene
     this.camera = camera
-    console.log(window.devicePixelRatio)
 
     this.renderer = new WebGLRenderer()
     this.renderer.setClearColor(0x000000)
@@ -94,6 +104,9 @@ export default class Renderer {
 
     const deltaTime = this.deltaTime.value
     const time = this.time.value
+
+    Time.deltaTime.value = deltaTime
+    Time.time.value = time
 
     if (deltaTime > TIME_INTERVAL) {
       publish(UPDATE, { deltaTime, time })

@@ -7,7 +7,7 @@ varying vec2 vUv;
 
 vec2 curveRemapUV(vec2 uv)
 {
-  vec2 curvature = vec2(5., 5.);
+  vec2 curvature = vec2(4., 3.);
   // as we near the edge of our screen apply greater distortion using a sinusoid.
 
   uv = uv * 2.0 - 1.0;
@@ -30,7 +30,7 @@ void main() {
   if (greenUv.x < 0.0 || greenUv.y < 0.0 || greenUv.x > 1.0 || greenUv.y > 1.0){
     gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
   } else {
-    float offset = abs(vUv.x - .5) * -.01;
+    float offset = abs(vUv.x - .5) * -.007;
 
     vec2 redUv = curveRemapUV(vec2(vUv.x + offset, vUv.y + offset));
     vec2 blueUv = curveRemapUV(vec2(vUv.x - offset, vUv.y - offset));

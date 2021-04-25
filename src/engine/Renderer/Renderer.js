@@ -26,7 +26,7 @@ export const Passes = {
   BLOOM_PASS: 1
 }
 
-export const TIME_INTERVAL = 1 / 30
+export const TIME_INTERVAL = 1 / 60
 
 export default class Renderer {
   static currentPass = ref(Passes.COLOR_PASS)

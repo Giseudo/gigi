@@ -93,12 +93,13 @@ export default class Renderer {
     this.deltaTime.value += Math.min(this.clock.getDelta(), .1)
 
     const deltaTime = this.deltaTime.value
+    const time = this.time.value
 
     if (deltaTime > TIME_INTERVAL) {
-      publish(UPDATE, { deltaTime })
+      publish(UPDATE, { deltaTime, time })
 
       this.composer.render(deltaTime)
-      this.scene.update({ deltaTime })
+      this.scene.update({ deltaTime, time })
 
       publish(DRAW)
 

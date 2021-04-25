@@ -4,7 +4,7 @@ import { TriplanarMaterial, MatcapMaterial } from '@/materials'
 
 export default class Environment extends Entity {
   async start(): Promise<void> {
-    await this.createTerrain()
+    // await this.createTerrain()
     await this.createStructure()
   }
 

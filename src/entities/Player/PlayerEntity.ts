@@ -4,19 +4,19 @@ import { InputReader, Movement } from '@/components'
 import { MatcapMaterial, FresnelMaterial } from '@/materials'
 
 export default class PlayerEntity extends Entity {
-  color: Color
   inputReader: InputReader
   movement: Movement
   isControllable: boolean
+  fresnelMaterial: FresnelMaterial
 
   constructor(data: any, color: number = 0xff2200, isControllable: boolean = false, orientation?: Object3D) {
     super()
-    this.color = new Color(color)
     this.isControllable = isControllable
     this.userData.player = data
 
     this.inputReader = this.addComponent(new InputReader(orientation))
     this.movement = this.addComponent(new Movement(50, 20))
+    this.fresnelMaterial = new FresnelMaterial(new Color(color), .5)
   }
 
   async start(): Promise<void> {
@@ -25,7 +25,7 @@ export default class PlayerEntity extends Entity {
     model.traverse(async (node: Mesh) => {
       if (node.isMesh) {
         if (node.name === 'Emission') {
-          node.material = new FresnelMaterial(new Color(0xff0000), new Color(this.color), .5)
+          node.material = this.fresnelMaterial
 
           if (this.isControllable)
             node.layers.enable(BLOOM_LAYER)
@@ -43,8 +43,12 @@ export default class PlayerEntity extends Entity {
   update(payload: any) {
     super.update(payload)
 
+    const { deltaTime, time } = payload
+
+    this.fresnelMaterial.uniforms.time.value = time
+
     if (this.isControllable)
-      return this.updatePosition(payload.deltaTime)
+      return this.updatePosition(deltaTime)
 
     this.syncPosition()
   }

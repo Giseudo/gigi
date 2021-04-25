@@ -1,15 +1,19 @@
 uniform float power;
-uniform vec3 firstColor;
-uniform vec3 secondColor;
+uniform float time;
+uniform vec3 color;
 
 varying vec3 vWorldNormal;
 varying vec3 vViewDirection;
 
 void main() {
-  float bias = 0.2;
-  float fresnel = bias * pow(dot(vViewDirection, vWorldNormal), power);
+  float fresnel = .5 * pow(dot(vViewDirection, vWorldNormal), power);
+  fresnel = saturate(fresnel);
+  fresnel += .5;
 
-  vec3 color = mix(firstColor, secondColor, fresnel);
+  float blink = pow(sin(time * 6.) * .5 + .5, .25) * .2;
 
-  gl_FragColor = vec4(color, 1.0);
+  vec3 blend = color * fresnel;
+  blend += blink * fresnel;
+
+  gl_FragColor = vec4(blend, 1.0);
 }

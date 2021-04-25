@@ -65,7 +65,7 @@ export default {
 
     async onPlayerConnected ({ player }) {
       const entity = await Entity.Instantiate(
-        new PlayerEntity(player, 0xff7777, true, this.camera)
+        new PlayerEntity(player, 0xff2244, true, this.camera)
       )
       this.entities.push(entity)
 

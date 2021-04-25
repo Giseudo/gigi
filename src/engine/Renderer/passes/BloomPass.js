@@ -55,7 +55,7 @@ export class BloomPass extends Pass {
     }
 
     this.renderPass = new RenderPass(scene, camera)
-    this.bloomPass = new UnrealBloomPass(new Vector2(width, height), .5, .25, .5)
+    this.bloomPass = new UnrealBloomPass(new Vector2(width, height), .75, .25, .25)
     this.material = new ShaderMaterial({
       uniforms: this.uniforms,
       vertexShader: vertexShader,

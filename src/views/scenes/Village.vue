@@ -22,7 +22,7 @@ export default ({
     stand.scale.set(3.5, 3.5, 3.5)
 
     this.entities = [
-      await Entity.Instantiate(stand),
+      // await Entity.Instantiate(stand),
       await Entity.Instantiate(environment)
     ]
   },

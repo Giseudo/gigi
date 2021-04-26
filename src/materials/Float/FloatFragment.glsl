@@ -1,7 +1,9 @@
 uniform vec3 baseColor;
 uniform vec3 fogColor;
+uniform sampler2D tColor;
 uniform int pass;
 
+varying vec2 vUv;
 varying vec3 vWorldPosition;
 varying vec3 vWorldNormal;
 
@@ -21,6 +23,9 @@ void main() {
 
   vec3 blend = baseColor - shadow;
   blend = mix(fogColor, blend, fog);
+
+  vec3 tint = texture2D(tColor, vUv).rgb;
+  blend *= tint;
 
   gl_FragColor = vec4(blend, 1.0);
 }

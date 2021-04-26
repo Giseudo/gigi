@@ -32,7 +32,7 @@ export default class Environment extends Entity {
       require('./Environment.fbx').default
     )
 
-    const material = new FloatMaterial(0x7f9eae)
+    const material = new FloatMaterial(0x7f9eae, await Resources.loadTexture(require('./EnvironmentColor.png')))
 
     structure.traverse((node: any) => {
       if (node.isMesh) node.material = material

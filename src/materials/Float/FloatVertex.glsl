@@ -1,5 +1,6 @@
 varying vec3 vWorldPosition;
 varying vec3 vWorldNormal;
+varying vec2 vUv;
 
 uniform float time;
 attribute vec3 color;
@@ -10,6 +11,7 @@ void main() {
   vec4 viewPosition = viewMatrix * worldPosition;
   vec4 projectedPosition = projectionMatrix * viewPosition;
 
+  vUv = uv;
   vWorldPosition = worldPosition.xyz;
   vWorldNormal = normalize(normalMatrix * normal);
 

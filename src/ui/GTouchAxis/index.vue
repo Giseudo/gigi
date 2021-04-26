@@ -6,15 +6,21 @@
     @touchmove="onTouchMove"
     @touchend="onTouchEnd"
   >
-  <div
-    class="g-touch-axis__background"
-    :style="{ left: `${origin.x}px`, top: `${origin.y}px` }"
-  >
+    <div
+      class="g-touch-axis__background"
+      :style="{ left: `${origin.x}px`, top: `${origin.y}px` }"
+    >
       <span
         class="g-touch-axis__handle"
         :style="{ transform: `translate(${direction.x * 100 / 2}px, ${-direction.y * 100 / 2}px)` }"
       />
     </div>
+
+    <span
+      class="g-touch-axis__touch"
+      :style="{ left: `${touch.x}px`, top: `${touch.y}px` }"
+    >
+    </span>
   </div>
 </template>
 
@@ -29,7 +35,7 @@ export default {
     isDragging: false,
     direction: new Vector2(),
     origin: new Vector2(),
-    delta: new Vector2()
+    touch: new Vector2()
   }),
 
   computed: {
@@ -52,23 +58,18 @@ export default {
       if (touches.length === 0) return
 
       this.origin.set(touches[0].pageX, touches[0].pageY)
+      this.touch.copy(this.origin)
       this.isDragging = true
     },
 
     onTouchMove (event) {
       const { touches } = event
-      const delta = {
-        x: (this.origin.x - touches[0].pageX) * this.renderer.deltaTime.value * .1,
-        y: (this.origin.y - touches[0].pageY) * this.renderer.deltaTime.value * .1
-      }
+      this.touch.set(touches[0].pageX, touches[0].pageY)
 
       if (touches.length === 0) return
 
-      this.direction.x -= delta.x
-      this.direction.y += delta.y
-
-      if (this.direction.lengthSq() > 1)
-       this.direction.normalize()
+      this.direction = this.origin.clone().sub(this.touch).normalize()
+      this.direction.x *= -1
 
       this.$emit('move', this.direction)
     },
@@ -126,6 +127,15 @@ export default {
       left: 50%;
       transform: translate(-50%, -50%);
     }
+  }
+
+  &__touch {
+    width: 40px;
+    height: 40px;
+    border-radius: 40px;
+    background: rgba(white, .1);
+    position: absolute;
+    transform: translate(-50%, -50%);
   }
 
   &--is-dragging {

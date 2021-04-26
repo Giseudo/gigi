@@ -25,15 +25,18 @@ vec4 scanLineIntensity(float uv, float resolution, float opacity, float frequenc
 }
 
 void main() {
-  vec2 greenUv = curveRemapUV(vec2(vUv.x, vUv.y));
+  // vec2 greenUv = curveRemapUV(vec2(vUv.x, vUv.y));
+  vec2 greenUv = vec2(vUv.x, vUv.y);
 
   if (greenUv.x < 0.0 || greenUv.y < 0.0 || greenUv.x > 1.0 || greenUv.y > 1.0){
     gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
   } else {
     float offset = abs(vUv.x - .5) * -.007;
 
-    vec2 redUv = curveRemapUV(vec2(vUv.x + offset, vUv.y + offset));
-    vec2 blueUv = curveRemapUV(vec2(vUv.x - offset, vUv.y - offset));
+    // vec2 redUv = curveRemapUV(vec2(vUv.x + offset, vUv.y + offset));
+    // vec2 blueUv = curveRemapUV(vec2(vUv.x - offset, vUv.y - offset));
+    vec2 redUv = vec2(vUv.x + offset, vUv.y + offset);
+    vec2 blueUv = vec2(vUv.x - offset, vUv.y - offset);
 
     float red = texture(tDiffuse, redUv).r;
     float green = texture(tDiffuse, greenUv).g;

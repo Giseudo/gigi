@@ -15,15 +15,10 @@ export default ({
   }),
 
   async mounted () {
-    const stand = new RedStand()
     const environment = new Environment()
-
-    stand.position.set(0, 0, 0)
-
-    this.entities = [
-      // await Entity.Instantiate(stand),
+    this.entities.push(
       await Entity.Instantiate(environment)
-    ]
+    )
   },
 
   beforeUnmount () {

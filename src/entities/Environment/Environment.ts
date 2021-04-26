@@ -1,11 +1,23 @@
 import { Object3D } from 'three'
 import { Resources, Entity } from '@/engine'
-import { TriplanarMaterial, MatcapMaterial, FloatMaterial } from '@/materials'
+import { TriplanarMaterial, FloatMaterial } from '@/materials'
+import { PanelEntity } from './'
 
 export default class Environment extends Entity {
+  panel?: PanelEntity
+
   async start(): Promise<void> {
-    // await this.createTerrain()
     await this.createStructure()
+
+    this.panel = await Entity.Instantiate(new PanelEntity(), this)
+    this.panel.position.y = 15
+    this.panel.position.z = -330
+    this.panel.rotateX(Math.PI * .3)
+  }
+
+  destroy () {
+    super.destroy()
+    this.panel?.destroy()
   }
 
   async createTerrain () {

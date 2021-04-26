@@ -16,7 +16,7 @@ void main() {
   vWorldNormal = normalize(normalMatrix * normal);
 
   if (color.b > 0.)
-    projectedPosition.y += sin(modelMatrix[0].x * 20. + time * .5) * 10.;
+    projectedPosition.y += sin(modelMatrix[0].x * 20. + time * .5) * 5.;
 
   gl_Position = projectedPosition;
 }

@@ -14,7 +14,7 @@ void main() {
   fresnel = saturate(fresnel);
   fresnel += .5;
 
-  float blink = pow(sin(time * 6.) * .5 + .5, .25) * .2;
+  float blink = pow(sin(time * 3.) * .5 + .5, .25) * .2;
 
   vec3 blend = color * fresnel;
   blend += blink * fresnel;

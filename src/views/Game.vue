@@ -2,6 +2,14 @@
   <div class="game">
     <router-view></router-view>
 
+    <g-hud>
+      <template v-slot:top>
+        <span class="line line--top" />
+      </template>
+      <template v-slot:down>
+        <span class="line line--down" />
+      </template>
+    </g-hud>
     <g-touch-axis @move="onTouchChange" />
     <g-dialogue v-if="showDialogue" />
   </div>
@@ -9,7 +17,7 @@
 
 <script>
 import { markRaw } from 'vue'
-import { GTouchAxis, GDialogue } from '@/ui'
+import { GTouchAxis, GDialogue, GHud } from '@/ui'
 import { Entity, subscribe, unsubscribe } from '@/engine'
 import { PlayerEntity, SkyboxEntity } from '@/entities'
 import { Movement } from '@/components'
@@ -21,7 +29,7 @@ export default {
 
   inject: [ 'input', 'camera', 'network' ],
 
-  components: { GTouchAxis, GDialogue },
+  components: { GTouchAxis, GDialogue, GHud },
 
   data: () => ({
     entities: markRaw([]),
@@ -107,3 +115,23 @@ export default {
   }
 }
 </script>
+
+<style lang="scss">
+.line {
+  position: absolute;
+  width: 80%;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 30px;
+  border-right: 2px solid rgba(white, .2);
+  border-left: 2px solid rgba(white, .2);
+  &--top {
+    border-top: 2px solid rgba(white, .2);
+    top: 80px;
+  }
+  &--down {
+    border-bottom: 2px solid rgba(white, .2);
+    bottom: 80px;
+  }
+}
+</style>

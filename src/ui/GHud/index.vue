@@ -1,15 +1,18 @@
 <template>
   <div class="g-hud">
-    <div class="g-hud__face g-hud__face--top">
+    <div class="face face--top">
       <slot name="top" />
     </div>
-    <div class="g-hud__face g-hud__face--right">
+
+    <div class="face face--right">
       <slot name="right" />
     </div>
-    <div class="g-hud__face g-hud__face--down">
+
+    <div class="face face--down">
       <slot name="down" />
     </div>
-    <div class="g-hud__face g-hud__face--left">
+
+    <div class="face face--left">
       <slot name="left" />
     </div>
   </div>
@@ -30,15 +33,17 @@ export default {
   height: 100%;
   perspective: 600px;
   overflow: hidden;
-  &__face {
+
+  .face {
     position: absolute;
-    // background: rgba(black, .1);
+    padding: 20px;
+    display: flex;
     &--top {
       width: 100%;
       height: 150px;
       top: 0;
       left: 0;
-      transform: rotateX(10deg);
+      // transform: rotateX(10deg);
       transform-origin: 50% 0%;
     }
     &--right {
@@ -46,15 +51,16 @@ export default {
       top: 0;
       right: 0;
       bottom: 0;
-      transform: rotateY(-15deg);
+      // transform: rotateY(-15deg);
       transform-origin: 100% 0%;
+      justify-content: flex-end;
     }
     &--down {
       width: 100%;
       height: 150px;
       bottom: 0;
       left: 0;
-      transform: rotateX(-10deg);
+      // transform: rotateX(-10deg);
       transform-origin: 50% 100%;
     }
     &--left {
@@ -62,7 +68,7 @@ export default {
       top: 0;
       left: 0;
       bottom: 0;
-      transform: rotateY(15deg);
+      // transform: rotateY(15deg);
       transform-origin: 0% 0%;
     }
   }

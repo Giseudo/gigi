@@ -8,7 +8,7 @@ export default class Skybox extends Entity {
 
   constructor (skyColor: Color|string|number) {
     super()
-    this.geometry = new SphereGeometry(600, 32, 32)
+    this.geometry = new SphereGeometry(2000, 32, 32)
     this.material = new SkyboxMaterial(skyColor)
   }
 

@@ -88,7 +88,7 @@ export default {
       )
       this.entities.push(entity)
 
-      this.camera.position.set(0, 4, 15)
+      this.camera.position.set(0, 1.5, 8)
       this.camera.position.add(entity.position)
       this.camera.lookAt(entity.position)
       this.camera.follow(entity)

@@ -10,8 +10,8 @@ export default class Environment extends Entity {
     await this.createStructure()
 
     this.panel = await Entity.Instantiate(new PanelEntity(), this)
-    this.panel.position.y = 15
-    this.panel.position.z = -330
+    this.panel.position.y = 10
+    this.panel.position.z = -63
     this.panel.rotateX(Math.PI * .3)
   }
 

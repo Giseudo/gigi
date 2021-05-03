@@ -22,7 +22,7 @@ void main() {
   shadow += dot(N, vec3(0., 0, -1.)) * .05;
 
   vec3 blend = baseColor - shadow;
-  blend = mix(fogColor, blend, fog);
+  // blend = mix(fogColor, blend, fog);
 
   vec3 tint = texture2D(tColor, vUv).rgb;
   blend *= tint;

@@ -4,20 +4,20 @@
 
     <g-hud>
       <template v-slot:top>
-        <!--span class="visor visor--top" /-->
+        <span class="visor visor--top" />
       </template>
 
       <template v-slot:down>
-        <!--span class="visor visor--down" /-->
+        <span class="visor visor--down" />
       </template>
 
       <template v-slot:left>
-        <!--img class="vector" :src="require('@/assets/vector.svg')" /-->
+        <img class="vector" :src="require('@/assets/vector.svg')" />
       </template>
 
       <template v-slot:right>
-        <!--span class="square" v-for="square in 20" /-->
-        <!--span class="line" /-->
+        <span class="square" v-for="square in 20" />
+        <span class="line" />
       </template>
     </g-hud>
 
@@ -134,14 +134,14 @@ export default {
   left: 50%;
   transform: translateX(-50%);
   height: 30px;
-  border-right: 2px solid orange;
-  border-left: 2px solid orange;
+  border-right: 2px solid rgba(white, .2);
+  border-left: 2px solid rgba(white, .2);
   &--top {
-    border-top: 2px solid orange;
+    border-top: 2px solid rgba(white, .2);
     top: 80px;
   }
   &--down {
-    border-bottom: 2px solid orange;
+    border-bottom: 2px solid rgba(white, .2);
     bottom: 80px;
   }
 }

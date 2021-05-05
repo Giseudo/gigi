@@ -43,7 +43,7 @@ export default {
       height: 150px;
       top: 0;
       left: 0;
-      // transform: rotateX(10deg);
+      transform: rotateX(10deg);
       transform-origin: 50% 0%;
     }
     &--right {
@@ -51,7 +51,7 @@ export default {
       top: 0;
       right: 0;
       bottom: 0;
-      // transform: rotateY(-15deg);
+      transform: rotateY(-15deg);
       transform-origin: 100% 0%;
       justify-content: flex-end;
     }
@@ -60,7 +60,7 @@ export default {
       height: 150px;
       bottom: 0;
       left: 0;
-      // transform: rotateX(-10deg);
+      transform: rotateX(-10deg);
       transform-origin: 50% 100%;
     }
     &--left {
@@ -68,7 +68,7 @@ export default {
       top: 0;
       left: 0;
       bottom: 0;
-      // transform: rotateY(15deg);
+      transform: rotateY(15deg);
       transform-origin: 0% 0%;
     }
   }

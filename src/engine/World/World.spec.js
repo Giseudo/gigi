@@ -20,17 +20,17 @@ describe('World', () => {
     const entity = new Entity()
 
     it('should have no entities at start', () => {
-      expect(world.entities.length === 0, 'expected 0 entities')
+      expect(world.entities).to.be.length(0)
     })
 
     it('should add entity', () => {
       world.addEntity(entity)
-      expect(world.entities.length === 1, 'expected 1 entity')
+      expect(world.entities).to.be.length(1)
     })
 
     it('should remove entity', () => {
       world.removeEntity(entity)
-      expect(world.entities.length === 0, 'expected 0 entities')
+      expect(world.entities).to.be.length(0)
     })
   })
 

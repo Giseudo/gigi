@@ -38,7 +38,7 @@ export default class Entity extends Object3D implements IStartable, IDestroyable
     const component = this.components.find(c => c instanceof type) as T
     
     if (!component)
-      throw new Error(`Could not find component of type ${type}`)
+      throw new Error(`Could not find component of type ${type.name}`)
 
     return component
   }
@@ -58,7 +58,14 @@ export default class Entity extends Object3D implements IStartable, IDestroyable
   }
 
   public removeComponent<T extends Component>(type: (new () => T)): void {
-    // TODO
+    const index = this.components.findIndex(c => c instanceof type)
+
+    if (index < 0)
+      throw new Error(`Entity has no component of type ${type.name}`)
+
+    const component = this.components[index]
+    component.destroy()
+    this.components.splice(index, 1)
   }
 
   enable() {

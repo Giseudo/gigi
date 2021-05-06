@@ -1,5 +1,6 @@
 import { Scene, Object3D } from 'three'
-import { EntityPayload, UpdatePayload, Object3DPayload, subscribe, unsubscribe } from '@/engine'
+import { EntityPayload, UpdatePayload, Object3DPayload } from '../payloads'
+import { subscribe, unsubscribe } from '../Messenger'
 import { ADD_ENTITY, ADD_OBJECT, REMOVE_OBJECT } from '../events'
 import Entity from './Entity'
 import Component from './Component'
@@ -17,6 +18,8 @@ export default class World extends Scene {
     unsubscribe(ADD_ENTITY, this.onAddEntity)
     unsubscribe(ADD_OBJECT, this.onAddObject)
     unsubscribe(REMOVE_OBJECT, this.onRemoveObject)
+
+    this.entities.forEach(entity => entity.destroy())
   }
 
   private onAddObject = ({ object }: Object3DPayload): void => {
@@ -48,6 +51,10 @@ export default class World extends Scene {
     else super.add(entity)
 
     entity.enable()
+  }
+
+  public removeEntity (entity: Entity): void {
+    this.destroyEntity(entity)
   }
 
   public destroyEntity (entity: Entity): void {

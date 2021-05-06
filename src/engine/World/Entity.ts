@@ -1,6 +1,7 @@
 import { Object3D } from 'three'
 import { IStartable, IDestroyable, IActivatable, IUpdatable } from '../interfaces'
-import { UpdatePayload, publish } from '../'
+import { UpdatePayload } from '../payloads'
+import { publish } from '../Messenger'
 import { ADD_ENTITY } from './events'
 import Component from './Component'
 

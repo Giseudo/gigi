@@ -1,5 +1,5 @@
 import { EventDispatcher } from 'three'
-import { UpdatePayload } from '@/engine'
+import { UpdatePayload } from '../payloads'
 import { IStartable, IDestroyable, IActivatable, IUpdatable } from '../interfaces'
 import Entity from './Entity'
 

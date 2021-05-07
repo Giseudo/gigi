@@ -32,10 +32,6 @@
     "template": "node_modules/@pixi/jsdoc-template"
   },
   "plugins": [
-    "node_modules/better-docs/typescript",
-    "node_modules/better-docs/category"
-  ],
-  "tags": {
-    "allowUnknownTags": ["category"]
-  }
+    "node_modules/better-docs/typescript"
+  ]
 }

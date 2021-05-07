@@ -5,16 +5,45 @@ import { ADD_ENTITY, ADD_OBJECT, REMOVE_OBJECT } from '../events'
 import Entity from './Entity'
 import Component from './Component'
 
-export default class World extends Scene {
-  entities: Array<Entity> = []
+/**
+ * World Class
+ *
+ * @extends {THREE.Scene}
+ */
+class World extends Scene {
+  public entities: Array<Entity>
 
-  init() {
+  /**
+   * Creates a World object.
+   */
+  constructor () {
+    super()
+
+    /**
+    * The entities list.
+    */
+    this.entities = []
+  }
+
+  /**
+   * Initializes the world, setup dependencies.
+   * Subscribe to events.
+   *
+   * @returns {void}
+   */
+  public init(): void {
     subscribe(ADD_ENTITY, this.onAddEntity)
     subscribe(ADD_OBJECT, this.onAddObject)
     subscribe(REMOVE_OBJECT, this.onRemoveObject)
   }
 
-  destroy() {
+  /**
+   * Destroys the world and every entitty.
+   * Unsubscribe from events.
+   *
+   * @returns {void}
+   */
+  public destroy(): void {
     unsubscribe(ADD_ENTITY, this.onAddEntity)
     unsubscribe(ADD_OBJECT, this.onAddObject)
     unsubscribe(REMOVE_OBJECT, this.onRemoveObject)
@@ -22,28 +51,14 @@ export default class World extends Scene {
     this.entities.forEach(entity => entity.destroy())
   }
 
-  private onAddObject = ({ object }: Object3DPayload): void => {
-    this.add(object)
-  }
-
-  private onRemoveObject = ({ object }: Object3DPayload): void => {
-    this.remove(object)
-  }
-
-  private onAddEntity = ({ entity, parent }: EntityPayload): void => {
-    this.addEntity(entity, parent)
-  }
-
   /**
-   * Removes object from scene
-   * @param payload Entity event data
-   * @returns void
+   * Add entity to the world.
+   *
+   * @param {Entity} entity The entity
+   * @param {Object3D} [parent] The parent object
+   * @returns {Entity}
    */
-  private onEntityDestroy = ({ entity }: EntityPayload): void => {
-    this.destroyEntity(entity)
-  }
-
-  public addEntity (entity: Entity, parent?: Object3D): void {
+  public addEntity (entity: Entity, parent?: Object3D): Entity {
     this.entities.push(entity)
     entity.subscribe('destroyed', this.onEntityDestroy)
 
@@ -51,12 +66,27 @@ export default class World extends Scene {
     else super.add(entity)
 
     entity.enable()
+
+    return entity
   }
 
+  /**
+   * Remove entity from the world.
+   *
+   * @param {Entity} entity The entity
+   * @returns {void}
+   */
   public removeEntity (entity: Entity): void {
     this.destroyEntity(entity)
   }
 
+  /**
+   * Remove entity from the world.
+   *
+   * @deprecated you should use removeEntity.
+   * @param {Entity} entity The entity
+   * @returns {void}
+   */
   public destroyEntity (entity: Entity): void {
     const index = this.entities.indexOf(entity)
 
@@ -78,13 +108,32 @@ export default class World extends Scene {
   }
 
   /**
-   * Updates all the active entities
-   * @param payload Update event data
-   * @returns void
+   * Updates all the active entities.
+   *
+   * @param {UpdatePayload} payload Update event data
+   * @returns {void}
    */
-  public update(payload: UpdatePayload) {
+  public update(payload: UpdatePayload): void {
     const entities = this.entities
 
     entities.forEach(entity => entity.isEnabled && entity.update(payload))
   }
+
+  private onAddObject = ({ object }: Object3DPayload): void => {
+    this.add(object)
+  }
+
+  private onRemoveObject = ({ object }: Object3DPayload): void => {
+    this.remove(object)
+  }
+
+  private onAddEntity = ({ entity, parent }: EntityPayload): void => {
+    this.addEntity(entity, parent)
+  }
+
+  private onEntityDestroy = ({ entity }: EntityPayload): void => {
+    this.removeEntity(entity)
+  }
 }
+
+export default World

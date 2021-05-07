@@ -6,6 +6,7 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "test": "mocha './src/**/*.spec.js'",
+    "docs": "jsdoc -c jsdoc.json",
     "serverBuild": "echo \"NONE SO FAR\"",
     "serverLocal": "set DEBUG=socket.io*&&ts-node-dev --respawn --transpile-only src/server/index.ts",
     "serverProd": "ts-node-dev --respawn --transpile-only src/server/index.ts"
@@ -26,6 +27,7 @@
     "@babel/core": "^7.14.0",
     "@babel/preset-env": "^7.14.1",
     "@babel/register": "^7.13.16",
+    "@pixi/jsdoc-template": "^2.6.0",
     "@types/chai": "^4.2.17",
     "@types/mocha": "^8.2.2",
     "@types/node": "^12.12.14",
@@ -37,6 +39,7 @@
     "@vue/cli-service": "~4.5.0",
     "@vue/compiler-sfc": "^3.0.0",
     "babel-loader": "^8.2.2",
+    "better-docs": "^2.3.2",
     "chai": "^4.3.4",
     "fflate": "^0.6.9",
     "file-loader": "^6.2.0",

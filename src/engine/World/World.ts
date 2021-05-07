@@ -7,7 +7,6 @@ import Component from './Component'
 
 /**
  * Entities manager.
- *
  * @extends {THREE.Scene}
  */
 class World extends Scene {
@@ -20,7 +19,8 @@ class World extends Scene {
     super()
 
     /**
-    * The entities list.
+     * List of entities.
+    * @type {Array<Entity>} 
     */
     this.entities = []
   }
@@ -49,7 +49,6 @@ class World extends Scene {
 
   /**
    * Add entity to the world.
-   *
    * @param {Entity} entity The entity
    * @param {Object3D} [parent] The parent object
    * @returns {Entity}
@@ -68,7 +67,6 @@ class World extends Scene {
 
   /**
    * Remove entity from the world.
-   *
    * @param {Entity} entity The entity
    */
   public removeEntity (entity: Entity): void {
@@ -77,9 +75,8 @@ class World extends Scene {
 
   /**
    * Remove entity from the world.
-   *
-   * @deprecated you should use removeEntity.
    * @param {Entity} entity The entity
+   * @deprecated you should use removeEntity instead.
    */
   public destroyEntity (entity: Entity): void {
     const index = this.entities.indexOf(entity)
@@ -103,7 +100,6 @@ class World extends Scene {
 
   /**
    * Updates all the active entities.
-   *
    * @param {UpdatePayload} payload Update event data
    */
   public update(payload: UpdatePayload): void {

@@ -6,7 +6,7 @@ import Entity from './Entity'
 import Component from './Component'
 
 /**
- * World Class
+ * Entities manager.
  *
  * @extends {THREE.Scene}
  */
@@ -28,8 +28,6 @@ class World extends Scene {
   /**
    * Initializes the world, setup dependencies.
    * Subscribe to events.
-   *
-   * @returns {void}
    */
   public init(): void {
     subscribe(ADD_ENTITY, this.onAddEntity)
@@ -40,8 +38,6 @@ class World extends Scene {
   /**
    * Destroys the world and every entitty.
    * Unsubscribe from events.
-   *
-   * @returns {void}
    */
   public destroy(): void {
     unsubscribe(ADD_ENTITY, this.onAddEntity)
@@ -74,7 +70,6 @@ class World extends Scene {
    * Remove entity from the world.
    *
    * @param {Entity} entity The entity
-   * @returns {void}
    */
   public removeEntity (entity: Entity): void {
     this.destroyEntity(entity)
@@ -85,7 +80,6 @@ class World extends Scene {
    *
    * @deprecated you should use removeEntity.
    * @param {Entity} entity The entity
-   * @returns {void}
    */
   public destroyEntity (entity: Entity): void {
     const index = this.entities.indexOf(entity)
@@ -111,7 +105,6 @@ class World extends Scene {
    * Updates all the active entities.
    *
    * @param {UpdatePayload} payload Update event data
-   * @returns {void}
    */
   public update(payload: UpdatePayload): void {
     const entities = this.entities

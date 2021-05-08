@@ -6,8 +6,10 @@ import { ADD_ENTITY } from './events'
 import Component from './Component'
 
 /**
- * Game object.
- * @extends {THREE.Object3D}
+ * The main game object.
+ * @class
+ * @extends THREE.Object3D
+ * @memberof GEngine
  */
 class Entity extends Object3D implements IStartable, IDestroyable, IActivatable, IUpdatable {
   components: Array<Component>
@@ -19,11 +21,17 @@ class Entity extends Object3D implements IStartable, IDestroyable, IActivatable,
   constructor() {
     super()
 
-    /** Whether the entity is active or not */
-    this.isEnabled = false
-
-    /** The active components list */
+    /**
+     * The active components list.
+     * @type Array<Component>
+     */
     this.components = []
+
+    /**
+     * Whether the entity is active or not.
+     * @type boolean
+     */
+    this.isEnabled = false
   }
 
   /**
@@ -37,6 +45,11 @@ class Entity extends Object3D implements IStartable, IDestroyable, IActivatable,
     await entity.start()
 
     entity.components.forEach((c: Component) => c.start())
+
+    /**
+     * Fired when the entity is initialized.
+     * @event GEngine.Entity#started
+     */
     entity.publish('started')
 
     publish(ADD_ENTITY, { entity, parent })
@@ -49,14 +62,17 @@ class Entity extends Object3D implements IStartable, IDestroyable, IActivatable,
    * Subscribe to events.
    * @returns {Promise<void>}
    */
-  public async start(): Promise<void> {
-    //
-  }
+  public async start(): Promise<void> { }
 
   /**
    * Destroys the entity. Dispose data. Unsubscribe from events.
    */
   public destroy (): void {
+    /**
+     * Fired when the entity is destroyed.
+     * @event GEngine.Entity#destroyed
+     * @param {EntityPayload} payload The event payload
+     */
     this.publish('destroyed', { entity: this })
   } 
 
@@ -125,6 +141,11 @@ class Entity extends Object3D implements IStartable, IDestroyable, IActivatable,
   public enable() {
     this.visible = true
     this.isEnabled = true
+
+    /**
+     * Fired when the component is enabled.
+     * @event GEngine.Entity#enabled
+     */
     this.publish('enabled', { entity: this })
   }
 
@@ -134,19 +155,40 @@ class Entity extends Object3D implements IStartable, IDestroyable, IActivatable,
   public disable() {
     this.visible = false
     this.isEnabled = false
+
+    /**
+     * Fired when the component is disabled.
+     * @event GEngine.Entity#disabled
+     */
     this.publish('disabled', { entity: this })
   }
 
+  /**
+   * Subscribes callback function to the given event type.
+   * @param {string} type The event type
+   * @param {Function} callback The callback function
+   */
   subscribe (type: string, callback: (value: any) => void): void {
     this.addEventListener(type, callback)
   }
 
-  publish (type: string, data?: any): void {
-    this.dispatchEvent({ type, ...(data ? data : {}) })
-  }
-
+   /**
+   * Unsubscribes callback function from the given event type.
+   * @param {string} type The event type
+   * @param {Function} callback The callback function
+   */
   unsubscribe(type: string, callback: (value: any) => void): void {
     this.removeEventListener(type, callback)
+  }
+
+   /**
+   * Publishes an event with the given type, passing data as custom payload.
+   * @param {string} type The event type
+   * @param {Object} data The event payload data
+   * @protected
+   */
+  protected publish (type: string, data?: any): void {
+    this.dispatchEvent({ type, ...(data ? data : {}) })
   }
 }
 

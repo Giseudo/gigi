@@ -7,20 +7,22 @@ import Component from './Component'
 
 /**
  * Entities manager.
+ * @class
  * @extends {THREE.Scene}
+ * @memberof GEngine
  */
 class World extends Scene {
   public entities: Array<Entity>
 
   /**
-   * Creates a World object.
+   * Creates a new World object.
    */
   constructor () {
     super()
 
     /**
      * List of entities.
-    * @type {Array<Entity>} 
+    * @type Array<Entity>
     */
     this.entities = []
   }

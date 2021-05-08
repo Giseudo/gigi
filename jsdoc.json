@@ -18,7 +18,8 @@
   "linenums": true,
   "source": {
     "include": [
-      "./src/engine/World/World.ts"
+      "./src/engine/World/World.ts",
+      "./src/engine/World/Entity.ts"
     ],
     "includePattern": "\\.(jsx|js|ts|tsx)$",
     "excludePattern": "(node_modules/|docs)"

@@ -5,11 +5,35 @@ import { publish } from '../Messenger'
 import { ADD_ENTITY } from './events'
 import Component from './Component'
 
-export default class Entity extends Object3D implements IStartable, IDestroyable, IActivatable, IUpdatable {
-  isEnabled: boolean = false
-  components: Array<Component> = []
+/**
+ * Game object.
+ * @extends {THREE.Object3D}
+ */
+class Entity extends Object3D implements IStartable, IDestroyable, IActivatable, IUpdatable {
+  components: Array<Component>
+  isEnabled: boolean
 
-  static async Instantiate(entity: Entity, parent: Object3D): Promise<Entity> {
+  /**
+   * Creates a new Entity object.
+   */
+  constructor() {
+    super()
+
+    /** Whether the entity is active or not */
+    this.isEnabled = false
+
+    /** The active components list */
+    this.components = []
+  }
+
+  /**
+   * Initialize an Entity and its components, then adds it to the world. If
+   * no parent object if given it will be added to the scene graph root.
+   * @param {Entity} entity The entity to instantiate
+   * @param {Object3D} parent The parent object
+   * @returns {Promise<Entity>}
+   */
+  public static async Instantiate(entity: Entity, parent: Object3D): Promise<Entity> {
     await entity.start()
 
     entity.components.forEach((c: Component) => c.start())
@@ -20,20 +44,37 @@ export default class Entity extends Object3D implements IStartable, IDestroyable
     return entity
   }
 
-  async start(): Promise<void> {
+  /**
+   * Initializes the entity. Load models, textures, materials.
+   * Subscribe to events.
+   * @returns {Promise<void>}
+   */
+  public async start(): Promise<void> {
     //
   }
 
-  destroy (): void {
+  /**
+   * Destroys the entity. Dispose data. Unsubscribe from events.
+   */
+  public destroy (): void {
     this.publish('destroyed', { entity: this })
   } 
 
+  /**
+   * Updates the entity and all active components.
+   * @param {UpdatePayload} payload Time payload object
+   */
   public update(payload: UpdatePayload): void {
     this.components.forEach(component =>
       component.isEnabled && component.update(payload)
     )
   }
 
+  /**
+   * Get a component from class type.
+   * @param {constructor} type The component class
+   * @returns {Component}
+   */
   public getComponent<T extends Component>(type: (new () => T)): T {
     const component = this.components.find(c => c instanceof type) as T
     
@@ -43,6 +84,12 @@ export default class Entity extends Object3D implements IStartable, IDestroyable
     return component
   }
 
+  /**
+   * Attaches a component to the entity. Cannot add two components from
+   * the same type.
+   * @param {Component} component The component instance
+   * @returns {Component}
+   */
   public addComponent<T extends Component>(component: T): T {
     const type: string = component.constructor.name
     const index = this.components.findIndex(c => c.constructor.name === type)
@@ -57,6 +104,10 @@ export default class Entity extends Object3D implements IStartable, IDestroyable
     return component
   }
 
+  /**
+   * Removes a component from the entity of class type.
+   * @param {constructor} type The component class
+   */
   public removeComponent<T extends Component>(type: (new () => T)): void {
     const index = this.components.findIndex(c => c instanceof type)
 
@@ -68,13 +119,19 @@ export default class Entity extends Object3D implements IStartable, IDestroyable
     this.components.splice(index, 1)
   }
 
-  enable() {
+  /**
+   * Enables the entity.
+   */
+  public enable() {
     this.visible = true
     this.isEnabled = true
     this.publish('enabled', { entity: this })
   }
 
-  disable() {
+  /**
+   * Disables the entity.
+   */
+  public disable() {
     this.visible = false
     this.isEnabled = false
     this.publish('disabled', { entity: this })
@@ -92,3 +149,5 @@ export default class Entity extends Object3D implements IStartable, IDestroyable
     this.removeEventListener(type, callback)
   }
 }
+
+export default Entity

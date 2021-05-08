@@ -14,8 +14,7 @@ export default class InputReader extends Component {
     [PRIMARY_AXIS]: new Vector2()
   }
 
-  start() {
-    super.start()
+  async onStart() {
     subscribe(AXIS_CHANGED, this.onAxisChange)
   }
 

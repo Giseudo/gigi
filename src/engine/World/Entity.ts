@@ -35,24 +35,16 @@ class Entity extends Object3D implements IStartable, IDestroyable, IActivatable,
   }
 
   /**
-   * Initialize an Entity and its components, then adds it to the world. If
-   * no parent object if given it will be added to the scene graph root.
+   * Initializes an Entity. If no parent object if given it will
+   * be added to the scene graph root.
    * @param {Entity} entity The entity to instantiate
    * @param {Object3D} parent The parent object
    * @returns {Promise<Entity>}
    */
-  public static async Instantiate(entity: Entity, parent: Object3D): Promise<Entity> {
-    await entity.start()
-
-    entity.components.forEach((c: Component) => c.start())
-
-    /**
-     * Fired when the entity is initialized.
-     * @event GEngine.Entity#started
-     */
-    entity.publish('started')
-
+  public static async Instantiate(entity: Entity, parent?: Object3D): Promise<Entity> {
     publish(ADD_ENTITY, { entity, parent })
+
+    await entity.start()
 
     return entity
   }
@@ -62,7 +54,30 @@ class Entity extends Object3D implements IStartable, IDestroyable, IActivatable,
    * Subscribe to events.
    * @returns {Promise<void>}
    */
-  public async start(): Promise<void> { }
+  public async start(): Promise<void> {
+    for (let i = 0; i < this.components.length; i++) {
+      const component: Component = this.components[i]
+      await component.start()
+    }
+
+    await this.onStart()
+
+    /**
+     * Fired when the entity is initialized.
+     * @event GEngine.Entity#started
+     */
+    this.publish('started')
+
+    this.enable()
+  }
+
+  /**
+   * Called when the component starts loading. This callback function
+   * should load any resource needed, as it is a good place to subscribe
+   * to events.
+   * @returns {Promise<void>}
+   */
+  protected async onStart(): Promise<void> { }
 
   /**
    * Destroys the entity. Dispose data. Unsubscribe from events.
@@ -147,6 +162,7 @@ class Entity extends Object3D implements IStartable, IDestroyable, IActivatable,
      * @event GEngine.Entity#enabled
      */
     this.publish('enabled', { entity: this })
+    this.onEnable()
   }
 
   /**
@@ -161,7 +177,20 @@ class Entity extends Object3D implements IStartable, IDestroyable, IActivatable,
      * @event GEngine.Entity#disabled
      */
     this.publish('disabled', { entity: this })
+    this.onDisable()
   }
+
+  /**
+   * This callback is called when the entity is enabled.
+   * @protected
+   */
+  protected onEnable(): void { }
+
+  /**
+   * This callback is called when the entity is disabled.
+   * @protected
+   */
+  protected onDisable(): void { }
 
   /**
    * Subscribes callback function to the given event type.

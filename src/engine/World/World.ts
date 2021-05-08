@@ -35,6 +35,8 @@ class World extends Scene {
     subscribe(ADD_ENTITY, this.onAddEntity)
     subscribe(ADD_OBJECT, this.onAddObject)
     subscribe(REMOVE_OBJECT, this.onRemoveObject)
+
+    this.dispatchEvent({ type: 'started' })
   }
 
   /**
@@ -53,16 +55,12 @@ class World extends Scene {
    * Add entity to the world.
    * @param {Entity} entity The entity
    * @param {Object3D} [parent] The parent object
-   * @returns {Entity}
+   * @returns {Promise<Entity>}
    */
-  public addEntity (entity: Entity, parent?: Object3D): Entity {
-    this.entities.push(entity)
-    entity.subscribe('destroyed', this.onEntityDestroy)
+  public async addEntity (entity: Entity, parent?: Object3D): Promise<Entity> {
+    this.attachEntity(entity, parent)
 
-    if (parent) parent.attach(entity)
-    else super.add(entity)
-
-    entity.enable()
+    await entity.start()
 
     return entity
   }
@@ -110,16 +108,30 @@ class World extends Scene {
     entities.forEach(entity => entity.isEnabled && entity.update(payload))
   }
 
+  /**
+   * Adds entity to entities list. Attaches it to the parent or to the
+   * scene if no parent is given.
+   * @param {Entity} entity The entity
+   * @param {Object3D} parent The parent object
+   * @private
+   */
+  private attachEntity(entity: Entity, parent?: Object3D): void {
+    this.entities.push(entity)
+    entity.subscribe('destroyed', this.onEntityDestroy)
+
+    if (!parent) super.add(entity)
+    if (parent) parent.add(entity)
+  }
+
   private onAddObject = ({ object }: Object3DPayload): void => {
     this.add(object)
   }
 
   private onRemoveObject = ({ object }: Object3DPayload): void => {
-    this.remove(object)
-  }
+    this.remove(object) }
 
   private onAddEntity = ({ entity, parent }: EntityPayload): void => {
-    this.addEntity(entity, parent)
+    this.attachEntity(entity, parent)
   }
 
   private onEntityDestroy = ({ entity }: EntityPayload): void => {

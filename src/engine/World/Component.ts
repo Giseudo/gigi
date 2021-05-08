@@ -37,11 +37,14 @@ class Component extends EventDispatcher implements IStartable, IDestroyable, IAc
   /**
    * Initializes the component, subscribes to events, and publishes
    * "started" event.
+   * @returns {Promise<Void>}
    */
-  start() {
+  async start(): Promise<void> {
     this.subscribe('enabled', this.onEnable)
     this.subscribe('disabled', this.onDisable)
     this.enable()
+
+    await this.onStart()
 
     /**
      * Fired when the component is initialized.
@@ -49,6 +52,14 @@ class Component extends EventDispatcher implements IStartable, IDestroyable, IAc
      */
     this.publish('started')
   }
+
+  /**
+   * Called when the component starts. This callback function should
+   * load any resource needed, as it is a good place to subscribe
+   * to events.
+   * @returns {Promise<void>}
+   */
+  async onStart(): Promise<void> { }
 
   /**
    * Destroys the component, unsubscribes from events, and publishes

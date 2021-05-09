@@ -10,20 +10,20 @@ import Entity from './Entity'
  * @memberof GEngine
  */
 class Component extends EventDispatcher implements IStartable, IDestroyable, IActivatable, IUpdatable {
-  entity?: Entity
-  isEnabled: boolean
+  public entity: Entity
+  public isEnabled: boolean
 
   /**
    * Creates a new game Component object.
    */
-  constructor() {
+  constructor(entity: Entity) {
     super()
 
     /**
      * The entity which the component is attached to.
      * @type Entity
      */
-    this.entity = undefined
+    this.entity = entity
 
     /**
      * Whether the component is active or not.
@@ -32,16 +32,12 @@ class Component extends EventDispatcher implements IStartable, IDestroyable, IAc
     this.isEnabled = false
   }
 
-  setEntity = (entity: Entity) => this.entity = entity
-
   /**
    * Initializes the component, subscribes to events, and publishes
    * "started" event.
    * @returns {Promise<Void>}
    */
   async start(): Promise<void> {
-    this.subscribe('enabled', this.onEnable)
-    this.subscribe('disabled', this.onDisable)
     this.enable()
 
     await this.onStart()
@@ -54,21 +50,13 @@ class Component extends EventDispatcher implements IStartable, IDestroyable, IAc
   }
 
   /**
-   * Called when the component starts. This callback function should
-   * load any resource needed, as it is a good place to subscribe
-   * to events.
-   * @returns {Promise<void>}
-   */
-  async onStart(): Promise<void> { }
-
-  /**
    * Destroys the component, unsubscribes from events, and publishes
    * "destroyed" event.
    */
-  destroy() {
+  public destroy() {
     this.disable()
-    this.unsubscribe('activated', this.onEnable)
-    this.unsubscribe('disabled', this.onDisable)
+
+    this.onDestroy()
 
     /**
      * Fired when the component is destroyed.
@@ -81,13 +69,15 @@ class Component extends EventDispatcher implements IStartable, IDestroyable, IAc
    * Game loop update callback.
    * @param {UpdatePayload} payload The time payload
    */
-  public update(payload: UpdatePayload): void { }
+  public update(_: UpdatePayload): void { }
 
   /**
    * Enables the component.
    */
   public enable(): void {
     this.isEnabled = true
+
+    this.onEnable()
 
     /**
      * Fired when the component is enabled.
@@ -102,12 +92,29 @@ class Component extends EventDispatcher implements IStartable, IDestroyable, IAc
   public disable(): void {
     this.isEnabled = false
 
+    this.onDisable()
+
     /**
      * Fired when the component is disabled.
      * @event GEngine.Component#disabled
      */
     this.publish('disabled')
   }
+
+  /**
+   * Called when the component starts. This callback function should
+   * load any resource needed by the component, as it is a good place
+   * to subscribe to events.
+   * @returns {Promise<void>}
+   * @protected
+   */
+  protected async onStart(): Promise<void> { }
+
+  /**
+   * Called when the component is destroyed.
+   * @protected
+   */
+  protected onDestroy(): void { }
 
   /**
    * This callback is called when the component is enabled.

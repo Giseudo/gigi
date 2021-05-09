@@ -14,8 +14,8 @@ export default class PlayerEntity extends Entity {
     this.isControllable = isControllable
     this.userData.player = data
 
-    this.inputReader = this.addComponent(new InputReader(orientation))
-    this.movement = this.addComponent(new Movement(25, 10))
+    this.inputReader = this.addComponent(new InputReader(this, orientation))
+    this.movement = this.addComponent(new Movement(this, 25, 10))
     this.fresnelMaterial = new FresnelMaterial(new Color(color), isControllable, .5)
   }
 

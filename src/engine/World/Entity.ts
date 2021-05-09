@@ -12,8 +12,8 @@ import Component from './Component'
  * @memberof GEngine
  */
 class Entity extends Object3D implements IStartable, IDestroyable, IActivatable, IUpdatable {
-  components: Array<Component>
-  isEnabled: boolean
+  public components: Array<Component>
+  public isEnabled: boolean
 
   /**
    * Creates a new Entity object.
@@ -50,8 +50,7 @@ class Entity extends Object3D implements IStartable, IDestroyable, IActivatable,
   }
 
   /**
-   * Initializes the entity. Load models, textures, materials.
-   * Subscribe to events.
+   * Initializes the entity and its components.
    * @returns {Promise<void>}
    */
   public async start(): Promise<void> {
@@ -72,17 +71,13 @@ class Entity extends Object3D implements IStartable, IDestroyable, IActivatable,
   }
 
   /**
-   * Called when the component starts loading. This callback function
-   * should load any resource needed, as it is a good place to subscribe
-   * to events.
-   * @returns {Promise<void>}
-   */
-  protected async onStart(): Promise<void> { }
-
-  /**
-   * Destroys the entity. Dispose data. Unsubscribe from events.
+   * Destroys the entity.
    */
   public destroy (): void {
+    this.disable()
+
+    this.onDestroy()
+
     /**
      * Fired when the entity is destroyed.
      * @event GEngine.Entity#destroyed
@@ -128,7 +123,6 @@ class Entity extends Object3D implements IStartable, IDestroyable, IActivatable,
     if (index >= 0)
       throw new Error(`Component of type ${type} already extists`)
 
-    component.setEntity(this)
     component.start()
     this.components.push(component)
 
@@ -136,7 +130,7 @@ class Entity extends Object3D implements IStartable, IDestroyable, IActivatable,
   }
 
   /**
-   * Removes a component from the entity of class type.
+   * Removes a component of given type from the entity.
    * @param {constructor} type The component class
    */
   public removeComponent<T extends Component>(type: (new () => T)): void {
@@ -157,12 +151,13 @@ class Entity extends Object3D implements IStartable, IDestroyable, IActivatable,
     this.visible = true
     this.isEnabled = true
 
+    this.onEnable()
+
     /**
      * Fired when the component is enabled.
      * @event GEngine.Entity#enabled
      */
     this.publish('enabled', { entity: this })
-    this.onEnable()
   }
 
   /**
@@ -172,22 +167,38 @@ class Entity extends Object3D implements IStartable, IDestroyable, IActivatable,
     this.visible = false
     this.isEnabled = false
 
+    this.onDisable()
+
     /**
      * Fired when the component is disabled.
      * @event GEngine.Entity#disabled
      */
     this.publish('disabled', { entity: this })
-    this.onDisable()
   }
 
   /**
-   * This callback is called when the entity is enabled.
+   * Called when the component starts loading. This callback function
+   * should load any resource needed by the entity, as it is a good
+   * place to subscribe to events.
+   * @returns {Promise<void>}
+   * @protected
+   */
+  protected async onStart(): Promise<void> { }
+
+  /**
+   * Called when the entity is destroyed.
+   * @protected
+   */
+  protected onDestroy(): void { }
+
+  /**
+   * Called when the entity is enabled.
    * @protected
    */
   protected onEnable(): void { }
 
   /**
-   * This callback is called when the entity is disabled.
+   * Called when the entity is disabled.
    * @protected
    */
   protected onDisable(): void { }
@@ -197,7 +208,7 @@ class Entity extends Object3D implements IStartable, IDestroyable, IActivatable,
    * @param {string} type The event type
    * @param {Function} callback The callback function
    */
-  subscribe (type: string, callback: (value: any) => void): void {
+  public subscribe (type: string, callback: (value: any) => void): void {
     this.addEventListener(type, callback)
   }
 
@@ -206,7 +217,7 @@ class Entity extends Object3D implements IStartable, IDestroyable, IActivatable,
    * @param {string} type The event type
    * @param {Function} callback The callback function
    */
-  unsubscribe(type: string, callback: (value: any) => void): void {
+  public unsubscribe(type: string, callback: (value: any) => void): void {
     this.removeEventListener(type, callback)
   }
 

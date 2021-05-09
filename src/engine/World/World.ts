@@ -70,15 +70,6 @@ class World extends Scene {
    * @param {Entity} entity The entity
    */
   public removeEntity (entity: Entity): void {
-    this.destroyEntity(entity)
-  }
-
-  /**
-   * Remove entity from the world.
-   * @param {Entity} entity The entity
-   * @deprecated you should use removeEntity instead.
-   */
-  public destroyEntity (entity: Entity): void {
     const index = this.entities.indexOf(entity)
 
     if (index < 0) return

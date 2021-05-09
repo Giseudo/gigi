@@ -1,0 +1,37 @@
+{
+  "applicationName": "Demo",
+  "disqus": "",
+  "googleAnalytics": "",
+  "favicon": "path/to/favicon.png",
+  "openGraph": {
+    "title": "",
+    "type": "website",
+    "image": "",
+    "site_name": "",
+    "url": ""
+  },
+  "meta": {
+    "title": "",
+    "description": "",
+    "keyword": ""
+  },
+  "linenums": true,
+  "source": {
+    "include": [
+      "./src/engine"
+    ],
+    "includePattern": "\\.(jsx|js|ts|tsx)$",
+    "excludePattern": "(node_modules/|docs)"
+  },
+  "opts": {
+    "encoding": "utf8",
+    "recurse": true,
+    "private": false,
+    "lenient": true,
+    "destination": "./docs",
+    "template": "node_modules/@pixi/jsdoc-template"
+  },
+  "plugins": [
+    "node_modules/better-docs/typescript"
+  ]
+}

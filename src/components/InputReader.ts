@@ -1,12 +1,13 @@
 import { Object3D, Vector2, Vector3 } from 'three'
-import { Component, subscribe, unsubscribe, PRIMARY_AXIS } from '@/engine'
+import { Component, Entity, subscribe, unsubscribe, PRIMARY_AXIS } from '@/engine'
 import { AXIS_CHANGED } from '@/engine/events'
 
 export default class InputReader extends Component {
   orientation?: Object3D
 
-  constructor(orientation?: Object3D) {
-    super()
+  constructor(entity: Entity, orientation?: Object3D) {
+    super(entity)
+
     this.orientation = orientation
   }
 
@@ -14,13 +15,11 @@ export default class InputReader extends Component {
     [PRIMARY_AXIS]: new Vector2()
   }
 
-  start() {
-    super.start()
+  async onStart() {
     subscribe(AXIS_CHANGED, this.onAxisChange)
   }
 
-  destroy() {
-    super.destroy()
+  onDestroy() {
     unsubscribe(AXIS_CHANGED, this.onAxisChange)
   }
 

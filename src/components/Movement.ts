@@ -1,5 +1,5 @@
 import { Vector3 } from 'three'
-import { Component, UpdatePayload } from '@/engine'
+import { Component, Entity, UpdatePayload } from '@/engine'
 
 export default class Movement extends Component {
   isMoving: boolean = false
@@ -8,8 +8,9 @@ export default class Movement extends Component {
   acceleration: number
   maxVelocity: number
 
-  constructor(acceleration: number = 50, maxVelocity: number = 20) {
-    super()
+  constructor(entity: Entity, acceleration: number = 50, maxVelocity: number = 20) {
+    super(entity)
+
     this.acceleration = acceleration
     this.maxVelocity = maxVelocity
   }

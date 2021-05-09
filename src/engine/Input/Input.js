@@ -1,6 +1,6 @@
 import { reactive } from 'vue'
 import { Vector2 } from 'three'
-import { publish } from '@GMessenger'
+import { publish } from '@/engine'
 import { AXIS_CHANGED, BUTTON_DOWN, BUTTON_PRESS, BUTTON_UP } from './events'
 
 export const PRIMARY_AXIS = 'input/PRIMARY_AXIS'

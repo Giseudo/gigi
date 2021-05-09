@@ -1,5 +1,4 @@
 import { ref } from 'vue'
-import { FloatNode } from 'three/examples/jsm/nodes/Nodes'
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer'
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass'
 import { LensDistortionPass } from './passes/LensDistortionPass'
@@ -40,8 +39,8 @@ export default class Renderer {
   clock = new Clock()
   width = window.innerWidth
   height = window.innerHeight
-  time = new FloatNode(0.0)
-  deltaTime = new FloatNode(0.0)
+  time = ref(0)
+  deltaTime = ref(0)
 
   uniforms = {
     tDepth: { value: null },

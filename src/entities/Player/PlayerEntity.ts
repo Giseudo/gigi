@@ -1,5 +1,5 @@
-import { Object3D, Color, Mesh, MeshBasicMaterial } from 'three'
-import { Entity, NavMesh, Resources, Debug, BLOOM_LAYER, PRIMARY_AXIS } from '@/engine'
+import { Object3D, Color, Mesh } from 'three'
+import { Entity, NavMesh, Resources, PRIMARY_AXIS } from '@/engine'
 import { InputReader, Movement } from '@/components'
 import { MatcapMaterial, FresnelMaterial } from '@/materials'
 
@@ -14,12 +14,12 @@ export default class PlayerEntity extends Entity {
     this.isControllable = isControllable
     this.userData.player = data
 
-    this.inputReader = this.addComponent(new InputReader(orientation))
-    this.movement = this.addComponent(new Movement(25, 10))
+    this.inputReader = this.addComponent(new InputReader(this, orientation))
+    this.movement = this.addComponent(new Movement(this, 25, 10))
     this.fresnelMaterial = new FresnelMaterial(new Color(color), isControllable, .5)
   }
 
-  async start(): Promise<void> {
+  async onStart(): Promise<void> {
     const model = await Resources.loadObject(require('./PlayerModel.fbx').default)
     const matcapMaterial = new MatcapMaterial(await Resources.loadTexture(require('./PlayerMatcap.png')))
 

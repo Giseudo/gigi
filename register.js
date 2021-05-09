@@ -1,6 +1,6 @@
 const tsNode = require('ts-node');
 const tsConfigPaths = require('tsconfig-paths');
-const babelRegister = require('@babel/register')
+// const babelRegister = require('@babel/register')
 
 tsConfigPaths.register({
   baseUrl: './',
@@ -15,10 +15,10 @@ tsNode.register({
   project: './tsconfig.json'
 })
 
-babelRegister({
+/*babelRegister({
   ignore: [
     /\.glsl$/
   ],
 
   extensions: [".es6", ".es", ".jsx", ".cjs", ".js", ".mjs", ".ts"],
-})
+})*/

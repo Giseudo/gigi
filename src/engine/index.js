@@ -1,12 +1,15 @@
 export { default as Engine } from './Engine'
-export * from './World'
+
+export * from './Camera'
+export * from './Debug'
 export * from './Input'
+export * from './Messenger'
 export * from './NavMesh'
+export * from './Network'
+export * from './Physics'
 export * from './Renderer'
 export * from './Resources'
-export * from './Camera'
-export * from './Messenger'
-export * from './Network'
-export * from './Debug'
 export * from './Time'
+export * from './World'
 
+/** @namespace GEngine */

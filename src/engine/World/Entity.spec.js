@@ -1,5 +1,5 @@
 import Entity from './Entity.ts'
-import Component from './Component.ts'
+import { Component } from '../Components'
 import { stub, spy } from 'sinon'
 import { expect } from 'chai'
 

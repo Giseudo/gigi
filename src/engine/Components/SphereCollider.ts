@@ -1,11 +1,11 @@
 import { Sphere } from 'three'
-import { Entity } from '../../World'
+import { Entity } from '../World'
 import Collider from './Collider'
 
 /**
  * A sphere shaped Collider component.
  * @class
- * @memberof GEngine.Physics
+ * @memberof GEngine.Components
  * @extends {Collider}
  */
 class SphereCollider extends Collider {

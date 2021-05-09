@@ -1,6 +1,6 @@
 import { Vector3 } from 'three'
 import { Entity } from '../World'
-import { BoxCollider, SphereCollider } from './Components'
+import { BoxCollider, SphereCollider } from '../Components'
 import { expect } from 'chai'
 import Space from './Space.ts'
 

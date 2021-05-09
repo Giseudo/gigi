@@ -1,5 +1,11 @@
 import { EventDispatcher, Group, Color, Vector2, BufferGeometry, BufferAttribute, Line, LineLoop, LineBasicMaterial } from 'three'
 
+/**
+ * Debug helper class.
+ * @class
+ * @extends THREE.EventDispatcher
+ * @memberof GEngine.Debug
+ */
 export default class Debug extends EventDispatcher {
   static CreateCircle(radius: number = 5, color: Color|string|number = 0xff0000, segments: number = 16): Line {
     const vertices: Array<Vector2> = []

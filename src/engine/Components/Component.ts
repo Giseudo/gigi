@@ -1,13 +1,13 @@
 import { EventDispatcher } from 'three'
 import { UpdatePayload } from '../payloads'
 import { IStartable, IDestroyable, IActivatable, IUpdatable } from '../interfaces'
-import Entity from './Entity'
+import { Entity } from '../World'
 
 /**
  * Game component class.
  * @class
  * @extends THREE.EventDispatcher
- * @memberof GEngine
+ * @memberof GEngine.Components
  */
 class Component extends EventDispatcher implements IStartable, IDestroyable, IActivatable, IUpdatable {
   public entity: Entity

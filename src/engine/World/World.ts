@@ -2,14 +2,14 @@ import { Scene, Object3D } from 'three'
 import { EntityPayload, UpdatePayload, Object3DPayload } from '../payloads'
 import { subscribe, unsubscribe } from '../Messenger'
 import { ADD_ENTITY, ADD_OBJECT, REMOVE_OBJECT } from '../events'
+import { Component } from '../Components'
 import Entity from './Entity'
-import Component from './Component'
 
 /**
  * Entities manager.
  * @class
  * @extends {THREE.Scene}
- * @memberof GEngine
+ * @memberof GEngine.World
  */
 class World extends Scene {
   public entities: Array<Entity>

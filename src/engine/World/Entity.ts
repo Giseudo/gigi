@@ -2,14 +2,14 @@ import { Object3D } from 'three'
 import { IStartable, IDestroyable, IActivatable, IUpdatable } from '../interfaces'
 import { UpdatePayload } from '../payloads'
 import { publish } from '../Messenger'
+import { Component } from '../Components'
 import { ADD_ENTITY } from './events'
-import Component from './Component'
 
 /**
  * The main game object.
  * @class
  * @extends THREE.Object3D
- * @memberof GEngine
+ * @memberof GEngine.World
  */
 class Entity extends Object3D implements IStartable, IDestroyable, IActivatable, IUpdatable {
   public components: Array<Component>

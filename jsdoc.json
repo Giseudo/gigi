@@ -1,37 +1,39 @@
 {
-  "applicationName": "Demo",
-  "disqus": "",
-  "googleAnalytics": "",
-  "favicon": "path/to/favicon.png",
-  "openGraph": {
-    "title": "",
-    "type": "website",
-    "image": "",
-    "site_name": "",
-    "url": ""
-  },
-  "meta": {
-    "title": "",
-    "description": "",
-    "keyword": ""
-  },
-  "linenums": true,
-  "source": {
-    "include": [
-      "./src/engine"
-    ],
-    "includePattern": "\\.(jsx|js|ts|tsx)$",
-    "excludePattern": "(node_modules/|docs)"
-  },
   "opts": {
     "encoding": "utf8",
     "recurse": true,
     "private": false,
     "lenient": true,
     "destination": "./docs",
-    "template": "node_modules/@pixi/jsdoc-template"
+    "template": "node_modules/@pixi/jsdoc-template",
+    "readme": "./README.md"
   },
   "plugins": [
     "node_modules/better-docs/typescript"
-  ]
+  ],
+  "templates": {
+    "applicationName": "GEngine",
+    "disqus": "",
+    "googleAnalytics": "",
+    "openGraph": {
+      "title": "GEngine",
+      "type": "website",
+      "image": "",
+      "site_name": "",
+      "url": "https://giseudo.github.io/GEngine"
+    },
+    "meta": {
+      "title": "GEngine",
+      "description": "",
+      "keyword": ""
+    },
+    "linenums": true
+  },
+  "source": {
+    "include": [
+      "./src/engine"
+    ],
+    "includePattern": "\\.(jsx|js|ts|tsx)$",
+    "excludePattern": "(node_modules/|docs)"
+  }
 }

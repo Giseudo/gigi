@@ -1,11 +1,11 @@
 import { Vector3, Box3 } from 'three'
-import { Entity } from '../../World'
+import { Entity } from '../World'
 import Collider from './Collider'
 
 /**
  * A rectangle shaped Collider component.
  * @class
- * @memberof GEngine.Physics
+ * @memberof GEngine.Components
  * @extends {Collider}
  */
 class BoxCollider extends Collider {

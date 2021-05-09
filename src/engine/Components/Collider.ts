@@ -1,5 +1,6 @@
 import { Box3, Sphere, Plane } from 'three'
-import { Entity, Component } from '../../World'
+import { Entity } from '../World'
+import Component from './Component'
 
 enum CollisionLayer {
   Default = 0
@@ -8,7 +9,7 @@ enum CollisionLayer {
 /**
  * The base Collider component.
  * @class
- * @memberof GEngine.Physics
+ * @memberof GEngine.Components
  * @extends {Component}
  */
 class Collider extends Component {

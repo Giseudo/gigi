@@ -1,4 +1,4 @@
-import { Collider } from './Components'
+import { Collider } from '../Components'
 import { Logger } from '../Logger'
 
 /**

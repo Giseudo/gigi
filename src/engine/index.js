@@ -1,6 +1,7 @@
 export { default as Engine } from './Engine'
 
 export * from './Camera'
+export * from './Components'
 export * from './Debug'
 export * from './Input'
 export * from './Messenger'

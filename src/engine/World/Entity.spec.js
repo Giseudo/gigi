@@ -3,14 +3,18 @@ import { Component } from '../Components'
 import { stub, spy } from 'sinon'
 import { expect } from 'chai'
 
-class TestComponent extends Component { }
+class TestComponent extends Component {
+  constructor(entity) {
+    super(entity)
+  }
+}
 
 describe('Entity', () => {
   const entity = new Entity()
 
   describe('components', () => {
     it('should add a component', () => {
-      const component = entity.addComponent(new TestComponent())
+      const component = entity.addComponent(new TestComponent(entity))
 
       expect(entity.components).to.be.contain(component)
     })

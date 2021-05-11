@@ -1,5 +1,7 @@
 import { EventDispatcher, Group, Color, Vector2, BufferGeometry, BufferAttribute, Line, LineLoop, LineBasicMaterial } from 'three'
 
+const TAU = 6.28318530718
+
 /**
  * Debug helper class.
  * @class
@@ -14,8 +16,8 @@ export default class Debug extends EventDispatcher {
       const theta = (i / segments) * TAU 
 
       vertices.push(new Vector2(
-        Math.cos(theta) * radius / 2,
-        Math.sin(theta) * radius / 2
+        Math.cos(theta) * radius,
+        Math.sin(theta) * radius
       ))
     }
 

@@ -1,4 +1,5 @@
-import { Box3, Sphere } from 'three'
+import { Box3, Sphere, Group } from 'three'
+import { Debug } from '../Debug'
 import { Entity } from '../World'
 import Collider from './Collider'
 import BoxCollider from './BoxCollider'
@@ -11,11 +12,16 @@ import BoxCollider from './BoxCollider'
  */
 class SphereCollider extends Collider {
   geometry: Sphere
+  gizmos: Group
 
   constructor(entity: Entity, radius: number) {
     super(entity)
 
     this.geometry = new Sphere(entity.position, radius)
+
+    this.gizmos = Debug.CreateSphere(radius, 0x00ff00)
+    this.gizmos.visible = true
+    entity.add(this.gizmos)
   }
 
   public intersectsWith(other: Collider): boolean {

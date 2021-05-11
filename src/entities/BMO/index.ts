@@ -1,1 +1,1 @@
-export { default as BMO } from './BMO'
+export { default as BMOEntity } from './BMOEntity'

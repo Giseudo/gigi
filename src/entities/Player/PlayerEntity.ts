@@ -1,11 +1,13 @@
 import { Object3D, Color, Mesh } from 'three'
-import { Entity, NavMesh, Resources, PRIMARY_AXIS } from '@/engine'
+import { Debug, Entity, NavMesh, Resources, SphereCollider, PRIMARY_AXIS } from '@/engine'
 import { InputReader, Movement } from '@/components'
 import { MatcapMaterial, FresnelMaterial } from '@/materials'
 
 export default class PlayerEntity extends Entity {
   inputReader: InputReader
   movement: Movement
+  collider: SphereCollider
+
   isControllable: boolean
   fresnelMaterial: FresnelMaterial
 
@@ -16,6 +18,8 @@ export default class PlayerEntity extends Entity {
 
     this.inputReader = this.addComponent(new InputReader(this, orientation))
     this.movement = this.addComponent(new Movement(this, 25, 10))
+    this.collider = this.addComponent(new SphereCollider(this, 3))
+
     this.fresnelMaterial = new FresnelMaterial(new Color(color), isControllable, .5)
   }
 

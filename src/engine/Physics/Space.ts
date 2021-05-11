@@ -1,8 +1,8 @@
 import { Collider } from '../Components'
 import { Logger } from '../Logger'
 import { subscribe } from '../Messenger'
-import { UPDATE } from '../events'
-import { UpdatePayload } from '../payloads'
+import { UPDATE, ADD_ENTITY } from '../events'
+import { EntityPayload } from '../payloads'
 
 /**
  * Handles collision detection
@@ -26,6 +26,7 @@ class Space {
    */
   public async init(): Promise<void> {
     subscribe(UPDATE, this.onUpdate)
+    subscribe(ADD_ENTITY, this.onAddEntity)
   }
 
   /**
@@ -54,15 +55,24 @@ class Space {
     this.colliders.splice(index, 1)
   }
 
-  public onUpdate(_: UpdatePayload): void {
+  public onUpdate = () => {
     this.checkCollisions()
+  }
+
+  public onAddEntity = ({ entity }: EntityPayload): void => {
+    for (let i = 0; i < entity.components.length; i++) {
+      const component = entity.components[i]
+
+      if (component instanceof Collider)
+        this.addCollider(component)
+    }
   }
 
   public checkCollisions(): void {
     for (let i = 0; i < this.colliders.length; i++) {
       const a = this.colliders[i]
 
-      for (let j = 0; i < this.colliders.length; j++) {
+      for (let j = 0; j < this.colliders.length; j++) {
         const b = this.colliders[j]
 
         if (a === b) continue

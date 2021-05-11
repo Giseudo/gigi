@@ -1,4 +1,4 @@
-import { EventDispatcher } from 'three'
+import { EventDispatcher, Group } from 'three'
 import { UpdatePayload } from '../payloads'
 import { IStartable, IDestroyable, IActivatable, IUpdatable } from '../interfaces'
 import { Entity } from '../World'
@@ -12,6 +12,7 @@ import { Entity } from '../World'
 class Component extends EventDispatcher implements IStartable, IDestroyable, IActivatable, IUpdatable {
   public entity: Entity
   public isEnabled: boolean
+  protected gizmos: Group
 
   /**
    * Creates a new game Component object.
@@ -31,6 +32,13 @@ class Component extends EventDispatcher implements IStartable, IDestroyable, IAc
      */
     this.isEnabled = false
 
+    /**
+     * The component gizmos group. This group is attached to the entity,
+     * and all the gizmos should be placed within this group.
+     */
+    this.gizmos = new Group()
+
+    entity.add(this.gizmos)
     entity.addComponent(this)
   }
 

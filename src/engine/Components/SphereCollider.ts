@@ -1,4 +1,4 @@
-import { Box3, Sphere, Group } from 'three'
+import { Sphere } from 'three'
 import { Debug } from '../Debug'
 import { Entity } from '../World'
 import Collider from './Collider'
@@ -12,16 +12,13 @@ import BoxCollider from './BoxCollider'
  */
 class SphereCollider extends Collider {
   geometry: Sphere
-  gizmos: Group
 
   constructor(entity: Entity, radius: number) {
     super(entity)
 
     this.geometry = new Sphere(entity.position, radius)
 
-    this.gizmos = Debug.CreateSphere(radius, 0x00ff00)
-    this.gizmos.visible = true
-    entity.add(this.gizmos)
+    this.gizmos.add(Debug.CreateSphere(radius, 0x00ff00))
   }
 
   public intersectsWith(other: Collider): boolean {
@@ -29,9 +26,9 @@ class SphereCollider extends Collider {
 
     if (other instanceof BoxCollider) {
       const a = this.geometry
-      const b = other.geometry as Box3
+      const b = other.geometry
 
-      intersects = a.intersectsBox(b)
+      intersects = b.intersectsSphere(a)
     }
 
     if (other instanceof SphereCollider) {

@@ -1,12 +1,12 @@
-import { Object3D, Color, Mesh } from 'three'
-import { Debug, Entity, NavMesh, Resources, SphereCollider, PRIMARY_AXIS } from '@/engine'
+import { Object3D, Color, Mesh, Vector3 } from 'three'
+import { Entity, NavMesh, Resources, Collider, BoxCollider, PRIMARY_AXIS } from '@/engine'
 import { InputReader, Movement } from '@/components'
 import { MatcapMaterial, FresnelMaterial } from '@/materials'
 
 export default class PlayerEntity extends Entity {
   inputReader: InputReader
   movement: Movement
-  collider: SphereCollider
+  collider: Collider
   isControllable: boolean
   fresnelMaterial: FresnelMaterial
 
@@ -16,12 +16,12 @@ export default class PlayerEntity extends Entity {
     this.components = [
       new InputReader(this, orientation),
       new Movement(this, 25, 10),
-      new SphereCollider(this, 3)
+      new BoxCollider(this, new Vector3(2, 2, 2), new Vector3(0, 1, 0))
     ]
 
     this.inputReader = this.getComponent(InputReader)
     this.movement = this.getComponent(Movement)
-    this.collider = this.getComponent(SphereCollider)
+    this.collider = this.getComponent(BoxCollider)
 
     this.isControllable = isControllable
     this.fresnelMaterial = new FresnelMaterial(new Color(color), isControllable, .5)
@@ -68,9 +68,9 @@ export default class PlayerEntity extends Entity {
     const desiredPosition = this.position.clone().add(
       this.movement.velocity.clone().multiplyScalar(deltaTime)
     )
-    const clampedPosition = NavMesh.ClampPosition(this.position, desiredPosition)
+    // const clampedPosition = NavMesh.ClampPosition(this.position, desiredPosition)
 
-    this.position.copy(clampedPosition)
+    this.position.copy(desiredPosition)
   }
 
   syncPosition(): void {

@@ -1,5 +1,7 @@
-import { Vector3, Box3, Sphere } from 'three'
+import { Vector3, Box3 } from 'three'
+import { OBB } from 'three/examples/jsm/math/OBB'
 import { Entity } from '../World'
+import { Debug } from '../Debug'
 import Collider from './Collider'
 import SphereCollider from './SphereCollider'
 
@@ -11,26 +13,30 @@ import SphereCollider from './SphereCollider'
  */
 class BoxCollider extends Collider {
   size: Vector3
-  geometry: Box3
+  center: Vector3
+  geometry: OBB
 
   get minPosition(): Vector3 {
-    return this.entity.position.clone().add(
-      new Vector3(-this.size.x, -this.size.y, -this.size.z)
-    )
+    return this.entity.position.clone().sub(this.size)
   }
 
   get maxPosition(): Vector3 {
-    return this.entity.position.clone().add(
-      new Vector3(this.size.x, this.size.y, this.size.z)
-    )
+    return this.entity.position.clone().add(this.size)
   }
 
-  constructor(entity: Entity, size: Vector3) {
+  constructor(entity: Entity, size: Vector3, center: Vector3 = new Vector3()) {
     super(entity)
 
     this.size = size
+    this.center = center
 
-    this.geometry = new Box3(this.minPosition, this.maxPosition)
+    this.geometry = new OBB(center, size)
+
+    const box = new Box3(this.minPosition, this.maxPosition)
+
+    this.geometry.fromBox3(box)
+
+    this.gizmos.add(Debug.CreateBox3(box, 0x00ff00))
   }
 
   public intersectsWith(other: Collider): boolean {
@@ -38,14 +44,14 @@ class BoxCollider extends Collider {
 
     if (other instanceof BoxCollider) {
       const a = this.geometry
-      const b = other.geometry as Box3
+      const b = other.geometry
 
-      intersects = a.intersectsBox(b)
+      intersects = a.intersectsOBB(b, Number.EPSILON)
     }
 
     if (other instanceof SphereCollider) {
       const a = this.geometry
-      const b = other.geometry as Sphere
+      const b = other.geometry
 
       intersects = a.intersectsSphere(b)
     }
@@ -60,8 +66,8 @@ class BoxCollider extends Collider {
   }
 
   private updatePosition() {
-    this.geometry.min = this.minPosition
-    this.geometry.max = this.maxPosition
+    this.geometry.center.copy(this.entity.position)
+    this.geometry.rotation.setFromMatrix4(this.entity.matrix)
   }
 }
 

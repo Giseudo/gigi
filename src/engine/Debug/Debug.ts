@@ -1,4 +1,5 @@
-import { EventDispatcher, Group, Color, Vector2, BufferGeometry, BufferAttribute, Line, LineLoop, LineBasicMaterial } from 'three'
+import { EventDispatcher, Group, Color, Vector2, BufferGeometry, BufferAttribute, Line, LineLoop, LineBasicMaterial, Box3, Box3Helper } from 'three'
+import { OBB } from 'three/examples/jsm/math/OBB'
 
 const TAU = 6.28318530718
 
@@ -92,6 +93,12 @@ class Debug extends EventDispatcher {
     const line = new Line(geometry, material)
 
     return line
+  }
+
+  static CreateBox3(box: Box3, color: Color|string|number = 0xff0000): Line {
+    const helper = new Box3Helper(box, new Color(color))
+
+    return helper
   }
 }
 

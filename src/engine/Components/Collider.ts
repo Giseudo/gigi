@@ -1,4 +1,5 @@
 import { Box3, Sphere, Plane } from 'three'
+import { OBB } from 'three/examples/jsm/math/OBB'
 import { Entity } from '../World'
 import Component from './Component'
 
@@ -15,7 +16,7 @@ enum CollisionLayer {
 class Collider extends Component {
   layer: CollisionLayer = CollisionLayer.Default
   trigger: boolean = true
-  geometry?: Box3|Sphere|Plane
+  geometry?: Box3|OBB|Sphere|Plane
   contacts: Array<Collider>
 
   constructor(entity: Entity) {

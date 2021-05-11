@@ -60,7 +60,7 @@ class Entity extends Object3D implements IStartable, IDestroyable, IActivatable,
   }
 
   /**
-   * Initializes the entity and its components.
+   * Initializes the entity and its initial components.
    * @returns {Promise<void>}
    */
   public async start(): Promise<void> {
@@ -70,7 +70,6 @@ class Entity extends Object3D implements IStartable, IDestroyable, IActivatable,
     }
 
     await this.onStart()
-    this.isLoading = false
 
     /**
      * Fired when the entity is initialized.

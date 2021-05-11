@@ -8,7 +8,7 @@ const TAU = 6.28318530718
  * @extends THREE.EventDispatcher
  * @memberof GEngine.Debug
  */
-export default class Debug extends EventDispatcher {
+class Debug extends EventDispatcher {
   static CreateCircle(radius: number = 5, color: Color|string|number = 0xff0000, segments: number = 16): Line {
     const vertices: Array<Vector2> = []
 
@@ -94,3 +94,5 @@ export default class Debug extends EventDispatcher {
     return line
   }
 }
+
+export default Debug

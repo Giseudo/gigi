@@ -27,7 +27,6 @@ describe('Collider', () => {
 
     a.intersectsWith(b)
 
-    a.entity.addComponent(a)
     a.entity.position.set(5, 5, 5)
     a.entity.update()
     

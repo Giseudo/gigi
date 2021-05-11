@@ -14,24 +14,38 @@ describe('Entity', () => {
 
   describe('components', () => {
     it('should add a component', () => {
-      const component = entity.addComponent(new TestComponent(entity))
+      const component = new TestComponent(entity)
 
       expect(entity.components).to.be.contain(component)
     })
 
-    it('should get a component', () => {
+    it('should get a component from type', () => {
       const component = entity.getComponent(TestComponent)
 
       expect(component).to.exist
       expect(component).to.be.instanceOf(TestComponent)
     })
 
+    it('should get multiple components from type', () => {
+      new TestComponent(entity)
+      new TestComponent(entity)
+
+      expect(entity.components).to.be.length(3)
+    })
+
     it('should remove a component', () => {
       const destroyStub = stub(entity.getComponent(TestComponent), 'destroy')
       entity.removeComponent(TestComponent)
-
-      expect(() => entity.getComponent(TestComponent)).to.throw(Error)
+      expect(entity.components).to.be.length(2)
       expect(destroyStub.calledOnce).to.be.true
+    })
+
+    it('should remove multiple components', () => {
+      entity.removeComponents(TestComponent)
+
+      const components = entity.getComponents(TestComponent)
+
+      expect(components).to.be.length(0)
     })
 
     it('should disable', () => {

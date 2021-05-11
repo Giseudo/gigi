@@ -4,6 +4,9 @@ import { UpdatePayload } from '../payloads'
 import { publish } from '../Messenger'
 import { Component } from '../Components'
 import { ADD_ENTITY } from './events'
+import { Logger } from '../Logger'
+
+type Constructor<T> = new (...args: any[]) => T;
 
 /**
  * The main game object.
@@ -14,6 +17,7 @@ import { ADD_ENTITY } from './events'
 class Entity extends Object3D implements IStartable, IDestroyable, IActivatable, IUpdatable {
   public components: Array<Component>
   public isEnabled: boolean
+  public isLoading: boolean
 
   /**
    * Creates a new Entity object.
@@ -32,6 +36,12 @@ class Entity extends Object3D implements IStartable, IDestroyable, IActivatable,
      * @type boolean
      */
     this.isEnabled = false
+
+    /**
+     * Whether the entity is still loading or not.
+     * @type boolean
+     */
+    this.isLoading = true
   }
 
   /**
@@ -60,6 +70,7 @@ class Entity extends Object3D implements IStartable, IDestroyable, IActivatable,
     }
 
     await this.onStart()
+    this.isLoading = false
 
     /**
      * Fired when the entity is initialized.
@@ -97,17 +108,26 @@ class Entity extends Object3D implements IStartable, IDestroyable, IActivatable,
   }
 
   /**
-   * Get a component from class type.
+   * Get the first component from class type.
    * @param {constructor} type The component class
    * @returns {Component}
    */
-  public getComponent<T extends Component>(type: (new () => T)): T {
+  public getComponent<T extends Component>(type: Constructor<T>): T {
     const component = this.components.find(c => c instanceof type) as T
     
     if (!component)
-      throw new Error(`Could not find component of type ${type.name}`)
+      Logger.Warn(`Could not find component of type ${type.name}`)
 
     return component
+  }
+
+  /**
+   * Get all the components from type.
+   * @param {constructor} type The component class
+   * @returns {Component}
+   */
+  public getComponents<T extends Component>(type: Constructor<T>): Array<T> {
+    return this.components.filter(c => c instanceof type) as Array<T>
   }
 
   /**
@@ -117,23 +137,18 @@ class Entity extends Object3D implements IStartable, IDestroyable, IActivatable,
    * @returns {Component}
    */
   public addComponent<T extends Component>(component: T): T {
-    const type: string = component.constructor.name
-    const index = this.components.findIndex(c => c.constructor.name === type)
+    if (!this.isLoading) component.start()
 
-    if (index >= 0)
-      throw new Error(`Component of type ${type} already extists`)
-
-    component.start()
     this.components.push(component)
 
     return component
   }
 
   /**
-   * Removes a component of given type from the entity.
+   * Removes the first component of given type from the entity.
    * @param {constructor} type The component class
    */
-  public removeComponent<T extends Component>(type: (new () => T)): void {
+  public removeComponent<T extends Component>(type: Constructor<T>): void {
     const index = this.components.findIndex(c => c instanceof type)
 
     if (index < 0)
@@ -142,6 +157,23 @@ class Entity extends Object3D implements IStartable, IDestroyable, IActivatable,
     const component = this.components[index]
     component.destroy()
     this.components.splice(index, 1)
+  }
+
+  /**
+   * Removes all components of given type from the entity.
+   * @param {constructor} type The component class
+   */
+  public removeComponents<T extends Component>(type: Constructor<T>): void {
+    const components = this.getComponents(type)
+
+    for (let i = 0; i < components.length; i++) {
+      const component = components[i]
+      const index = this.components.indexOf(component)
+
+      if (index < 0) continue
+
+      this.components.splice(index, 1)
+    }
   }
 
   /**

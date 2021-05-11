@@ -23,7 +23,6 @@ describe('SphereCollider', () => {
     const a = new BoxCollider(new Entity(), new Vector3(1, 1, 1))
     const b = new SphereCollider(new Entity(), 1)
 
-    a.entity.addComponent(a)
     a.entity.position.set(4, 4, 4)
     a.entity.update()
 

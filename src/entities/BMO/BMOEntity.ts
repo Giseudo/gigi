@@ -7,7 +7,7 @@ export default class BMOEntity extends Entity {
   constructor() {
     super()
 
-    this.collider = this.addComponent(new SphereCollider(this, 8))
+    this.collider = new SphereCollider(this, 8)
 
     this.collider.subscribe('collisionStart', this.onCollisionStart)
     this.collider.subscribe('collisionEnd', this.onCollisionEnd)

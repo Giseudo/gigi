@@ -7,20 +7,26 @@ export default class PlayerEntity extends Entity {
   inputReader: InputReader
   movement: Movement
   collider: SphereCollider
-
   isControllable: boolean
   fresnelMaterial: FresnelMaterial
 
   constructor(data: any, color: number = 0xff2200, isControllable: boolean = false, orientation?: Object3D) {
     super()
+
+    this.components = [
+      new InputReader(this, orientation),
+      new Movement(this, 25, 10),
+      new SphereCollider(this, 3)
+    ]
+
+    this.inputReader = this.getComponent(InputReader)
+    this.movement = this.getComponent(Movement)
+    this.collider = this.getComponent(SphereCollider)
+
     this.isControllable = isControllable
-    this.userData.player = data
-
-    this.inputReader = this.addComponent(new InputReader(this, orientation))
-    this.movement = this.addComponent(new Movement(this, 25, 10))
-    this.collider = this.addComponent(new SphereCollider(this, 3))
-
     this.fresnelMaterial = new FresnelMaterial(new Color(color), isControllable, .5)
+
+    this.userData.player = data
   }
 
   async onStart(): Promise<void> {

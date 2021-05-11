@@ -30,6 +30,8 @@ class Component extends EventDispatcher implements IStartable, IDestroyable, IAc
      * @type boolean
      */
     this.isEnabled = false
+
+    entity.addComponent(this)
   }
 
   /**

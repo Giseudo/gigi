@@ -70,7 +70,7 @@ export default class PlayerEntity extends Entity {
     )
     const clampedPosition = NavMesh.ClampPosition(this.position, desiredPosition)
 
-    this.position.copy(desiredPosition)
+    this.position.copy(clampedPosition)
   }
 
   syncPosition(): void {

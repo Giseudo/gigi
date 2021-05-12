@@ -1,7 +1,7 @@
 import vertexShader from '../shaders/FullScreenQuad.vert.glsl'
 import fragmentShader from '../shaders/LensDistortion.frag.glsl'
 import { ShaderMaterial, Vector2 } from 'three'
-import { Pass } from 'three/examples/jsm/postprocessing/Pass.js'
+import { Pass, FullScreenQuad } from 'three/examples/jsm/postprocessing/Pass.js'
 import { subscribe, RESIZE } from '@/engine'
 
 export class LensDistortionPass extends Pass {
@@ -25,7 +25,7 @@ export class LensDistortionPass extends Pass {
       fragmentShader: fragmentShader
     })
 
-    this.fsQuad = new Pass.FullScreenQuad(this.material)
+    this.fsQuad = new FullScreenQuad(this.material)
 
     subscribe(RESIZE, this.updateResolution)
   }

@@ -2,7 +2,7 @@ import vertexShader from '../shaders/FullScreenQuad.vert.glsl'
 import fragmentShader from '../shaders/Bloom.frag.glsl'
 import { WebGLRenderTarget, NearestFilter, ShaderMaterial, MeshBasicMaterial, Vector2, Layers, Color } from 'three'
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer'
-import { Pass } from 'three/examples/jsm/postprocessing/Pass.js'
+import { Pass, FullScreenQuad } from 'three/examples/jsm/postprocessing/Pass.js'
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass'
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass'
 import { BLOOM_LAYER, RESIZE, subscribe } from '@/engine'
@@ -66,7 +66,7 @@ export class BloomPass extends Pass {
     this.composer.addPass(this.renderPass)
     this.composer.addPass(this.bloomPass)
 
-    this.fsQuad = new Pass.FullScreenQuad(this.material)
+    this.fsQuad = new FullScreenQuad(this.material)
 
     subscribe(RESIZE, this.updateResolution)
   }

@@ -1,6 +1,6 @@
 import { ShaderMaterial, Color } from 'three'
 import { FresnelFragment, FresnelVertex } from './'
-import { Renderer } from '@/engine'
+import { Renderer, Time } from '@/engine'
 
 export default class FresnelMaterial extends ShaderMaterial {
   fragmentShader: string = FresnelFragment
@@ -12,7 +12,7 @@ export default class FresnelMaterial extends ShaderMaterial {
     this.uniforms = {
       color: { value: color },
       power: { value: power },
-      time: { value: 0 },
+      time: Time.time,
       bloom: { value: bloom },
       pass: Renderer.currentPass
     }

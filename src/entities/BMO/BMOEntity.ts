@@ -8,9 +8,6 @@ export default class BMOEntity extends Entity {
     super()
 
     this.collider = new SphereCollider(this, 8)
-
-    this.collider.subscribe('collisionStart', this.onCollisionStart)
-    this.collider.subscribe('collisionEnd', this.onCollisionEnd)
   }
 
   async onStart(): Promise<void> {
@@ -25,13 +22,5 @@ export default class BMOEntity extends Entity {
     })
 
     this.add(model)
-  }
-
-  private onCollisionStart() {
-    console.log('hey friend, lets talk!')
-  }
-
-  private onCollisionEnd() {
-    console.log('okay, see ya!')
   }
 }

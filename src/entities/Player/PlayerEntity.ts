@@ -1,5 +1,5 @@
 import { Object3D, Color, Mesh, Vector3 } from 'three'
-import { NavMesh, Entity, Resources, Collider, SphereCollider, PRIMARY_AXIS } from '@/engine'
+import { NavMesh, Entity, Resources, Collider, SphereCollider, PRIMARY_AXIS, UpdatePayload } from '@/engine'
 import { InputReader, Movement } from '@/components'
 import { MatcapMaterial, FresnelMaterial } from '@/materials'
 
@@ -7,8 +7,8 @@ export default class PlayerEntity extends Entity {
   inputReader: InputReader
   movement: Movement
   collider: Collider
+  color: Color
   isControllable: boolean
-  fresnelMaterial: FresnelMaterial
 
   constructor(data: any, color: number = 0xff2200, isControllable: boolean = false, orientation?: Object3D) {
     super()
@@ -22,20 +22,20 @@ export default class PlayerEntity extends Entity {
     this.inputReader = this.getComponent(InputReader)
     this.movement = this.getComponent(Movement)
     this.collider = this.getComponent(SphereCollider)
-
+    this.color = new Color(color)
     this.isControllable = isControllable
-    this.fresnelMaterial = new FresnelMaterial(new Color(color), isControllable, .5)
 
     this.userData.player = data
   }
 
-  async onStart(): Promise<void> {
+  async onStart() {
     const model = await Resources.loadObject(require('./PlayerModel.fbx').default)
     const matcapMaterial = new MatcapMaterial(await Resources.loadTexture(require('./PlayerMatcap.png')))
+    const fresnelMaterial = new FresnelMaterial(this.color, this.isControllable, .5)
 
     model.traverse(async (node: Mesh) => {
       if (node.isMesh) {
-        if (node.name === 'Emission') node.material = this.fresnelMaterial
+        if (node.name === 'Emission') node.material = fresnelMaterial
         if (node.name === 'Body') node.material = matcapMaterial
       }
     })
@@ -44,12 +44,8 @@ export default class PlayerEntity extends Entity {
     this.add(model)
   }
 
-  update(payload: any) {
-    super.update(payload)
-
-    const { deltaTime, time } = payload
-
-    this.fresnelMaterial.uniforms.time.value = time
+  onUpdate(payload: UpdatePayload) {
+    const { deltaTime } = payload
 
     if (this.isControllable)
       return this.updatePosition(deltaTime)
@@ -57,23 +53,21 @@ export default class PlayerEntity extends Entity {
     this.syncPosition()
   }
 
-  updatePosition(deltaTime: number): void {
+  updatePosition(deltaTime: number) {
     if (this.movement.isMoving)
       this.publish('changedPosition', this.position)
 
-    this.movement.move(
-      this.inputReader.getOrientedAxis(PRIMARY_AXIS)
-    )
+    this.movement.move(this.inputReader.getOrientedAxis(PRIMARY_AXIS))
 
-    const desiredPosition = this.position.clone().add(
-      this.movement.velocity.clone().multiplyScalar(deltaTime)
-    )
+    const desiredPosition = this.position.clone()
+      .add(this.movement.velocity.clone().multiplyScalar(deltaTime))
+
     const clampedPosition = NavMesh.ClampPosition(this.position, desiredPosition)
 
     this.position.copy(clampedPosition)
   }
 
-  syncPosition(): void {
+  syncPosition() {
     const { x, y, z } = this.userData.player.position
 
     this.position.set(x, y, z)

@@ -104,6 +104,8 @@ class Entity extends Object3D implements IStartable, IDestroyable, IActivatable,
     this.components.forEach(component =>
       component.isEnabled && component.update(payload)
     )
+
+    this.onUpdate(payload)
   }
 
   /**
@@ -233,6 +235,12 @@ class Entity extends Object3D implements IStartable, IDestroyable, IActivatable,
    * @protected
    */
   protected onDisable(): void { }
+
+  /**
+   * Called when the entity is updated.
+   * @protected
+   */
+  protected onUpdate(_: UpdatePayload): void { }
 
   /**
    * Subscribes callback function to the given event type.

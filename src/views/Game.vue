@@ -1,9 +1,14 @@
 <template>
-  <div class="game">
+  <div class="g-game">
     <router-view></router-view>
 
     <g-touch-axis @move="onTouchChange" />
-    <g-dialogue v-if="showDialogue" />
+    <g-dialogue
+      class="g-game__dialogue"
+      v-if="showDialogue"
+    >
+      {{ currentAction }}
+    </g-dialogue>
   </div>
 </template>
 
@@ -14,6 +19,7 @@ import { Entity, subscribe, unsubscribe } from '@/engine'
 import { PlayerEntity, SkyboxEntity } from '@/entities'
 import { Movement } from '@/components'
 import { PRIMARY_AXIS } from '@/engine/Input'
+import { showDialogue, currentAction } from '@/services/UI'
 import * as events from '@/engine/events'
 
 export default {
@@ -23,9 +29,12 @@ export default {
 
   components: { GTouchAxis, GDialogue },
 
+  setup () {
+    return { showDialogue, currentAction }
+  },
+
   data: () => ({
-    entities: markRaw([]),
-    showDialogue: false,
+    entities: markRaw([])
   }),
 
   mounted () {
@@ -107,3 +116,14 @@ export default {
   }
 }
 </script>
+
+<style lang="scss">
+.g-game {
+  &__dialogue {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
+}
+</style>

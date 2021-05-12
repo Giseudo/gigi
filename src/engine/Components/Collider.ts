@@ -1,4 +1,4 @@
-import { Box3, Sphere, Plane } from 'three'
+import { Vector3, Box3, Sphere, Plane } from 'three'
 import { OBB } from 'three/examples/jsm/math/OBB'
 import { Entity } from '../World'
 import Component from './Component'
@@ -14,14 +14,16 @@ enum CollisionLayer {
  * @extends {Component}
  */
 class Collider extends Component {
+  center: Vector3
   layer: CollisionLayer = CollisionLayer.Default
   trigger: boolean = true
   geometry?: Box3|OBB|Sphere|Plane
   contacts: Array<Collider>
 
-  constructor(entity: Entity) {
+  constructor(entity: Entity, center: Vector3) {
     super(entity)
 
+    this.center = center.clone()
     this.contacts = []
   }
 

@@ -12,31 +12,17 @@ import SphereCollider from './SphereCollider'
  * @extends {Collider}
  */
 class BoxCollider extends Collider {
-  size: Vector3
-  center: Vector3
   geometry: OBB
 
-  get minPosition(): Vector3 {
-    return this.entity.position.clone().sub(this.size)
-  }
-
-  get maxPosition(): Vector3 {
-    return this.entity.position.clone().add(this.size)
-  }
-
   constructor(entity: Entity, size: Vector3, center: Vector3 = new Vector3()) {
-    super(entity)
+    super(entity, center)
 
-    this.size = size
-    this.center = center
-
-    this.geometry = new OBB(center, size)
-
-    const box = new Box3(this.minPosition, this.maxPosition)
-
-    this.geometry.fromBox3(box)
+    const half = size.divideScalar(2)
+    const box = new Box3().setFromCenterAndSize(center, half)
 
     this.gizmos.add(Debug.CreateBox3(box, 0x00ff00))
+    this.geometry = new OBB(center, half)
+    this.center = center.clone()
   }
 
   public intersectsWith(other: Collider): boolean {
@@ -66,7 +52,9 @@ class BoxCollider extends Collider {
   }
 
   private updatePosition() {
-    this.geometry.center.copy(this.entity.position)
+    this.geometry.center.copy(
+      this.center.clone().add(this.entity.position)
+    )
     this.geometry.rotation.setFromMatrix4(this.entity.matrix)
   }
 }

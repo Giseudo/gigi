@@ -1,5 +1,4 @@
-import { EventDispatcher, Group, Color, Vector2, BufferGeometry, BufferAttribute, Line, LineLoop, LineBasicMaterial, Box3, Box3Helper } from 'three'
-import { OBB } from 'three/examples/jsm/math/OBB'
+import { Vector3, EventDispatcher, Group, Color, Vector2, BufferGeometry, BufferAttribute, Line, LineLoop, LineBasicMaterial, Box3, Box3Helper } from 'three'
 
 const TAU = 6.28318530718
 
@@ -29,7 +28,7 @@ class Debug extends EventDispatcher {
     return line
   }
 
-  static CreateSphere(radius: number, color: Color|string|number = 0xff0000, segments: number = 16): Group {
+  static CreateSphere(radius: number, center: Vector3 = new Vector3(), color: Color|string|number = 0xff0000, segments: number = 16): Group {
     const group: Group = new Group()
     const x: Line = Debug.CreateCircle(radius, color, segments)
     const y: Line = Debug.CreateCircle(radius, color, segments)
@@ -41,6 +40,8 @@ class Debug extends EventDispatcher {
     group.add(x)
     group.add(y)
     group.add(z)
+
+    group.position.add(center)
 
     return group
   }

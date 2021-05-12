@@ -5,28 +5,53 @@ import { Entity } from '../World'
 import { expect } from 'chai'
 
 describe('BoxCollider', () => {
-  it('should collide with box', () => {
-    const a = new BoxCollider(new Entity(), new Vector3(1, 1, 1))
-    const b = new BoxCollider(new Entity(), new Vector3(1, 1, 1))
+  describe('box x box', () => {
+    it('should collide', () => {
+      const a = new BoxCollider(new Entity(), new Vector3(1, 1, 1))
+      const b = new BoxCollider(new Entity(), new Vector3(1, 1, 1))
 
-    expect(a.intersectsWith(b)).to.be.true
+      expect(a.intersectsWith(b)).to.be.true
+    })
+
+    it('should not collide', () => {
+      const a = new BoxCollider(new Entity(), new Vector3(1, 1, 1))
+      const b = new BoxCollider(new Entity(), new Vector3(1, 1, 1))
+
+      b.entity.start()
+      b.entity.position.set(0, 2, 0)
+      b.entity.update()
+
+      expect(a.intersectsWith(b)).to.be.false
+
+      const c = new BoxCollider(new Entity(), new Vector3(1, 1, 1), new Vector3(0, 2, 0))
+      const d = new BoxCollider(new Entity(), new Vector3(1, 1, 1))
+
+      expect(c.intersectsWith(d)).to.be.false
+    })
   })
 
-  it('should collide with sphere', () => {
-    const a = new BoxCollider(new Entity(), new Vector3(1, 1, 1))
-    const b = new SphereCollider(new Entity(), 1)
+  describe('box x sphere', () => {
+    it('should collide', () => {
+      const a = new BoxCollider(new Entity(), new Vector3(1, 1, 1))
+      const b = new SphereCollider(new Entity(), 1)
 
-    expect(a.intersectsWith(b)).to.be.true
-  })
+      expect(a.intersectsWith(b)).to.be.true
+    })
 
-  it('should track parent entity position', () => {
-    const a = new BoxCollider(new Entity(), new Vector3(1, 1, 1))
-    const b = new SphereCollider(new Entity(), 1)
+    it('should not collide', () => {
+      const a = new BoxCollider(new Entity(), new Vector3(2, 2, 2))
+      const b = new SphereCollider(new Entity(), 8)
 
-    a.entity.start()
-    a.entity.position.set(4, 4, 4)
-    a.entity.update()
+      b.entity.start()
+      b.entity.position.set(0, 10, 0)
+      b.entity.update()
 
-    expect(a.intersectsWith(b)).to.be.false
+      expect(a.intersectsWith(b)).to.be.false
+
+      const c = new BoxCollider(new Entity(), new Vector3(2, 2, 2), new Vector3(0, 10, 0))
+      const d = new SphereCollider(new Entity(), 8)
+
+      expect(c.intersectsWith(d)).to.be.false
+    })
   })
 })

@@ -1,4 +1,4 @@
-import { Sphere } from 'three'
+import { Vector3, Sphere } from 'three'
 import { Debug } from '../Debug'
 import { Entity } from '../World'
 import Collider from './Collider'
@@ -13,12 +13,14 @@ import BoxCollider from './BoxCollider'
 class SphereCollider extends Collider {
   geometry: Sphere
 
-  constructor(entity: Entity, radius: number) {
-    super(entity)
+  constructor(entity: Entity, radius: number, center: Vector3 = new Vector3()) {
+    super(entity, center)
 
-    this.geometry = new Sphere(entity.position, radius)
+    const position = entity.position.clone().add(center)
 
-    this.gizmos.add(Debug.CreateSphere(radius, 0x00ff00))
+    this.geometry = new Sphere(position, radius)
+
+    this.gizmos.add(Debug.CreateSphere(radius, center, 0x00ff00))
   }
 
   public intersectsWith(other: Collider): boolean {
@@ -41,6 +43,11 @@ class SphereCollider extends Collider {
     this.updateContacts(other, intersects)
 
     return intersects
+  }
+
+  public update() {
+    const position = this.entity.position.clone().add(this.center)
+    this.geometry.center.copy(position)
   }
 }
 

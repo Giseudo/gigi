@@ -1,15 +1,23 @@
 <template>
-  <div class="g-home" />
+  <div class="g-village">
+    <span
+      class="g-village__indicator"
+      :style="{ left: `${bmoPosition.x}px`, top: `${bmoPosition.y}px` }"
+      @click="onIndicatorClick"
+    />
+  </div>
 </template>
 
 <script>
 import { markRaw } from 'vue'
 import { Warning, BMO, RedStand, Environment, BMOEntity } from '@/entities'
-import { Entity } from '@/engine'
+import { Entity, subscribe, unsubscribe, UPDATE } from '@/engine'
 import { setAction, setShowDialogue } from '@/services/UI'
 
 export default ({
   name: 'Village',
+
+  inject: [ 'camera' ],
 
   setup () {
     return { setAction, setShowDialogue }
@@ -17,6 +25,7 @@ export default ({
 
   data: () => ({
     entities: markRaw([]),
+    bmoPosition: {},
     bmo: null
   }),
 
@@ -34,6 +43,8 @@ export default ({
       await Entity.Instantiate(environment),
       await Entity.Instantiate(bmo)
     )
+
+    subscribe(UPDATE, this.onUpdate)
   },
 
   beforeUnmount () {
@@ -42,6 +53,8 @@ export default ({
 
     this.entities.forEach(e => e.destroy())
     this.entities = []
+
+    unsubscribe(UPDATE, this.onUpdate)
   },
 
   methods: {
@@ -53,7 +66,35 @@ export default ({
     onHideInteraction() {
       this.setShowDialogue(false)
       this.setAction('')
+    },
+
+    onUpdate({ deltaTime }) {
+      const position = this.camera.getScreenPosition(this.bmo)
+
+      this.bmoPosition = position
+    },
+
+    onIndicatorClick() {
+      alert('AWWWWWWWWW, you clicked me >:B')
     }
   }
 })
 </script>
+
+<style lang="scss">
+.g-village {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  overflow: hidden;
+  &__indicator {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    background: red;
+    border-radius: 50px;
+    transform: translate(-50%, -50%);
+    z-index: 200;
+  }
+}
+</style>

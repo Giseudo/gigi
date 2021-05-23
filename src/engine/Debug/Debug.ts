@@ -9,6 +9,8 @@ const TAU = 6.28318530718
  * @memberof GEngine.Debug
  */
 class Debug extends EventDispatcher {
+  static ShowGizmos: boolean = false
+
   static CreateCircle(radius: number = 5, color: Color|string|number = 0xff0000, segments: number = 16): Line {
     const vertices: Array<Vector2> = []
 

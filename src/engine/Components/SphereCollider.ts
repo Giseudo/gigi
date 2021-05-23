@@ -21,6 +21,7 @@ class SphereCollider extends Collider {
     this.geometry = new Sphere(position, radius)
 
     this.gizmos.add(Debug.CreateSphere(radius, center, 0x00ff00))
+    this.gizmos.visible = Debug.ShowGizmos
   }
 
   public intersectsWith(other: Collider): boolean {

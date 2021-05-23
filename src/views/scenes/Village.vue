@@ -89,11 +89,11 @@ export default ({
   overflow: hidden;
   &__indicator {
     position: absolute;
-    width: 50px;
-    height: 50px;
+    width: 100px;
+    height: 100px;
     background: red;
-    border-radius: 50px;
-    transform: translate(-50%, -50%);
+    border-radius: 100px;
+    transform: translate(-50%, 0px);
     z-index: 200;
   }
 }

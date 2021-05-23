@@ -21,6 +21,7 @@ class BoxCollider extends Collider {
     const box = new Box3().setFromCenterAndSize(center, half)
 
     this.gizmos.add(Debug.CreateBox3(box, 0x00ff00))
+    this.gizmos.visible = Debug.ShowGizmos
     this.geometry = new OBB(center, half)
     this.center = center.clone()
   }

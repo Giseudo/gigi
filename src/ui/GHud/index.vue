@@ -38,6 +38,7 @@ export default {
     position: absolute;
     padding: 20px;
     display: flex;
+    //background: rgba(yellow, .1);
     &--top {
       width: 100%;
       height: 150px;

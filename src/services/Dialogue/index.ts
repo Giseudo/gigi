@@ -1,1 +1,1 @@
-export { default as DialogueService } from './DialogueService'
+export * from './DialogueService'

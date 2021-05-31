@@ -51,12 +51,12 @@ export default class Camera extends PerspectiveCamera {
     if (this.followTarget) this.updatePosition(deltaTime)
   }
 
-  getScreenPosition = (object: Object3D): Vector3 => {
+  getScreenPosition = (pos: Vector3): Vector3 => {
     const width = window.innerWidth
     const height = window.innerHeight
     const widthHalf = width / 2
     const heightHalf = height / 2
-    const position: Vector3 = object.position.clone()
+    const position: Vector3 = pos.clone().add(new Vector3(0, 2.5, 0))
 
     position.project(this)
     position.x = (position.x * widthHalf) + widthHalf

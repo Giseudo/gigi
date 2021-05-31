@@ -1,14 +1,22 @@
 import { NearestFilter, Object3D, Texture } from 'three'
 import { Resources, Entity, SphereCollider } from '@/engine'
 import { BasicMaterial } from '@/materials'
+import Speaker from '@/components/Speaker'
 
 export default class BMOEntity extends Entity {
   collider: SphereCollider
+  speaker: Speaker
 
   constructor() {
     super()
 
-    this.collider = new SphereCollider(this, 8)
+    this.components = [
+      new SphereCollider(this, 8),
+      new Speaker(this)
+    ]
+
+    this.collider = this.getComponent(SphereCollider)
+    this.speaker = this.getComponent(Speaker)
   }
 
   async onStart(): Promise<void> {
@@ -28,6 +36,22 @@ export default class BMOEntity extends Entity {
       if (node.isMesh) node.material = material
     })
 
+    this.collider.subscribe('collisionStart', this.onEntityApproach)
+    this.collider.subscribe('collisionEnd', this.onEntityMoveAway)
+
     this.add(model)
+  }
+
+  onDestroy() {
+    this.collider.unsubscribe('collisionStart', this.onEntityApproach)
+    this.collider.unsubscribe('collisionEnd', this.onEntityMoveAway)
+  }
+
+  onEntityApproach = () => {
+    this.speaker.speak('HEYA')
+  }
+
+  onEntityMoveAway = () => {
+    this.speaker.shutUp()
   }
 }

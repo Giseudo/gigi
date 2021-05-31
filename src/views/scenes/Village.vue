@@ -1,31 +1,32 @@
 <template>
   <div class="g-village">
-    <span
-      class="g-village__indicator"
-      :style="{ left: `${bmoPosition.x}px`, top: `${bmoPosition.y}px` }"
-      @click="onIndicatorClick"
-    />
+    <transition-group name="fade" tag="div">
+      <span
+        :key="key"
+        v-for="balloon, key in balloons"
+        class="g-village__indicator"
+        :style="{ left: `${balloon.screenPosition.x}px`, top: `${balloon.screenPosition.y}px` }"
+        @click="onIndicatorClick"
+      >
+        {{ balloon.text }}
+      </span>
+    </transition-group>
   </div>
 </template>
 
 <script>
-import { markRaw } from 'vue'
+import { markRaw, inject } from 'vue'
 import { Warning, BMO, RedStand, Environment, BMOEntity } from '@/entities'
 import { Entity, subscribe, unsubscribe, UPDATE } from '@/engine'
-import { setAction, setShowDialogue } from '@/services/UI'
 
 export default ({
   name: 'Village',
 
-  inject: [ 'camera' ],
+  inject: [ 'camera', 'dialogueService' ],
 
-  setup () {
-    return { setAction, setShowDialogue }
-  },
-
-  data: () => ({
+  data: vm => ({
     entities: markRaw([]),
-    bmoPosition: {},
+    balloons: vm.dialogueService.balloons,
     bmo: null
   }),
 
@@ -33,49 +34,46 @@ export default ({
     const environment = new Environment()
     const bmo = new BMOEntity()
 
-    bmo.position.set(0, 0, -50)
-    bmo.collider.subscribe('collisionStart', this.onShowInteraction)
-    bmo.collider.subscribe('collisionEnd', this.onHideInteraction)
-
     this.bmo = bmo
+
+    this.bmo.position.set(0, 0, -50)
+    this.bmo.collider.subscribe('collisionStart', this.onBMOApproach)
+    this.bmo.collider.subscribe('collisionEnd', this.onBMOMoveAway)
+
+    subscribe(UPDATE, this.onUpdate)
 
     this.entities.push(
       await Entity.Instantiate(environment),
       await Entity.Instantiate(bmo)
     )
-
-    subscribe(UPDATE, this.onUpdate)
   },
 
   beforeUnmount () {
-    this.bmo.collider.unsubscribe('collisionStart', this.onShowInteraction)
-    this.bmo.collider.unsubscribe('collisionEnd', this.onHideInteraction)
-
     this.entities.forEach(e => e.destroy())
     this.entities = []
 
-    unsubscribe(UPDATE, this.onUpdate)
+    this.bmo.collider.unsubscribe('collisionStart', this.onBMOApproach)
+    this.bmo.collider.unsubscribe('collisionEnd', this.onBMOMoveAway)
+    this.onBMOMoveAway()
   },
 
   methods: {
-    onShowInteraction() {
-      this.setShowDialogue(true)
-      this.setAction('hi friend :)')
-    },
-
-    onHideInteraction() {
-      this.setShowDialogue(false)
-      this.setAction('')
-    },
-
-    onUpdate({ deltaTime }) {
-      const position = this.camera.getScreenPosition(this.bmo)
-
-      this.bmoPosition = position
-    },
-
     onIndicatorClick() {
       alert('AWWWWWWWWW, you clicked me >:B')
+    },
+
+    onBMOApproach () {
+      this.dialogueService.showSpeechBalloon(
+        this.bmo, 'Hello friend! How are yooou? <3'
+      )
+    },
+
+    onBMOMoveAway () {
+      this.dialogueService.hideSpeechBalloon(this.bmo)
+    },
+
+    onUpdate () {
+      this.dialogueService.updateBalloonsPosition()
     }
   }
 })
@@ -87,14 +85,39 @@ export default ({
   height: 100%;
   position: absolute;
   overflow: hidden;
+  perspective: 200px;
+  z-index: 20;
   &__indicator {
+    padding: 10px;
     position: absolute;
-    width: 100px;
-    height: 100px;
-    background: red;
-    border-radius: 100px;
-    transform: translate(-50%, 0px);
+    background: rgba(white, .7);
+    transform: scaleY(1) translate(-50%, -100%);
     z-index: 200;
+    text-shadow: 2px 2px white;
+    width: 250px;
+    text-align: center;
+    font-size: 14px;
+    line-height: 150%;
+    &:before {
+      content: "";
+      position: absolute;
+      border-left: 10px solid transparent;
+      border-right: 10px solid transparent;
+      border-top: 20px solid rgba(white, .7);
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+    }
   }
+}
+
+.fade-enter-active {
+  transition: opacity .15s, transform .3s;
+}
+.fade-leave-active {
+  transition: opacity .1s, transform .1s;
+}
+.fade-enter-from, .fade-leave-to {
+  transform: scaleY(0) translate(-50%, -100%);
 }
 </style>

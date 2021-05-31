@@ -6,11 +6,11 @@
 
     <g-hud>
       <template v-slot:top>
-        <span class="g-game__visor g-game__visor--top" />
+        <!--span class="g-game__visor g-game__visor--top" /-->
       </template>
 
       <template v-slot:down>
-        <span class="g-game__visor g-game__visor--bottom" />
+        <!--span class="g-game__visor g-game__visor--bottom" /-->
       </template>
 
       <template v-slot:right>
@@ -18,7 +18,7 @@
           <span class="g-game__square" v-for="square in 10" />
           <span class="g-game__line" />
           <div class="g-game__rect">
-            So cool! :D
+            So cool!
 
             <button @click="onClick" class="g-game__button">
               A Button OMG
@@ -38,13 +38,14 @@
 </template>
 
 <script>
-import { markRaw } from 'vue'
+import { markRaw, inject, provide } from 'vue'
 import { GTouchAxis, GDialogue, GHud } from '@/ui'
 import { Entity, subscribe, unsubscribe } from '@/engine'
 import { PlayerEntity, SkyboxEntity } from '@/entities'
 import { Movement } from '@/components'
 import { PRIMARY_AXIS } from '@/engine/Input'
 import { showDialogue, currentAction } from '@/services/UI'
+import dialogueService from '@/services/Dialogue/DialogueService'
 import * as events from '@/engine/events'
 
 export default {
@@ -55,6 +56,10 @@ export default {
   components: { GTouchAxis, GDialogue, GHud },
 
   setup () {
+    const camera = inject('camera')
+
+    provide('dialogueService', dialogueService(camera))
+
     return { showDialogue, currentAction }
   },
 

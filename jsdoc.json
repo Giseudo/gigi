@@ -31,7 +31,8 @@
   },
   "source": {
     "include": [
-      "./src/engine"
+      "./src/engine",
+      "./src/services"
     ],
     "includePattern": "\\.(jsx|js|ts|tsx)$",
     "excludePattern": "(node_modules/|docs)"

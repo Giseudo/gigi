@@ -3,7 +3,7 @@
     <transition-group name="fade" tag="div">
       <span
         :key="key"
-        v-for="balloon, key in balloons"
+        v-for="balloon, key in speechService.balloons"
         class="g-village__indicator"
         :style="{ left: `${balloon.screenPosition.x}px`, top: `${balloon.screenPosition.y}px` }"
         @click="onIndicatorClick"
@@ -16,65 +16,38 @@
 
 <script>
 import { markRaw, inject } from 'vue'
-import { Warning, BMO, RedStand, Environment, BMOEntity } from '@/entities'
-import { Entity, subscribe, unsubscribe, UPDATE } from '@/engine'
+import { Environment, BMOEntity } from '@/entities'
+import { Entity } from '@/engine'
+import { SpeechServiceSymbol } from '@/services'
 
 export default ({
   name: 'Village',
 
-  inject: [ 'camera', 'dialogueService' ],
+  inject: [ 'camera' ],
 
-  data: vm => ({
-    entities: markRaw([]),
-    balloons: vm.dialogueService.balloons,
-    bmo: null
+  setup () {
+    return { speechService: inject(SpeechServiceSymbol) }
+  },
+
+  data: () => ({
+    entities: markRaw([])
   }),
 
   async mounted () {
-    const environment = new Environment()
-    const bmo = new BMOEntity()
+    const bmo = new BMOEntity(this.speechService)
 
-    this.bmo = bmo
-
-    this.bmo.position.set(0, 0, -50)
-    this.bmo.collider.subscribe('collisionStart', this.onBMOApproach)
-    this.bmo.collider.subscribe('collisionEnd', this.onBMOMoveAway)
-
-    subscribe(UPDATE, this.onUpdate)
+    bmo.position.set(0, 0, -50)
 
     this.entities.push(
-      await Entity.Instantiate(environment),
-      await Entity.Instantiate(bmo)
+      await Entity.Instantiate(new Environment()),
+      await Entity.Instantiate(bmo),
+      await Entity.Instantiate(new BMOEntity(this.speechService))
     )
   },
 
   beforeUnmount () {
     this.entities.forEach(e => e.destroy())
     this.entities = []
-
-    this.bmo.collider.unsubscribe('collisionStart', this.onBMOApproach)
-    this.bmo.collider.unsubscribe('collisionEnd', this.onBMOMoveAway)
-    this.onBMOMoveAway()
-  },
-
-  methods: {
-    onIndicatorClick() {
-      alert('AWWWWWWWWW, you clicked me >:B')
-    },
-
-    onBMOApproach () {
-      this.dialogueService.showSpeechBalloon(
-        this.bmo, 'Hello friend! How are yooou? <3'
-      )
-    },
-
-    onBMOMoveAway () {
-      this.dialogueService.hideSpeechBalloon(this.bmo)
-    },
-
-    onUpdate () {
-      this.dialogueService.updateBalloonsPosition()
-    }
   }
 })
 </script>

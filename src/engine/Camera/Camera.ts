@@ -3,12 +3,18 @@ import { RESIZE, UPDATE, INIT_CAMERA } from '../events'
 import { subscribe, unsubscribe, publish } from '../Messenger'
 
 export default class Camera extends PerspectiveCamera {
-  followOffset: Vector3 = new Vector3()
-  followTarget?: Object3D
-  height: Vector3 = new Vector3(0, 1, 0)
+  private followOffset: Vector3 = new Vector3()
+  private followTarget?: Object3D
+  private width: number
+  private height: number
+  private previousPosition: Vector3
 
-  constructor() {
-    super(60, window.innerWidth / window.innerHeight, .1, 2000)
+  constructor(width: number, height: number, fov: number = 60) {
+    super(fov, width / height, .1, 2000)
+
+    this.width = width
+    this.height = height
+    this.previousPosition = this.position
   }
 
   init () {
@@ -39,7 +45,7 @@ export default class Camera extends PerspectiveCamera {
   }
 
   lookAt (position: Vector3): void {
-    super.lookAt(position.clone().add(this.height))
+    super.lookAt(position.clone())
   }
 
   onResize = ({ width, height }: any) => {
@@ -49,11 +55,14 @@ export default class Camera extends PerspectiveCamera {
 
   onUpdate = ({ deltaTime }: any) => {
     if (this.followTarget) this.updatePosition(deltaTime)
+
+    if (this.position.equals(this.previousPosition))
+      this.dispatchEvent({ type: 'moved', position: this.position})
   }
 
   getScreenPosition = (pos: Vector3): Vector3 => {
-    const width = window.innerWidth
-    const height = window.innerHeight
+    const width = this.width 
+    const height = this.height 
     const widthHalf = width / 2
     const heightHalf = height / 2
     const position: Vector3 = pos.clone().add(new Vector3(0, 2.5, 0))

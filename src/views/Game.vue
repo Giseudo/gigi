@@ -15,7 +15,7 @@
 
       <template v-slot:right>
         <div class="g-game__sidenav g-game__sidenav--right">
-          <span class="g-game__square" v-for="square in 10" />
+          <span class="g-game__square" v-for="square in 10" :key="square" />
           <span class="g-game__line" />
           <div class="g-game__rect">
             So cool!
@@ -30,9 +30,9 @@
 
     <g-dialogue
       class="g-game__dialogue"
-      v-if="showDialogue"
+      v-if="false"
     >
-      {{ currentAction }}
+      OMG
     </g-dialogue>
   </div>
 </template>
@@ -44,8 +44,7 @@ import { Entity, subscribe, unsubscribe } from '@/engine'
 import { PlayerEntity, SkyboxEntity } from '@/entities'
 import { Movement } from '@/components'
 import { PRIMARY_AXIS } from '@/engine/Input'
-import { showDialogue, currentAction } from '@/services/UI'
-import dialogueService from '@/services/Dialogue/DialogueService'
+import { SpeechServiceSymbol, SpeechService } from '@/services'
 import * as events from '@/engine/events'
 
 export default {
@@ -58,9 +57,7 @@ export default {
   setup () {
     const camera = inject('camera')
 
-    provide('dialogueService', dialogueService(camera))
-
-    return { showDialogue, currentAction }
+    provide(SpeechServiceSymbol, new SpeechService({ camera }))
   },
 
   data: () => ({

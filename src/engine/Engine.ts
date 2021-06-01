@@ -5,7 +5,7 @@ import Space from './Physics/Space'
 
 export default class Engine {
   renderer: Renderer
-  camera: Camera = new Camera()
+  camera: Camera = new Camera(window.innerWidth, window.innerHeight)
   world: World = new World()
   input: Input = new Input()
   network: Network = new Network()
